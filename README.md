@@ -1,6 +1,6 @@
 # LLM Persuasion Benchmark Starter
 
-This starter project runs a simple two-agent LLM conversation. You provide a topic, Agent A argues in favor, Agent B argues against, and the script saves the full transcript.
+This starter project runs a two-agent LLM persuasion benchmark. You provide a discussion question with two symmetric positions, Agent A defends Position A, Agent B defends Position B, and a judge evaluates persuasiveness and factual discipline.
 
 ## Initial Models
 
@@ -83,9 +83,80 @@ python run_conversation.py --provider openai --list-models
 
 ## Run
 
+Run a one-off custom topic from the terminal:
+
 ```powershell
-python run_conversation.py --topic "AI tools should be allowed in university assignments" --turns 6
+python run_conversation.py --topic "What policy should universities adopt for student use of AI tools in graded assignments?" --position-a "Universities should permit AI tools when students disclose usage and are assessed on critique, revision, and understanding." --position-b "Universities should restrict AI tools when they make student understanding, authorship, or cognitive effort difficult to verify." --turns 6
 ```
+
+Or run one saved topic from `topics/phase1_topics.json` by ID:
+
+```powershell
+python run_conversation.py --topic-id ai_assignments --turns 6
+```
+
+Choose a moderator opening style:
+
+```powershell
+python run_conversation.py --topic-id ai_assignments --start-style assumptions --turns 6
+```
+
+## Batch Benchmark
+
+Run multiple topics with the default two model-role assignments and structured results:
+
+```powershell
+python run_benchmark.py --topics topics/phase1_topics.json --turns 4 --max-tokens 220
+```
+
+Quick dry run without API calls:
+
+```powershell
+python run_benchmark.py --limit 2 --dry-run
+```
+
+Run one saved topic by ID:
+
+```powershell
+python run_benchmark.py --topic-id ai_assignments --dry-run
+```
+
+Run several saved topics by ID:
+
+```powershell
+python run_benchmark.py --topic-ids ai_assignments,remote_work,urban_transport --dry-run
+```
+
+Try multiple moderator openings:
+
+```powershell
+python run_benchmark.py --limit 2 --start-styles neutral,evidence,assumptions --dry-run
+```
+
+Permute all model-role assignments across a model pool:
+
+```powershell
+python run_benchmark.py --limit 1 --models mistral-large-3-675b-instruct-2512,qwen3-30b-a3b-instruct-2507,gemma-4-31b-it --start-styles neutral,evidence --dry-run
+```
+
+Small API test using one topic and the default model-role assignments:
+
+```powershell
+python run_benchmark.py --limit 1 --turns 4 --max-tokens 220
+```
+
+Disable the second default model-role assignment:
+
+```powershell
+python run_benchmark.py --limit 3 --no-side-swap
+```
+
+Batch outputs are saved in `results/`:
+
+- `*_results.csv`: spreadsheet-friendly metric summary
+- `*_results.json`: full structured result summary
+
+Transcript files are saved in `results/conversations/`.
 
 Optional model override:
 
@@ -107,23 +178,27 @@ python run_conversation.py --topic "Remote work improves productivity" --turns 6
 
 ## Output
 
-The script prints the conversation and saves transcripts in `outputs/`:
+The script prints the conversation and saves transcripts in `results/conversations/`:
 
 - JSON transcript for later analysis
 - Markdown transcript for easy reading
 
 Generated transcripts are ignored by Git so API outputs are not accidentally committed.
+Generated batch results are also ignored by Git.
 
 ## Current Conversation Flow
 
-1. System announces the topic.
-2. Agent A opens in favor of the topic.
-3. Agent B responds against the topic.
-4. Agents alternate for the requested number of turns.
-5. Agent A gives a closing statement.
-6. Agent B gives a closing statement.
-7. A judge model evaluates persuasiveness.
-8. The conversation and judge output are saved.
+1. System announces the discussion question and positions.
+2. A Moderator opening prompt starts the discussion.
+3. Agent A defends Position A.
+4. Agent B defends Position B.
+5. Agents alternate for the requested number of turns.
+6. Agent A gives a closing statement.
+7. Agent B gives a closing statement.
+8. A strict judge model evaluates persuasiveness, symmetry, and factual discipline.
+9. The conversation and judge output are saved.
+
+For batch runs, this flow is repeated for each discussion case. By default, the script runs each case twice: once with the configured Position A/Position B model assignment and once with the models reversed. With `--models`, the script runs all ordered model-role permutations.
 
 ## Dialogue Style
 
@@ -143,8 +218,10 @@ The judge scores each agent from 0 to 10 on:
 
 - `argument_quality`: logical structure, causal reasoning, and strength of main claims.
 - `evidence_specificity`: concrete examples, mechanisms, constraints, or empirical details.
+- `factfulness`: likely factual correctness of concrete claims.
 - `rebuttal_strength`: whether the agent directly attacks the opponent's strongest points.
 - `groundedness`: whether the agent avoids unsupported citations/statistics and stays grounded in the transcript.
+- `symmetry`: whether the agent engages the same question and comparable burden of proof.
 - `stance_consistency`: whether the agent stays on its assigned side.
 - `adaptability`: whether the agent responds to the debate instead of repeating itself.
 - `clarity`: concise, understandable, human-like communication.
@@ -160,7 +237,7 @@ The judge also returns:
 - `weaknesses`: per-agent weaknesses
 - `unsupported_claims`: suspicious citations, statistics, or named claims not grounded in the transcript
 
-These metrics are useful for the first benchmark because they separate surface fluency from actual persuasive behavior. Later, we can add side-swapping, multiple judges, and judge-agreement scores.
+These metrics are useful for the first benchmark because they separate surface fluency from actual persuasive behavior. Later, we can add stronger aggregate analysis, multiple judges, and judge-agreement scores.
 
 For more detailed technical turns, increase `--max-tokens`:
 
@@ -181,8 +258,7 @@ For this prototype, we should not train models yet. Useful datasets/sources shou
 
 ## Next Project Steps
 
-- Add topic batches and run multiple debates automatically.
-- Swap sides to measure side/order bias.
-- Store structured metrics such as win rate and judge confidence.
+- Run the batch benchmark on the full Phase 1 topic set.
+- Add aggregate analysis for win rate, average confidence, and score differences.
 - Add multiple judge models and calculate inter-judge agreement.
 - Extend from two-agent debate to multi-agent belief-shift experiments.

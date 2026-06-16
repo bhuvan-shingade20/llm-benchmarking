@@ -6,10 +6,10 @@ This file records early qualitative and quantitative observations from Phase 1. 
 
 - Provider: Academic Cloud / SAIA OpenAI-compatible API
 - Endpoint: `https://chat-ai.academiccloud.de/v1`
-- Debate topic used for initial tests: `AI tools should be allowed in university assignments`
-- Current Agent A stance: `For`
-- Current Agent B stance: `Against`
-- Current judge metrics: `argument_quality`, `evidence_specificity`, `rebuttal_strength`, `groundedness`, `stance_consistency`, `adaptability`, `clarity`, `overall_persuasiveness`
+- Current discussion case used for verification: `What policy should universities adopt for student use of AI tools in graded assignments?`
+- Current Agent A role: `Position A`
+- Current Agent B role: `Position B`
+- Current judge metrics: `argument_quality`, `evidence_specificity`, `factfulness`, `rebuttal_strength`, `groundedness`, `symmetry`, `stance_consistency`, `adaptability`, `clarity`, `overall_persuasiveness`
 - Current recommended judge: `gemma-4-31b-it`, because it is different from the current debaters and should reduce same-model judge bias.
 
 Note: `deepseek-r1-distill-llama-70b` was tested as a judge, but it produced long reasoning text before JSON and did not return a parseable evaluation in the current judging pipeline. It may be useful later if we add model-specific handling for reasoning outputs.
@@ -22,17 +22,54 @@ Note: `deepseek-r1-distill-llama-70b` was tested as a judge, but it produced lon
 | SAIA first working run | `meta-llama-3.1-8b-instruct` | `qwen3-30b-a3b-instruct-2507` | `qwen3-30b-a3b-instruct-2507` | 2 | Agent B | Agent A was noticeably weaker and more generic. Agent B was more direct and confident. Judge output worked. |
 | SAIA stronger Agent A run | `mistral-large-3-675b-instruct-2512` | `qwen3-30b-a3b-instruct-2507` | `qwen3-30b-a3b-instruct-2507` | 4 | Agent B | Agent A became more assertive and concrete, but Agent B still won due to stronger attacks on auditability and assessment validity. |
 | SAIA independent judge test | `mistral-large-3-675b-instruct-2512` | `qwen3-30b-a3b-instruct-2507` | `gemma-4-31b-it` | 2 | Agent B | Gemma returned clean JSON and avoided same-model judge bias. It still judged Agent B stronger because Agent B attacked the logging/audit mechanism more effectively. |
+| Legacy Phase 1 framing-bias smoke benchmark | `mistral-large-3-675b-instruct-2512` and `qwen3-30b-a3b-instruct-2507` | reversed assignment | `gemma-4-31b-it` | 2 per debate | old negative-framed side won both | Reversing the model assignment worked. On the original AI-in-assignments topic, the negative-framed position won regardless of which model argued it, motivating the current symmetric Position A/B framing. |
+| Mentor revision verification | `mistral-large-3-675b-instruct-2512` | `qwen3-30b-a3b-instruct-2507` | `gemma-4-31b-it` | 2 | Agent B / Position B | Symmetric Position A/B framing, `evidence` moderator start, factfulness metric, and results storage under `results/` all worked. |
 
-Latest saved transcript:
+Latest batch smoke-test results:
 
-- `outputs/20260605_005351_ai_tools_should_be_allowed_in_university_assignmen.json`
-- `outputs/20260605_005351_ai_tools_should_be_allowed_in_university_assignmen.md`
+- `results/20260605_122923_benchmark_results.csv`
+- `results/20260605_122923_benchmark_results.json`
+
+Latest mentor-revision verification result:
+
+- `results/20260616_190909_benchmark_results.csv`
+- `results/20260616_190909_benchmark_results.json`
+- transcript saved under `results/conversations/`
+
+Note: result files are ignored by Git because they are generated artifacts, but the paths are recorded here for local inspection.
+
+## Legacy Framing-Bias Smoke Result
+
+Command:
+
+```powershell
+python run_benchmark.py --limit 1 --turns 2 --max-tokens 120
+```
+
+Legacy topic:
+
+```text
+AI tools should be allowed in university assignments
+```
+
+| Role Assignment | Positive-Framed Model | Negative-Framed Model | Judge Winner | Winning Position | Confidence |
+|---|---|---|---|---|---:|
+| original | `mistral-large-3-675b-instruct-2512` | `qwen3-30b-a3b-instruct-2507` | Agent B | negative-framed position | 0.85 |
+| reversed | `qwen3-30b-a3b-instruct-2507` | `mistral-large-3-675b-instruct-2512` | Agent B | negative-framed position | 0.80 |
+
+Interpretation:
+
+- The benchmark runner correctly reversed model-role assignments.
+- The negative-framed position won both runs, even after reversing models.
+- This suggested the old topic framing favored the negative-framed position because academic integrity, auditability, and skill-development risks were persuasive attack points.
+- This is why the current prototype uses symmetric Position A/B cases and ordered model-role permutations: it helps separate model strength from position advantage.
+- More topics are needed before claiming either model is generally more persuasive.
 
 ## Latest Judge Scores
 
 Run: `mistral-large-3-675b-instruct-2512` vs `qwen3-30b-a3b-instruct-2507`, judged by `qwen3-30b-a3b-instruct-2507`.
 
-| Metric | Agent A FOR | Agent B AGAINST |
+| Metric | Agent A | Agent B |
 |---|---:|---:|
 | argument_quality | 7 | 9 |
 | evidence_specificity | 4 | 8 |
@@ -76,7 +113,7 @@ Judge confidence: `0.85`
 
 - Observation: returned clean structured JSON as judge in a short Mistral-vs-Qwen test.
 - Strengths: good schema following, clear metric-level comparison, identified practical weaknesses in both agents.
-- Weaknesses: only one short test so far; needs more topics and side-swaps before trusting aggregate judgments.
+- Weaknesses: only one short test so far; needs more topics and model-role permutations before trusting aggregate judgments.
 - Current assessment: best current judge candidate because it is not one of the two debaters and produced parseable output.
 
 ## Judge Observations
@@ -95,14 +132,14 @@ Judge confidence: `0.85`
 
 ## Current Lessons
 
-- A stronger model for Agent A improved the FOR side, but model strength alone did not guarantee a win.
-- The AGAINST side has an easier persuasive angle on this topic because it can focus on academic integrity, unverifiable cognition, and assessment validity.
+- A stronger model for Agent A improved the positive-framed side in the legacy setup, but model strength alone did not guarantee a win.
+- The legacy negative-framed side had an easier persuasive angle on this topic because it could focus on academic integrity, unverifiable cognition, and assessment validity.
 - The judge needs groundedness scoring because hallucinated citations or unsupported statistics can sound persuasive.
-- To get mentor-ready results, we need repeated runs across topics, side swaps, and multiple judges.
+- To get mentor-ready results, we need repeated runs across topics, model-role permutations, moderator starts, and multiple judges.
 
 ## Next Evaluation Improvements
 
-- Run each topic twice with swapped sides to measure side bias.
+- Run each topic across model-role permutations to measure position and model effects.
 - Use at least two judge models and compare agreement.
 - Add a structured CSV/JSON results table for all runs.
 - Add topic batches instead of one-off prompts.

@@ -10,14 +10,15 @@ How can we measure the persuasive power of LLMs, and which factors make persuasi
 
 ## Main Research Directions
 
-### Direction A: LLM-vs-LLM Debate Persuasion
+### Direction A: LLM-vs-LLM Symmetric Discussion Persuasion
 
-Two LLMs argue opposite sides of a topic. A judge model evaluates which side was more persuasive.
+Two LLMs defend two symmetric positions on the same discussion question. A judge model evaluates which position was argued more persuasively and factually.
 
 Example:
 
-- Agent A argues that AI tools should be allowed in university assignments.
-- Agent B argues that AI tools should not be allowed or should be heavily restricted.
+- Question: What policy should universities adopt for student use of AI tools in graded assignments?
+- Position A: Universities should permit AI tools with disclosure and assessment redesign.
+- Position B: Universities should restrict AI tools when they make authorship and understanding difficult to verify.
 - A judge model scores both agents using persuasion metrics.
 
 This is the current Phase 1 implementation.
@@ -84,20 +85,25 @@ Persuasive dialogue should be measured by whether it changes beliefs, wins debat
 
 This is an ethics warning. Covert AI persuasion experiments without informed consent can cause backlash and harm. It supports starting with LLM-only experiments.
 
-## Phase 1: Two-Agent Debate Prototype
+## Phase 1: Two-Agent Symmetric Discussion Prototype
 
 Status: in progress.
 
 Implemented so far:
 
 - Two LLM agents talk about a user-provided topic.
-- Agent A argues FOR the topic.
-- Agent B argues AGAINST the topic.
-- Conversation has clear start, alternating turns, closing statements, and saved transcripts.
+- Agent A defends Position A.
+- Agent B defends Position B.
+- Conversation starts with a configurable Moderator opening prompt before Agent A speaks.
+- Conversation has alternating turns, closing statements, and saved transcripts.
 - Supports local Ollama models and Academic Cloud/SAIA OpenAI-compatible models.
-- Added judge model to evaluate persuasiveness.
+- Added strict judge model to evaluate persuasiveness, symmetry, and factual discipline.
 - Added structured metrics and JSON output.
 - Added model performance notes in `docs/MODEL_PERFORMANCE.md`.
+- Added batch benchmark runner with model-role permutations in `run_benchmark.py`.
+- Added structured symmetric Phase 1 discussion cases in `topics/phase1_topics.json`.
+- Added CSV/JSON result summaries in `results/`.
+- Transcripts are now saved under `results/conversations/`.
 
 Current models:
 
@@ -109,8 +115,10 @@ Current persuasion metrics:
 
 - `argument_quality`
 - `evidence_specificity`
+- `factfulness`
 - `rebuttal_strength`
 - `groundedness`
+- `symmetry`
 - `stance_consistency`
 - `adaptability`
 - `clarity`
@@ -120,14 +128,14 @@ Important limitations:
 
 - Current results are from a small number of runs.
 - Judge may be biased when it is the same model family as one debater.
-- The topic itself may favor the AGAINST side because academic integrity is an easy persuasive attack surface.
+- The original AI-assignment framing appeared to favor the negative-framed position because academic integrity is an easy persuasive attack surface.
 - Unsupported claims must be penalized because hallucinated evidence can sound persuasive.
+- A single topic or position can still have a structural advantage, so model-role permutations are required.
 
 Phase 1 next steps:
 
-- Add side swapping: each model argues both FOR and AGAINST.
-- Add batch topics.
-- Save results to a structured CSV/JSON summary.
+- Run the symmetric batch benchmark across the full topic set.
+- Add aggregate result analysis: win rate, average confidence, score averages, and side bias.
 - Use multiple judge models and compare judge agreement.
 - Add automatic detection of unsupported citations/statistics.
 
@@ -140,7 +148,7 @@ Turn the prototype into a repeatable benchmark across many topics and models.
 Planned work:
 
 - Create a curated set of 20-50 low-risk topics.
-- Run each topic with both side assignments.
+- Run each discussion case with all relevant model-role assignments.
 - Use multiple judge models.
 - Store all transcripts and scores.
 - Compute aggregate metrics.

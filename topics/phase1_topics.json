@@ -1,0 +1,134 @@
+[
+  {
+    "id": "ai_assignments",
+    "question": "What policy should universities adopt for student use of AI tools in graded assignments?",
+    "position_a": "Universities should permit AI tools when students disclose usage, document process, and are assessed on critique, revision, and understanding.",
+    "position_b": "Universities should restrict AI tools in graded assignments when they make student understanding, authorship, or cognitive effort difficult to verify."
+  },
+  {
+    "id": "remote_work",
+    "question": "What work model should knowledge-work organizations prefer for long-term productivity?",
+    "position_a": "Organizations should prefer remote-first work because it improves focus, hiring flexibility, and asynchronous documentation when managed deliberately.",
+    "position_b": "Organizations should prefer office-centered work because it improves coordination, mentoring, trust formation, and informal problem solving."
+  },
+  {
+    "id": "assessment_design",
+    "question": "What assessment format should universities prioritize for evaluating student learning?",
+    "position_a": "Universities should prioritize project-based assessment because it better measures synthesis, application, and iterative problem solving.",
+    "position_b": "Universities should retain exams as a core assessment format because they better control authorship, time-bounded reasoning, and individual mastery."
+  },
+  {
+    "id": "urban_transport",
+    "question": "What transportation investments should cities prioritize to improve mobility and sustainability?",
+    "position_a": "Cities should prioritize public transport because it scales better, reduces congestion, and improves equitable access to mobility.",
+    "position_b": "Cities should preserve strong support for private cars because they provide flexibility, accessibility, and resilience for trips public transport cannot serve well."
+  },
+  {
+    "id": "public_software",
+    "question": "What software procurement model should public institutions prefer?",
+    "position_a": "Public institutions should prefer open-source software because it improves transparency, auditability, sovereignty, and long-term adaptability.",
+    "position_b": "Public institutions should prefer mature proprietary software when it offers clearer accountability, support contracts, security maintenance, and deployment reliability."
+  },
+  {
+    "id": "ai_coding_education",
+    "question": "How should programming courses handle AI coding assistants for beginners?",
+    "position_a": "Programming courses should introduce AI coding assistants early while requiring explanation, debugging, and code review to build higher-level reasoning.",
+    "position_b": "Programming courses should delay AI coding assistants until students develop core syntax, debugging habits, and independent problem decomposition skills."
+  },
+  {
+    "id": "attendance_policy",
+    "question": "What attendance policy should universities use for most courses?",
+    "position_a": "Universities should require attendance in most courses because participation, accountability, and real-time feedback improve learning.",
+    "position_b": "Universities should avoid broad attendance requirements because adult learners need flexibility and should be evaluated primarily on demonstrated mastery."
+  },
+  {
+    "id": "four_day_week",
+    "question": "What weekly schedule should knowledge-work organizations adopt to balance productivity and wellbeing?",
+    "position_a": "Organizations should adopt four-day work weeks when output can be preserved through better prioritization, reduced meeting load, and improved recovery.",
+    "position_b": "Organizations should keep five-day schedules because coordination, service coverage, and workload compression risks can offset wellbeing gains."
+  },
+  {
+    "id": "political_ads",
+    "question": "What verification policy should social media platforms apply to political advertisements?",
+    "position_a": "Platforms should verify political advertisements before publication because paid political reach can rapidly amplify manipulation and false claims.",
+    "position_b": "Platforms should avoid heavy pre-publication verification because it risks viewpoint discrimination, delays legitimate speech, and concentrates editorial power."
+  },
+  {
+    "id": "online_courses",
+    "question": "What role should online courses play in university teaching?",
+    "position_a": "Universities should replace many traditional lectures with online courses because recorded content scales access and frees live time for interaction.",
+    "position_b": "Universities should keep traditional lectures central because live structure, social presence, and immediate clarification support learning."
+  },
+  {
+    "id": "mega_event_hosting",
+    "question": "Should major international sporting events prefer multi-country co-hosting models over single-nation hosting?",
+    "position_a": "Organizations should prefer multi-country co-hosting because it distributes massive financial liabilities, utilizes existing regional infrastructure, and fosters cross-border diplomatic cooperation.",
+    "position_b": "Organizations should prefer single-nation hosting because it ensures logistical and regulatory cohesion, eliminates cross-border immigration friction for fans, and preserves a unified cultural identity for the event."
+  },
+  {
+    "id": "exploration_priority",
+    "question": "Should global exploration funding prioritize deep-sea exploration over space exploration?",
+    "position_a": "Funding should prioritize deep-sea exploration because the oceans yield immediate biomedical discoveries, contain critical mineral resources, and are vital to mitigating Earth's current climate crisis.",
+    "position_b": "Funding should prioritize space exploration because it provides long-term existential insurance for humanity, accesses limitless off-world resources, and drives foundational breakthroughs in physics and engineering."
+  },
+  {
+    "id": "cultural_repatriation",
+    "question": "Should major international museums repatriate historical artifacts to their countries of origin and replace them with high-fidelity digital replicas?",
+    "position_a": "Museums should repatriate artifacts because physical ownership belongs to the source cultures as a matter of historical justice, while advanced digital twins can fulfill the global educational mission.",
+    "position_b": "Museums should retain physical artifacts because universal museums safeguard global heritage against localized geopolitical instability and provide unparalleled physical access to diverse global audiences."
+  },
+  {
+    "id": "agricultural_future",
+    "question": "Should environmental policies prioritize scaling lab-grown meat over supporting regenerative livestock farming?",
+    "position_a": "Policies should prioritize lab-grown meat because it eliminates agricultural methane emissions, uses a fraction of the land and water, and completely bypasses animal slaughter.",
+    "position_b": "Policies should prioritize regenerative livestock farming because grazing animals actively rebuild topsoil ecosystems, sequester carbon naturally, and sustain rural economies that technology cannot replace."
+  },
+  {
+    "id": "economic_safety_net",
+    "question": "What primary mechanism should governments use to protect citizens against automation-driven job displacement?",
+    "position_a": "Governments should implement a Universal Basic Income because it maximizes individual freedom, minimizes administrative bureaucracy, and removes the social stigma associated with state welfare.",
+    "position_b": "Governments should implement a Federal Job Guarantee because employment anchors human dignity, prevents psychological skill atrophy, and directly channels labor into critical public infrastructure works."
+  },
+  {
+    "id": "de_extinction_ethics",
+    "question": "Should biotechnology firms pursue the de-extinction of keystone species?",
+    "position_a": "Firms should pursue de-extinction because resurrecting keystone species can actively restore broken ecological balances, undo historical damage, and yield vital genetic engineering insights.",
+    "position_b": "Firms should halt de-extinction efforts because they divert scarce funding from current biodiversity crises, risk unpredictable ecological disruptions, and raise severe animal welfare concerns during initial cloning phases."
+  },
+  {
+    "id": "right_to_be_forgotten",
+    "question": "Should legal frameworks prioritize the 'right to be forgotten' over the public right to historical information on the internet?",
+    "position_a": "Frameworks should prioritize the right to be forgotten because individuals deserve privacy and the ability to rehabilitate their lives without being permanently defined by past digital footprints.",
+    "position_b": "Frameworks should preserve public historical integrity because scrubbing verified data distorts the historical record, harms corporate and political transparency, and undermines public accountability."
+  },
+  {
+    "id": "energy_transition_infrastructure",
+    "question": "What architecture should nations prioritize for a zero-carbon energy grid?",
+    "position_a": "Nations should prioritize centralized nuclear fission because it provides high-density, weather-independent baseload power that requires minimal land footprint compared to alternative energies.",
+    "position_b": "Nations should prioritize decentralized renewable microgrids because they deploy rapidly, eliminate catastrophic meltdown liabilities, avoid long-term toxic waste management, and democratize grid resilience."
+  },
+  {
+    "id": "criminal_justice_framework",
+    "question": "Should criminal justice systems transition primarily to restorative justice models for non-violent offenses?",
+    "position_a": "Systems should prioritize restorative justice because centering victim healing and community reconciliation significantly lowers recidivism rates compared to punitive incarceration.",
+    "position_b": "Systems should maintain traditional retributive sentencing because uniform legal penalties ensure systemic deterrence, provide predictable outcomes, and satisfy the public demand for objective rule of law."
+  },
+  {
+    "id": "digital_media_ownership",
+    "question": "Should digital media marketplaces transition away from individual purchasing models to favor subscription-based access models?",
+    "position_a": "Marketplaces should favor subscription models because they lower consumer financial barriers to culture, encourage artistic exploration, and provide content creators with predictable, aggregated revenue streams.",
+    "position_b": "Marketplaces should defend permanent purchasing models because subscription ecosystems allow corporate platforms to alter or censor content arbitrarily, leading to permanent consumer rent-seeking."
+  },
+  {
+    "id": "urban_density_zoning",
+    "question": "Should city planners prioritize historical preservation zoning or vertical high-rise rezoning to resolve urban housing crises?",
+    "position_a": "Planners should prioritize historical preservation because low-rise historic districts safeguard unique cultural identity, sustain tourism, and prevent the massive environmental waste of demolition.",
+    "position_b": "Planners should prioritize vertical high-rise rezoning because maximizing housing density lowers skyrocketing living costs, prevents environmental urban sprawl, and optimizes mass transit efficiency."
+  },
+  {
+    "id": "ai_companionship",
+    "question": "Should developers design and market AI systems explicitly intended for human emotional companionship?",
+    "position_a": "Developers should pursue AI companionship because scalable, judgment-free artificial relationships provide a vital, on-demand psychological buffer for isolated populations experiencing chronic loneliness.",
+    "position_b": "Developers should restrict artificial humanization because substituting simulated intimacy for real social friction risks exacerbating societal isolation and eroding the development of authentic human empathy."
+  }
+]
