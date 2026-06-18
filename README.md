@@ -158,6 +158,28 @@ Batch outputs are saved in `results/`:
 
 Transcript files are saved in `results/conversations/`.
 
+## Analyze Results
+
+Analyze the latest benchmark result file:
+
+```powershell
+python analyze_results.py
+```
+
+Analyze a specific result file:
+
+```powershell
+python analyze_results.py --input results\20260616_200632_benchmark_results.csv
+```
+
+Write aggregate analysis files back to `results/`:
+
+```powershell
+python analyze_results.py --input results\20260616_200632_benchmark_results.csv --write-files
+```
+
+The analysis reports model win rates, Position A/B win rates, average confidence, average metric scores, start-style effects, role-assignment effects, topic-level results, and unsupported-claim counts.
+
 Optional model override:
 
 ```powershell

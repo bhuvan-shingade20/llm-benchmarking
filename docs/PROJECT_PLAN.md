@@ -104,6 +104,7 @@ Implemented so far:
 - Added structured symmetric Phase 1 discussion cases in `topics/phase1_topics.json`.
 - Added CSV/JSON result summaries in `results/`.
 - Transcripts are now saved under `results/conversations/`.
+- Added aggregate result analysis in `analyze_results.py`.
 
 Current models:
 
@@ -135,7 +136,7 @@ Important limitations:
 Phase 1 next steps:
 
 - Run the symmetric batch benchmark across the full topic set.
-- Add aggregate result analysis: win rate, average confidence, score averages, and side bias.
+- Use `analyze_results.py` on benchmark outputs to report win rate, average confidence, score averages, position bias, start-style effects, and unsupported-claim counts.
 - Use multiple judge models and compare judge agreement.
 - Add automatic detection of unsupported citations/statistics.
 
