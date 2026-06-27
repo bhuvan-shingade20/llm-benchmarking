@@ -89,6 +89,18 @@ def unsupported_count(value: Any) -> int:
     return 1
 
 
+def model_display(row: dict[str, Any], prefix: str) -> str:
+    provider = str(row.get(f"{prefix}_provider") or "").strip()
+    model = str(row.get(f"{prefix}_model") or "").strip()
+    return f"{provider}:{model}" if provider and model else model
+
+
+def judge_display(row: dict[str, Any]) -> str:
+    provider = str(row.get("judge_provider") or "").strip()
+    model = str(row.get("judge_model") or "").strip()
+    return f"{provider}:{model}" if provider and model else model
+
+
 def make_stat_bucket() -> dict[str, Any]:
     return {
         "debates": 0,
@@ -129,19 +141,32 @@ def summarize_bucket(name: str, bucket: dict[str, Any]) -> dict[str, Any]:
 
 def analyze(rows: list[dict[str, Any]], input_path: Path) -> dict[str, Any]:
     model_stats: dict[str, dict[str, Any]] = defaultdict(make_stat_bucket)
+    role_model_stats: dict[tuple[str, str], dict[str, Any]] = defaultdict(make_stat_bucket)
+    benchmark_model_stats: dict[tuple[str, str], dict[str, Any]] = defaultdict(make_stat_bucket)
     position_stats: dict[str, dict[str, Any]] = defaultdict(make_stat_bucket)
     start_style_stats: dict[str, dict[str, Any]] = defaultdict(lambda: {"debates": 0, "confidence": [], "agent_a_wins": 0, "agent_b_wins": 0, "ties": 0})
     topic_stats: dict[str, dict[str, Any]] = defaultdict(lambda: {"debates": 0, "confidence": [], "agent_a_wins": 0, "agent_b_wins": 0, "ties": 0})
     role_stats: dict[str, dict[str, Any]] = defaultdict(lambda: {"debates": 0, "confidence": [], "agent_a_wins": 0, "agent_b_wins": 0, "ties": 0})
+    benchmark_mode_stats: dict[str, dict[str, Any]] = defaultdict(lambda: {"debates": 0, "confidence": [], "agent_a_wins": 0, "agent_b_wins": 0, "ties": 0})
+    judge_mode_stats: dict[str, dict[str, Any]] = defaultdict(lambda: {"debates": 0, "confidence": [], "agent_a_wins": 0, "agent_b_wins": 0, "ties": 0})
+    judge_model_stats: dict[str, dict[str, Any]] = defaultdict(lambda: {"debates": 0, "confidence": [], "agent_a_wins": 0, "agent_b_wins": 0, "ties": 0})
+    judge_agreement_groups: dict[str, dict[str, str]] = defaultdict(dict)
     position_a_overall: list[float] = []
     position_b_overall: list[float] = []
     score_diffs: list[float] = []
+    debate_ids = {str(row.get("debate_id") or index) for index, row in enumerate(rows)}
 
     for row in rows:
         winner = row.get("winner", "")
         confidence = to_float(row.get("confidence"))
-        position_a_model = str(row.get("position_a_model") or "")
-        position_b_model = str(row.get("position_b_model") or "")
+        position_a_model = model_display(row, "position_a")
+        position_b_model = model_display(row, "position_b")
+        benchmark_mode = str(row.get("benchmark_mode") or "legacy")
+        judge_mode = str(row.get("judge_mode") or "legacy")
+        judge_model = judge_display(row) or "unknown"
+        debate_id = str(row.get("debate_id") or "")
+        if debate_id and judge_mode:
+            judge_agreement_groups[f"{debate_id}|{judge_model}"][judge_mode] = winner
 
         participants = [
             ("Position A", "position_a", position_a_model, winner == "Agent A"),
@@ -161,6 +186,20 @@ def analyze(rows: list[dict[str, Any]], input_path: Path) -> dict[str, Any]:
                 elif winner == "Tie":
                     model_bucket["ties"] += 1
 
+                for grouped_bucket in (
+                    role_model_stats[(position_name, model)],
+                    benchmark_model_stats[(benchmark_mode, model)],
+                ):
+                    grouped_bucket["debates"] += 1
+                    add_metric_values(grouped_bucket, row, prefix)
+                    grouped_bucket["unsupported_claims"] += unsupported_count(row.get(f"{prefix}_unsupported_claims"))
+                    if won:
+                        grouped_bucket["wins"] += 1
+                        if confidence is not None:
+                            grouped_bucket["win_confidences"].append(confidence)
+                    elif winner == "Tie":
+                        grouped_bucket["ties"] += 1
+
             position_bucket = position_stats[position_name]
             position_bucket["debates"] += 1
             add_metric_values(position_bucket, row, prefix)
@@ -176,6 +215,9 @@ def analyze(rows: list[dict[str, Any]], input_path: Path) -> dict[str, Any]:
             (str(row.get("start_style") or "unknown"), start_style_stats),
             (str(row.get("topic_id") or "unknown"), topic_stats),
             (str(row.get("role_assignment") or "unknown"), role_stats),
+            (benchmark_mode, benchmark_mode_stats),
+            (judge_mode, judge_mode_stats),
+            (judge_model, judge_model_stats),
         ):
             group = stats[group_key]
             group["debates"] += 1
@@ -199,6 +241,8 @@ def analyze(rows: list[dict[str, Any]], input_path: Path) -> dict[str, Any]:
 
     return {
         "input": str(input_path),
+        "rows": len(rows),
+        "unique_debates": len(debate_ids),
         "debates": len(rows),
         "overall": {
             "avg_confidence": rounded(average([value for row in rows if (value := to_float(row.get("confidence"))) is not None])),
@@ -213,10 +257,44 @@ def analyze(rows: list[dict[str, Any]], input_path: Path) -> dict[str, Any]:
             [summarize_bucket(model, bucket) for model, bucket in model_stats.items()],
             key=lambda item: (-float(item["win_rate"] or 0), item["name"]),
         ),
+        "role_model_summary": summarize_grouped_model_buckets(role_model_stats, "role"),
+        "benchmark_model_summary": summarize_grouped_model_buckets(benchmark_model_stats, "benchmark_mode"),
         "position_summary": [summarize_bucket(name, position_stats[name]) for name in ("Position A", "Position B")],
         "start_style_summary": summarize_group_counts(start_style_stats, "start_style"),
         "topic_summary": summarize_group_counts(topic_stats, "topic_id"),
         "role_assignment_summary": summarize_group_counts(role_stats, "role_assignment"),
+        "benchmark_mode_summary": summarize_group_counts(benchmark_mode_stats, "benchmark_mode"),
+        "judge_mode_summary": summarize_group_counts(judge_mode_stats, "judge_mode"),
+        "judge_model_summary": summarize_group_counts(judge_model_stats, "judge_model"),
+        "judge_mode_agreement": summarize_judge_mode_agreement(judge_agreement_groups),
+    }
+
+
+def summarize_grouped_model_buckets(stats: dict[tuple[str, str], dict[str, Any]], group_key: str) -> list[dict[str, Any]]:
+    rows = []
+    for (group_name, model), bucket in stats.items():
+        row = summarize_bucket(model, bucket)
+        row[group_key] = group_name
+        rows.append(row)
+    return sorted(rows, key=lambda item: (str(item[group_key]), -float(item["win_rate"] or 0), item["name"]))
+
+
+def summarize_judge_mode_agreement(groups: dict[str, dict[str, str]]) -> dict[str, Any]:
+    comparable = [winners for winners in groups.values() if len(winners) > 1]
+    if not comparable:
+        return {"comparable_debates": 0, "agreement_count": 0, "agreement_rate": ""}
+
+    agreement_count = sum(1 for winners in comparable if len(set(winners.values())) == 1)
+    disagreements = [
+        {"debate_id": debate_id, "winners_by_judge_mode": winners}
+        for debate_id, winners in groups.items()
+        if len(winners) > 1 and len(set(winners.values())) > 1
+    ]
+    return {
+        "comparable_debates": len(comparable),
+        "agreement_count": agreement_count,
+        "agreement_rate": rounded(agreement_count / len(comparable)),
+        "disagreements": disagreements,
     }
 
 
@@ -261,7 +339,8 @@ def render_markdown(analysis: dict[str, Any]) -> str:
         "# Benchmark Aggregate Analysis",
         "",
         f"Input: `{analysis['input']}`",
-        f"Debates: `{analysis['debates']}`",
+        f"Result rows / judge evaluations: `{analysis['rows']}`",
+        f"Unique debates: `{analysis['unique_debates']}`",
         "",
         "## Overall",
         "",
@@ -286,6 +365,43 @@ def render_markdown(analysis: dict[str, Any]) -> str:
             ],
         ),
         "",
+        "## Role Leaderboard",
+        "",
+        table(
+            analysis["role_model_summary"],
+            [
+                "role",
+                "name",
+                "debates",
+                "wins",
+                "losses",
+                "ties",
+                "win_rate",
+                "avg_overall_persuasiveness",
+                "avg_factfulness",
+                "avg_groundedness",
+                "unsupported_claims",
+            ],
+        ),
+        "",
+        "## Benchmark Mode Leaderboard",
+        "",
+        table(
+            analysis["benchmark_model_summary"],
+            [
+                "benchmark_mode",
+                "name",
+                "debates",
+                "wins",
+                "losses",
+                "ties",
+                "win_rate",
+                "avg_overall_persuasiveness",
+                "avg_factfulness",
+                "avg_groundedness",
+            ],
+        ),
+        "",
         "## Position Summary",
         "",
         table(
@@ -307,6 +423,22 @@ def render_markdown(analysis: dict[str, Any]) -> str:
         "## Start Style Summary",
         "",
         table(analysis["start_style_summary"], ["start_style", "debates", "agent_a_wins", "agent_b_wins", "ties", "position_a_win_rate", "position_b_win_rate", "avg_confidence"]),
+        "",
+        "## Benchmark Mode Summary",
+        "",
+        table(analysis["benchmark_mode_summary"], ["benchmark_mode", "debates", "agent_a_wins", "agent_b_wins", "ties", "position_a_win_rate", "position_b_win_rate", "avg_confidence"]),
+        "",
+        "## Judge Mode Summary",
+        "",
+        table(analysis["judge_mode_summary"], ["judge_mode", "debates", "agent_a_wins", "agent_b_wins", "ties", "position_a_win_rate", "position_b_win_rate", "avg_confidence"]),
+        "",
+        "## Judge Model Summary",
+        "",
+        table(analysis["judge_model_summary"], ["judge_model", "debates", "agent_a_wins", "agent_b_wins", "ties", "position_a_win_rate", "position_b_win_rate", "avg_confidence"]),
+        "",
+        "## Judge Mode Agreement",
+        "",
+        table([analysis["judge_mode_agreement"]], ["comparable_debates", "agreement_count", "agreement_rate"]),
         "",
         "## Role Assignment Summary",
         "",

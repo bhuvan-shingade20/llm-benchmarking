@@ -105,6 +105,9 @@ Implemented so far:
 - Added CSV/JSON result summaries in `results/`.
 - Transcripts are now saved under `results/conversations/`.
 - Added aggregate result analysis in `analyze_results.py`.
+- Added explicit benchmark modes: `single`, `paired`, and `permutations`.
+- Added judge modes: `winner_only`, `detailed`, and `both` for comparing quick decisions with detailed fact-checking evaluation.
+- Added mixed-provider runs so Ollama and Academic Cloud models can compete or judge in the same benchmark.
 
 Current models:
 
@@ -137,6 +140,7 @@ Phase 1 next steps:
 
 - Run the symmetric batch benchmark across the full topic set.
 - Use `analyze_results.py` on benchmark outputs to report win rate, average confidence, score averages, position bias, start-style effects, and unsupported-claim counts.
+- Compare whether model leaderboards change across benchmark modes and judge modes.
 - Use multiple judge models and compare judge agreement.
 - Add automatic detection of unsupported citations/statistics.
 

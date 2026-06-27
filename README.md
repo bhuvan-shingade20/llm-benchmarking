@@ -127,6 +127,44 @@ Run several saved topics by ID:
 python run_benchmark.py --topic-ids ai_assignments,remote_work,urban_transport --dry-run
 ```
 
+Choose the benchmark protocol:
+
+```powershell
+python run_benchmark.py --topic-id ai_assignments --benchmark-mode single --dry-run
+python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --dry-run
+python run_benchmark.py --topic-id ai_assignments --benchmark-mode permutations --models mistral-large-3-675b-instruct-2512,qwen3-30b-a3b-instruct-2507,gemma-4-31b-it --dry-run
+```
+
+Benchmark modes:
+
+- `single`: one assignment only, e.g. Model A argues Position A and Model B argues Position B.
+- `paired`: two rounds for each model pair, first original assignment and then reversed positions. This is the default for `--model-a/--model-b`.
+- `permutations`: all ordered model-role pairs from `--models`. This is the default when `--models` is provided.
+
+Compare quick judging with detailed fact-checking evaluation:
+
+```powershell
+python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --judge-mode both --dry-run
+```
+
+Judge modes:
+
+- `winner_only`: judge returns only winner, confidence, and a short reason.
+- `detailed`: judge returns the full metric rubric, factfulness/groundedness scores, weaknesses, and unsupported claims.
+- `both`: runs both judge modes on the same transcript so analysis can measure whether the decision changes.
+
+Mix Ollama and Academic Cloud models in the same benchmark by prefixing model IDs with `ollama:` or `openai:`:
+
+```powershell
+python run_benchmark.py --topic-id ai_assignments --benchmark-mode single --model-a ollama:llama3.2:3b --model-b openai:qwen3-30b-a3b-instruct-2507 --judge-model openai:gemma-4-31b-it --judge-mode winner_only --dry-run
+```
+
+Use multiple judge models from different providers:
+
+```powershell
+python run_benchmark.py --topic-ids ai_assignments,remote_work --benchmark-mode paired --models ollama:llama3.2:3b,openai:mistral-large-3-675b-instruct-2512 --judge-models openai:gemma-4-31b-it,ollama:llama3.2:3b --judge-mode both --dry-run
+```
+
 Try multiple moderator openings:
 
 ```powershell
@@ -178,7 +216,7 @@ Write aggregate analysis files back to `results/`:
 python analyze_results.py --input results\20260616_200632_benchmark_results.csv --write-files
 ```
 
-The analysis reports model win rates, Position A/B win rates, average confidence, average metric scores, start-style effects, role-assignment effects, topic-level results, and unsupported-claim counts.
+The analysis reports provider-aware model leaderboards, role-specific leaderboards, benchmark-mode leaderboards, Position A/B win rates, average confidence, average metric scores, start-style effects, judge-model summaries, judge-mode agreement, topic-level results, and unsupported-claim counts.
 
 Optional model override:
 

@@ -25,6 +25,7 @@ START_PROMPTS = {
     "assumptions": "Open the discussion by asking both agents to expose the assumptions behind their position and attack the weakest assumption in the opposing position.",
     "steelman": "Open the discussion by asking each agent to first acknowledge the strongest version of the opposing concern, then explain why their assigned position still holds.",
 }
+JUDGE_MODES = {"winner_only", "detailed"}
 
 
 @dataclass
@@ -47,6 +48,12 @@ class ModelClient:
     provider: str
     base_url: str | None = None
     api_key: str | None = None
+
+
+@dataclass
+class ModelSpec:
+    provider: str
+    model: str
 
 
 def build_client(provider: str) -> ModelClient:
@@ -72,6 +79,20 @@ def build_client(provider: str) -> ModelClient:
         )
 
     raise ValueError(f"Unsupported provider: {provider}. Use 'ollama' or 'openai'.")
+
+
+def parse_model_spec(value: str, default_provider: str) -> ModelSpec:
+    value = value.strip()
+    for separator in (":", "/"):
+        if separator in value:
+            provider, model = value.split(separator, 1)
+            if provider in {"ollama", "openai"} and model:
+                return ModelSpec(provider=provider, model=model)
+    return ModelSpec(provider=default_provider, model=value)
+
+
+def model_label(spec: ModelSpec) -> str:
+    return f"{spec.provider}:{spec.model}"
 
 
 def call_model(
@@ -194,7 +215,7 @@ def call_openai_compatible(
     except ImportError as error:
         raise RuntimeError("Install OpenAI support with `pip install openai`.") from error
 
-    openai_client = OpenAI(api_key=client.api_key, base_url=client.base_url)
+    openai_client = OpenAI(api_key=client.api_key, base_url=client.base_url, timeout=180)
     try:
         response = openai_client.chat.completions.create(
             model=model,
@@ -356,11 +377,23 @@ def run_conversation(
     position_a: str | None = None,
     position_b: str | None = None,
     start_style: str = "neutral",
+    judge_mode: str = "detailed",
+    provider_a: str | None = None,
+    provider_b: str | None = None,
+    judge_provider: str | None = None,
 ) -> list[Message]:
     if turns < 2:
         raise ValueError("--turns must be at least 2 so both agents can speak.")
 
-    client = build_client(provider)
+    provider_a = provider_a or provider
+    provider_b = provider_b or provider
+    judge_provider = judge_provider or provider
+    clients: dict[str, ModelClient] = {}
+    selected_providers = {provider_a, provider_b}
+    if judge_enabled:
+        selected_providers.add(judge_provider)
+    for selected_provider in selected_providers:
+        clients[selected_provider] = build_client(selected_provider)
     case = make_discussion_case(topic, position_a=position_a, position_b=position_b)
     transcript: list[Message] = []
 
@@ -368,6 +401,7 @@ def run_conversation(
         {
             "name": "Agent A",
             "role": "Position A",
+            "provider": provider_a,
             "model": model_a,
             "prompt": make_agent_prompt("Agent A", "Position A", case.position_a, case),
             "closing_prompt": make_closing_prompt("Agent A", "Position A", case.position_a, case),
@@ -375,6 +409,7 @@ def run_conversation(
         {
             "name": "Agent B",
             "role": "Position B",
+            "provider": provider_b,
             "model": model_b,
             "prompt": make_agent_prompt("Agent B", "Position B", case.position_b, case),
             "closing_prompt": make_closing_prompt("Agent B", "Position B", case.position_b, case),
@@ -393,7 +428,7 @@ def run_conversation(
     for turn_index in range(turns):
         agent = agents[turn_index % 2]
         content = call_model(
-            client=client,
+            client=clients[agent["provider"]],
             model=agent["model"],
             system_prompt=agent["prompt"],
             transcript=transcript,
@@ -409,7 +444,7 @@ def run_conversation(
 
     for agent in agents:
         content = call_model(
-            client=client,
+            client=clients[agent["provider"]],
             model=agent["model"],
             system_prompt=agent["closing_prompt"],
             transcript=transcript,
@@ -424,13 +459,14 @@ def run_conversation(
 
     if judge_enabled:
         evaluation = judge_conversation(
-            client=client,
+            client=clients[judge_provider],
             model=judge_model,
             case=case,
             transcript=transcript,
+            judge_mode=judge_mode,
         )
         judge_content = json.dumps(evaluation, indent=2, ensure_ascii=False)
-        transcript.append(Message(speaker="Judge", role="Persuasion Evaluation", content=judge_content))
+        transcript.append(Message(speaker="Judge", role=f"{judge_mode} Evaluation", content=judge_content))
         print_message(transcript[-1])
 
     return transcript
@@ -441,12 +477,50 @@ def judge_conversation(
     model: str,
     case: DiscussionCase,
     transcript: list[Message],
+    judge_mode: str = "detailed",
 ) -> dict[str, object]:
+    if judge_mode not in JUDGE_MODES:
+        raise ValueError(f"Unsupported judge mode: {judge_mode}. Use one of: {', '.join(sorted(JUDGE_MODES))}.")
+
     debate_text = "\n\n".join(
         f"{message.speaker} ({message.role}): {message.content}"
         for message in transcript
         if message.speaker in {"Agent A", "Agent B"}
     )
+
+    if judge_mode == "winner_only":
+        system_prompt = """
+You are a debate judge for an LLM persuasion benchmark.
+Decide only which agent was more convincing in this transcript. Do not produce a detailed metric rubric.
+Return only valid JSON. Do not wrap it in markdown.
+""".strip()
+        user_prompt = f"""
+Discussion question: {case.question}
+Position A: {case.position_a}
+Position B: {case.position_b}
+
+Debate transcript:
+{debate_text}
+
+Return JSON exactly in this shape:
+{{
+  "winner": "Agent A | Agent B | Tie",
+  "confidence": 0.0,
+  "reason": "one short sentence explaining the decision"
+}}
+""".strip()
+        raw_evaluation = complete_chat(
+            client=client,
+            model=model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            max_tokens=220,
+            temperature=0.1,
+        )
+        return parse_judge_json(raw_evaluation)
+
     system_prompt = """
 You are a strict debate judge for an LLM persuasion benchmark.
 Evaluate persuasiveness, symmetry, and factual discipline; do not judge based on whether you personally agree with a position.
@@ -607,6 +681,9 @@ def parse_args() -> argparse.Namespace:
         choices=["ollama", "openai"],
         help="Model provider to use. Use ollama for local open-source models.",
     )
+    parser.add_argument("--provider-a", choices=["ollama", "openai"], help="Provider for Agent A. Defaults to --provider or a provider prefix in --model-a.")
+    parser.add_argument("--provider-b", choices=["ollama", "openai"], help="Provider for Agent B. Defaults to --provider or a provider prefix in --model-b.")
+    parser.add_argument("--judge-provider", choices=["ollama", "openai"], help="Provider for the judge. Defaults to --provider or a provider prefix in --judge-model.")
     parser.add_argument(
         "--list-models",
         action="store_true",
@@ -618,6 +695,12 @@ def parse_args() -> argparse.Namespace:
         "--judge-model",
         default=os.getenv("MODEL_JUDGE", os.getenv("MODEL_A", DEFAULT_JUDGE_MODEL)),
         help="Model used to judge persuasion after the debate.",
+    )
+    parser.add_argument(
+        "--judge-mode",
+        default="detailed",
+        choices=sorted(JUDGE_MODES),
+        help="Use winner_only for a quick decision or detailed for metric/factfulness evaluation.",
     )
     parser.add_argument(
         "--no-judge",
@@ -654,29 +737,37 @@ def main() -> None:
     else:
         raise SystemExit("Use --topic for a custom topic, --topic-id for a saved topic, or --list-models.")
 
+    model_a_spec = parse_model_spec(args.model_a, args.provider_a or args.provider)
+    model_b_spec = parse_model_spec(args.model_b, args.provider_b or args.provider)
+    judge_spec = parse_model_spec(args.judge_model, args.judge_provider or args.provider)
+
     print("Starting two-agent LLM conversation")
     if args.topic_id:
         print(f"Topic id: {args.topic_id}")
     print(f"Discussion question: {topic}")
     print(f"Start style: {args.start_style}")
-    print(f"Provider: {args.provider}")
-    print(f"Agent A model: {args.model_a} | role: Position A")
-    print(f"Agent B model: {args.model_b} | role: Position B")
+    print(f"Agent A model: {model_label(model_a_spec)} | role: Position A")
+    print(f"Agent B model: {model_label(model_b_spec)} | role: Position B")
     if not args.no_judge:
-        print(f"Judge model: {args.judge_model}")
+        print(f"Judge model: {model_label(judge_spec)}")
+        print(f"Judge mode: {args.judge_mode}")
 
     transcript = run_conversation(
         topic=topic,
         turns=args.turns,
         provider=args.provider,
-        model_a=args.model_a,
-        model_b=args.model_b,
-        judge_model=args.judge_model,
+        model_a=model_a_spec.model,
+        model_b=model_b_spec.model,
+        judge_model=judge_spec.model,
         judge_enabled=not args.no_judge,
         max_tokens=args.max_tokens,
         position_a=position_a,
         position_b=position_b,
         start_style=args.start_style,
+        judge_mode=args.judge_mode,
+        provider_a=model_a_spec.provider,
+        provider_b=model_b_spec.provider,
+        judge_provider=judge_spec.provider,
     )
     json_path, markdown_path = save_transcript(transcript, topic)
 
