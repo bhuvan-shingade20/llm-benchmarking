@@ -5,7 +5,6 @@ Skipped 10 rows with judge parse errors, run errors, or missing model fields.
 Models currently tracked: 9.
 Valid benchmark run IDs included: 13.
 
-## Mentor Summary
 
 | Point | Current Status |
 |-------|----------------|
