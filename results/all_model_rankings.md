@@ -16,9 +16,9 @@ Valid benchmark run IDs included: 13.
 | Provider diversity | Academic Cloud and Ollama runs are both included; mixed-provider debates are included. |
 | All-runs leaderboard | This file aggregates every `results/*_results.csv` file and labels legacy unprefixed rows as `academic_cloud`. |
 
-## Key Findings For Discussion
+## Key Findings
 
-| Finding | Evidence In Current Runs | Mentor Feedback Needed |
+| Finding | Evidence In Current Runs |  Feedback  |
 |---------|--------------------------|------------------------|
 | Early Position B dominance was probably structural. | Legacy `a_first` rows show Agent B winning most often, while balanced runs are less one-sided. | Should we exclude legacy rows from the final paper leaderboard or keep them as a bias-detection pilot? |
 | Academic Cloud models currently outperform local 3B Ollama models. | Academic Cloud has a positive aggregate win rate; Ollama local models mostly lose or tie in mixed runs. | Is this comparison fair, or should local models be benchmarked in a separate tier? |
