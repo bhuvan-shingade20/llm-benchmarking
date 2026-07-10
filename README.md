@@ -141,6 +141,20 @@ Benchmark modes:
 - `paired`: two rounds for each model pair, first original assignment and then reversed positions. This is the default for `--model-a/--model-b`.
 - `permutations`: all ordered model-role pairs from `--models`. This is the default when `--models` is provided.
 
+Control first/last speaker bias:
+
+```powershell
+python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --speaker-order balanced --dry-run
+python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --speaker-order a_first --dry-run
+python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --speaker-order b_first --dry-run
+```
+
+Speaker-order modes:
+
+- `balanced`: runs every planned debate twice, once with Agent A opening/closing first and once with Agent B opening/closing first. This is the benchmark default because it reduces recency and closing-order bias.
+- `a_first`: legacy order; Agent A opens and Agent B closes last.
+- `b_first`: reversed order; Agent B opens and Agent A closes last.
+
 Compare quick judging with detailed fact-checking evaluation:
 
 ```powershell
@@ -216,7 +230,15 @@ Write aggregate analysis files back to `results/`:
 python analyze_results.py --input results\20260616_200632_benchmark_results.csv --write-files
 ```
 
-The analysis reports provider-aware model leaderboards, role-specific leaderboards, benchmark-mode leaderboards, Position A/B win rates, average confidence, average metric scores, start-style effects, judge-model summaries, judge-mode agreement, topic-level results, and unsupported-claim counts.
+The analysis reports provider-aware model leaderboards, role-specific leaderboards, benchmark-mode leaderboards, Position A/B win rates, speaker-order effects, average confidence, average metric scores, start-style effects, judge-model summaries, judge-mode agreement, topic-level results, and unsupported-claim counts.
+
+Build a combined ranking across every benchmark CSV in `results/`:
+
+```powershell
+python analyze_all_results.py
+```
+
+This writes `results/model_ranking_all_runs.md`. Older unprefixed SAIA rows are labeled as `academic_cloud`, and invalid judge parse/error rows are skipped rather than counted as losses.
 
 Optional model override:
 
@@ -250,15 +272,14 @@ Generated batch results are also ignored by Git.
 
 1. System announces the discussion question and positions.
 2. A Moderator opening prompt starts the discussion.
-3. Agent A defends Position A.
-4. Agent B defends Position B.
+3. The selected speaker order decides whether Agent A or Agent B speaks first.
+4. Agent A defends Position A and Agent B defends Position B.
 5. Agents alternate for the requested number of turns.
-6. Agent A gives a closing statement.
-7. Agent B gives a closing statement.
-8. A strict judge model evaluates persuasiveness, symmetry, and factual discipline.
-9. The conversation and judge output are saved.
+6. Closing statements follow the same selected speaker order.
+7. A strict judge model evaluates persuasiveness, symmetry, and factual discipline.
+8. The conversation and judge output are saved.
 
-For batch runs, this flow is repeated for each discussion case. By default, the script runs each case twice: once with the configured Position A/Position B model assignment and once with the models reversed. With `--models`, the script runs all ordered model-role permutations.
+For batch runs, this flow is repeated for each discussion case. By default, the script uses paired model-role assignments and balanced speaker order, so each model pair/topic runs four debates: original roles plus reversed roles, each with both speaking orders. With `--models`, the script runs all ordered model-role permutations.
 
 ## Dialogue Style
 

@@ -14,6 +14,7 @@ from run_conversation import (
     DEFAULT_PROVIDER,
     DEFAULT_TOPICS_PATH,
     JUDGE_MODES,
+    SPEAKER_ORDERS,
     START_PROMPTS,
     DiscussionCase,
     Message,
@@ -32,6 +33,7 @@ from run_conversation import (
 
 RESULTS_DIR = Path("results")
 BENCHMARK_MODES = {"single", "paired", "permutations"}
+BENCHMARK_SPEAKER_ORDERS = {"a_first", "b_first", "balanced"}
 
 
 def parse_csv_list(value: str | None) -> list[str]:
@@ -77,6 +79,7 @@ def make_row(
     judge_mode: str,
     role_assignment: str,
     start_style: str,
+    speaker_order: str,
     position_a_model: str,
     position_a_provider: str,
     position_b_model: str,
@@ -111,6 +114,7 @@ def make_row(
         "provider": provider,
         "role_assignment": role_assignment,
         "start_style": start_style,
+        "speaker_order": speaker_order,
         "position_a_provider": position_a_provider,
         "position_a_model": position_a_model,
         "position_b_provider": position_b_provider,
@@ -179,6 +183,7 @@ def build_runs(
     models: list[ModelSpec],
     start_styles: list[str],
     benchmark_mode: str,
+    speaker_orders: list[str],
 ) -> list[dict[str, str]]:
     runs: list[dict[str, str]] = []
 
@@ -251,26 +256,28 @@ def build_runs(
 
     for case in cases:
         for start_style in start_styles:
-            for pair in model_pairs:
-                label = f"{case.id}_{benchmark_mode}_{start_style}_{pair['pair_id']}_r{pair['round_index']}"
-                runs.append(
-                    {
-                        "topic_id": case.id or "",
-                        "question": case.question,
-                        "position_a": case.position_a,
-                        "position_b": case.position_b,
-                        "benchmark_mode": benchmark_mode,
-                        "role_assignment": pair["role_assignment"],
-                        "start_style": start_style,
-                        "position_a_provider": pair["position_a_provider"],
-                        "position_a_model": pair["position_a_model"],
-                        "position_b_provider": pair["position_b_provider"],
-                        "position_b_model": pair["position_b_model"],
-                        "pair_id": pair["pair_id"],
-                        "round_index": str(pair["round_index"]),
-                        "label": label,
-                    }
-                )
+            for speaker_order in speaker_orders:
+                for pair in model_pairs:
+                    label = f"{case.id}_{benchmark_mode}_{start_style}_{speaker_order}_{pair['pair_id']}_r{pair['round_index']}"
+                    runs.append(
+                        {
+                            "topic_id": case.id or "",
+                            "question": case.question,
+                            "position_a": case.position_a,
+                            "position_b": case.position_b,
+                            "benchmark_mode": benchmark_mode,
+                            "role_assignment": pair["role_assignment"],
+                            "start_style": start_style,
+                            "speaker_order": speaker_order,
+                            "position_a_provider": pair["position_a_provider"],
+                            "position_a_model": pair["position_a_model"],
+                            "position_b_provider": pair["position_b_provider"],
+                            "position_b_model": pair["position_b_model"],
+                            "pair_id": pair["pair_id"],
+                            "round_index": str(pair["round_index"]),
+                            "label": label,
+                        }
+                    )
     return runs
 
 
@@ -341,6 +348,12 @@ def parse_args() -> argparse.Namespace:
         default="neutral",
         help=f"Comma-separated moderator start styles. Available: {', '.join(sorted(START_PROMPTS))}.",
     )
+    parser.add_argument(
+        "--speaker-order",
+        default=os.getenv("SPEAKER_ORDER", "balanced"),
+        choices=sorted(BENCHMARK_SPEAKER_ORDERS),
+        help="Use a_first, b_first, or balanced to run both orders and control first/last speaker bias.",
+    )
     parser.add_argument("--no-side-swap", action="store_true", help="Disable the reversed default model-role run.")
     parser.add_argument("--no-judge", action="store_true", help="Disable judging.")
     parser.add_argument("--dry-run", action="store_true", help="Print planned runs without calling models.")
@@ -368,8 +381,9 @@ def main() -> None:
     invalid_start_styles = [style for style in start_styles if style not in START_PROMPTS]
     if invalid_start_styles:
         raise SystemExit(f"Invalid start style(s): {', '.join(invalid_start_styles)}")
+    speaker_orders = sorted(SPEAKER_ORDERS) if args.speaker_order == "balanced" else [args.speaker_order]
 
-    run_id = datetime.now().strftime("%Y%m%d_%H%M%S_benchmark")
+    run_id = datetime.now().strftime("%Y%m%d_%H%M%S_%f_benchmark")
     planned_runs = build_runs(
         cases=cases,
         model_a=model_a,
@@ -377,6 +391,7 @@ def main() -> None:
         models=models,
         start_styles=start_styles,
         benchmark_mode=benchmark_mode,
+        speaker_orders=speaker_orders,
     )
 
     judge_modes = [] if args.no_judge else (["winner_only", "detailed"] if args.judge_mode == "both" else [args.judge_mode])
@@ -392,6 +407,7 @@ def main() -> None:
     if judge_modes:
         print(f"Judge mode(s): {', '.join(judge_modes)}")
     print(f"Start styles: {', '.join(start_styles)}")
+    print(f"Speaker order: {args.speaker_order} ({', '.join(speaker_orders)})")
     print(f"Topics: {len(cases)} | Planned debates: {len(planned_runs)}")
     if judge_modes:
         print(f"Planned judge evaluations: {len(planned_runs) * len(judge_modes) * len(judge_models)}")
@@ -401,7 +417,7 @@ def main() -> None:
             print(
                 f"{index}. {run['label']} | Position A={run['position_a_provider']}:{run['position_a_model']} | "
                 f"Position B={run['position_b_provider']}:{run['position_b_model']} | mode={run['benchmark_mode']} | "
-                f"round={run['round_index']} | start={run['start_style']} | {run['question']}"
+                f"round={run['round_index']} | speaker_order={run['speaker_order']} | start={run['start_style']} | {run['question']}"
             )
         return
 
@@ -418,6 +434,7 @@ def main() -> None:
         print(f"Question: {run['question']}")
         print(f"Benchmark mode: {run['benchmark_mode']} | Pair: {run['pair_id']} | Round: {run['round_index']}")
         print(f"Start style: {run['start_style']}")
+        print(f"Speaker order: {run['speaker_order']}")
         print(f"Position A model: {run['position_a_provider']}:{run['position_a_model']}")
         print(f"Position B model: {run['position_b_provider']}:{run['position_b_model']}")
 
@@ -438,6 +455,7 @@ def main() -> None:
                 provider_a=run["position_a_provider"],
                 provider_b=run["position_b_provider"],
                 judge_provider=judge_models[0].provider,
+                speaker_order=run["speaker_order"],
             )
         except Exception as error:
             error_text = f"Conversation failed: {error}"
@@ -507,6 +525,7 @@ def main() -> None:
                     judge_mode=judge_mode,
                     role_assignment=run["role_assignment"],
                     start_style=run["start_style"],
+                    speaker_order=run["speaker_order"],
                     position_a_model=run["position_a_model"],
                     position_a_provider=run["position_a_provider"],
                     position_b_model=run["position_b_model"],

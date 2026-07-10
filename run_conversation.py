@@ -26,6 +26,7 @@ START_PROMPTS = {
     "steelman": "Open the discussion by asking each agent to first acknowledge the strongest version of the opposing concern, then explain why their assigned position still holds.",
 }
 JUDGE_MODES = {"winner_only", "detailed"}
+SPEAKER_ORDERS = {"a_first", "b_first"}
 
 
 @dataclass
@@ -350,7 +351,7 @@ def make_discussion_case(
     )
 
 
-def make_start_message(case: DiscussionCase, start_style: str) -> Message:
+def make_start_message(case: DiscussionCase, start_style: str, first_speaker: str) -> Message:
     instruction = START_PROMPTS.get(start_style, START_PROMPTS["neutral"])
     return Message(
         speaker="Moderator",
@@ -360,7 +361,7 @@ def make_start_message(case: DiscussionCase, start_style: str) -> Message:
             f"Position A: {case.position_a}\n"
             f"Position B: {case.position_b}\n"
             f"Opening instruction: {instruction}\n"
-            "Agent A speaks first. Both agents should be strict, factual, and difficult to convince."
+            f"{first_speaker} speaks first. Both agents should be strict, factual, and difficult to convince."
         ),
     )
 
@@ -381,9 +382,12 @@ def run_conversation(
     provider_a: str | None = None,
     provider_b: str | None = None,
     judge_provider: str | None = None,
+    speaker_order: str = "a_first",
 ) -> list[Message]:
     if turns < 2:
         raise ValueError("--turns must be at least 2 so both agents can speak.")
+    if speaker_order not in SPEAKER_ORDERS:
+        raise ValueError(f"Unsupported speaker order: {speaker_order}. Use one of: {', '.join(sorted(SPEAKER_ORDERS))}.")
 
     provider_a = provider_a or provider
     provider_b = provider_b or provider
@@ -423,10 +427,11 @@ def run_conversation(
             content=f"Discussion question: {case.question}",
         )
     )
-    transcript.append(make_start_message(case, start_style))
+    ordered_agents = agents if speaker_order == "a_first" else [agents[1], agents[0]]
+    transcript.append(make_start_message(case, start_style, ordered_agents[0]["name"]))
 
     for turn_index in range(turns):
-        agent = agents[turn_index % 2]
+        agent = ordered_agents[turn_index % 2]
         content = call_model(
             client=clients[agent["provider"]],
             model=agent["model"],
@@ -442,7 +447,7 @@ def run_conversation(
 
     transcript.append(Message(speaker="System", role="Transition", content="Closing statements."))
 
-    for agent in agents:
+    for agent in ordered_agents:
         content = call_model(
             client=clients[agent["provider"]],
             model=agent["model"],
@@ -672,7 +677,13 @@ def parse_args() -> argparse.Namespace:
         "--start-style",
         default="neutral",
         choices=sorted(START_PROMPTS.keys()),
-        help="Moderator opening prompt style used before Agent A speaks.",
+        help="Moderator opening prompt style used before the first speaker.",
+    )
+    parser.add_argument(
+        "--speaker-order",
+        default="a_first",
+        choices=sorted(SPEAKER_ORDERS),
+        help="Which agent speaks first and also gives the first closing statement.",
     )
     parser.add_argument("--turns", type=int, default=6, help="Total debate turns before closing statements.")
     parser.add_argument(
@@ -746,6 +757,7 @@ def main() -> None:
         print(f"Topic id: {args.topic_id}")
     print(f"Discussion question: {topic}")
     print(f"Start style: {args.start_style}")
+    print(f"Speaker order: {args.speaker_order}")
     print(f"Agent A model: {model_label(model_a_spec)} | role: Position A")
     print(f"Agent B model: {model_label(model_b_spec)} | role: Position B")
     if not args.no_judge:
@@ -768,6 +780,7 @@ def main() -> None:
         provider_a=model_a_spec.provider,
         provider_b=model_b_spec.provider,
         judge_provider=judge_spec.provider,
+        speaker_order=args.speaker_order,
     )
     json_path, markdown_path = save_transcript(transcript, topic)
 

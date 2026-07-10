@@ -134,12 +134,14 @@ Judge confidence: `0.85`
 
 - A stronger model for Agent A improved the positive-framed side in the legacy setup, but model strength alone did not guarantee a win.
 - The legacy negative-framed side had an easier persuasive angle on this topic because it could focus on academic integrity, unverifiable cognition, and assessment validity.
+- A separate structural bias existed in early runs: Agent A always opened and Agent B always gave the last closing statement, which likely inflated Position B wins through recency/closing-order effects.
+- The benchmark now supports `--speaker-order balanced`, which runs both `a_first` and `b_first` orders so Position A and Position B each receive first-speaker and last-closing opportunities.
 - The judge needs groundedness scoring because hallucinated citations or unsupported statistics can sound persuasive.
 - To get mentor-ready results, we need repeated runs across topics, model-role permutations, moderator starts, and multiple judges.
 
 ## Next Evaluation Improvements
 
-- Run each topic across model-role permutations to measure position and model effects.
+- Run each topic across model-role permutations and balanced speaker orders to measure position, model, and recency effects.
 - Use at least two judge models and compare agreement.
 - Add a structured CSV/JSON results table for all runs.
 - Add topic batches instead of one-off prompts.

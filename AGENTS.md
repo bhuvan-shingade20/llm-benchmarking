@@ -1,8 +1,8 @@
 # Agent Notes
 
 ## Repo Shape
-- This is a small Python CLI benchmark, not a package; main entrypoints are `run_conversation.py`, `run_benchmark.py`, and `analyze_results.py`.
-- There is no CI, test runner, formatter, or typechecker config; use `python -m py_compile "run_conversation.py" "run_benchmark.py" "analyze_results.py"` as the basic syntax check.
+- This is a small Python CLI benchmark, not a package; main entrypoints are `run_conversation.py`, `run_benchmark.py`, `analyze_results.py`, and `analyze_all_results.py`.
+- There is no CI, test runner, formatter, or typechecker config; use `python -m py_compile "run_conversation.py" "run_benchmark.py" "analyze_results.py" "analyze_all_results.py"` as the basic syntax check.
 - Dependencies are only `python-dotenv` and `openai` from `requirements.txt`.
 
 ## Environment
@@ -18,6 +18,7 @@
 - Batch runs support `--benchmark-mode single|paired|permutations`; default is `paired` for `--model-a/--model-b` and `permutations` when `--models` is provided.
 - The legacy flag `--no-side-swap` now forces `single` mode for backward compatibility.
 - Use `--judge-mode winner_only|detailed|both`; `both` judges the same transcript twice so `analyze_results.py` can report judge-mode agreement.
+- Use `--speaker-order balanced|a_first|b_first`; benchmark default is `balanced`, which runs both first/last-speaker orders to reduce recency bias.
 - Mixed-provider runs are supported with model prefixes like `ollama:llama3.2:3b` and `openai:gemma-4-31b-it`; result rows store provider columns for each role and judge.
 - Use `--judge-models` for multiple judges; this multiplies judge calls by `debates * judge_models * judge_modes`.
 - With `--models`, permutation mode runs all ordered model-role pairs, so use `--dry-run` first to avoid unexpected API cost.
@@ -27,9 +28,10 @@
 - Transcripts are written to `results/conversations/`; benchmark CSV/JSON and analysis files are written to `results/`.
 - Generated `results/**/*.json`, `results/**/*.csv`, and `results/**/*.md` are ignored; only `.gitkeep` placeholders should be tracked there.
 - `analyze_results.py` reads the newest `results/*_results.csv` or `results/*_results.json` when `--input` is omitted.
+- `analyze_all_results.py` aggregates all `results/*_results.csv` files into `results/model_ranking_all_runs.md`; legacy rows without provider columns should be treated as Academic Cloud/SAIA.
 
 ## Focused Verification
-- Validate topic loading and planned benchmark runs without API calls: `python run_benchmark.py --topic-ids ai_assignments,remote_work --start-styles neutral,evidence --dry-run`.
+- Validate topic loading and planned benchmark runs without API calls: `python run_benchmark.py --topic-ids ai_assignments,remote_work --start-styles neutral,evidence --speaker-order balanced --dry-run`.
 - Validate mixed local/cloud planning: `python run_benchmark.py --topic-id ai_assignments --benchmark-mode single --model-a ollama:llama3.2:3b --model-b openai:qwen3-30b-a3b-instruct-2507 --judge-model openai:gemma-4-31b-it --judge-mode winner_only --dry-run`.
 - Cheap real API smoke test: `python run_benchmark.py --topic-id ai_assignments --start-styles evidence --no-side-swap --turns 2 --max-tokens 120`.
 - Verify aggregate analysis on an existing result: `python analyze_results.py --input results\<run_id>_benchmark_results.csv`.
