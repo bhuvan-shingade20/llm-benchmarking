@@ -13,6 +13,7 @@ from run_conversation import (
     DEFAULT_MODEL,
     DEFAULT_PROVIDER,
     DEFAULT_TOPICS_PATH,
+    EVALUATION_PROTOCOLS,
     JUDGE_MODES,
     SPEAKER_ORDERS,
     START_PROMPTS,
@@ -77,6 +78,7 @@ def make_row(
     judge_model: str,
     judge_provider: str,
     judge_mode: str,
+    evaluation_protocol: str,
     role_assignment: str,
     start_style: str,
     speaker_order: str,
@@ -122,6 +124,7 @@ def make_row(
         "judge_provider": judge_provider,
         "judge_model": judge_model,
         "judge_mode": judge_mode,
+        "evaluation_protocol": evaluation_protocol,
         "winner": winner,
         "winning_provider": winning_provider,
         "winning_model": winning_model,
@@ -334,6 +337,17 @@ def parse_args() -> argparse.Namespace:
         help="Use winner_only, detailed, or both to compare quick decisions with detailed fact-checking evaluation.",
     )
     parser.add_argument(
+        "--evaluation-protocol",
+        default="holistic_persuasion",
+        choices=["all", *sorted(EVALUATION_PROTOCOLS)],
+        help="Evaluation protocol for judging. Use all to apply all four protocols to the same transcript.",
+    )
+    parser.add_argument(
+        "--evaluation-protocols",
+        default=os.getenv("EVALUATION_PROTOCOLS", ""),
+        help="Comma-separated evaluation protocols. Use all for every protocol.",
+    )
+    parser.add_argument(
         "--benchmark-mode",
         "--mode",
         dest="benchmark_mode",
@@ -383,7 +397,7 @@ def main() -> None:
         raise SystemExit(f"Invalid start style(s): {', '.join(invalid_start_styles)}")
     speaker_orders = sorted(SPEAKER_ORDERS) if args.speaker_order == "balanced" else [args.speaker_order]
 
-    run_id = datetime.now().strftime("%Y%m%d_%H%M%S_%f_benchmark")
+    run_id = f"{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}_{os.getpid()}_benchmark"
     planned_runs = build_runs(
         cases=cases,
         model_a=model_a,
@@ -395,6 +409,11 @@ def main() -> None:
     )
 
     judge_modes = [] if args.no_judge else (["winner_only", "detailed"] if args.judge_mode == "both" else [args.judge_mode])
+    requested_protocols = parse_csv_list(args.evaluation_protocols) or [args.evaluation_protocol]
+    evaluation_protocols = sorted(EVALUATION_PROTOCOLS) if "all" in requested_protocols else requested_protocols
+    invalid_protocols = [protocol for protocol in evaluation_protocols if protocol not in EVALUATION_PROTOCOLS]
+    if invalid_protocols:
+        raise SystemExit(f"Invalid evaluation protocol(s): {', '.join(invalid_protocols)}")
 
     print(f"Benchmark run id: {run_id}")
     print(f"Default provider: {args.provider}")
@@ -406,11 +425,12 @@ def main() -> None:
     print(f"Judge: {'disabled' if args.no_judge else ', '.join(model_label(judge) for judge in judge_models)}")
     if judge_modes:
         print(f"Judge mode(s): {', '.join(judge_modes)}")
+        print(f"Evaluation protocol(s): {', '.join(evaluation_protocols)}")
     print(f"Start styles: {', '.join(start_styles)}")
     print(f"Speaker order: {args.speaker_order} ({', '.join(speaker_orders)})")
     print(f"Topics: {len(cases)} | Planned debates: {len(planned_runs)}")
     if judge_modes:
-        print(f"Planned judge evaluations: {len(planned_runs) * len(judge_modes) * len(judge_models)}")
+        print(f"Planned judge evaluations: {len(planned_runs) * len(judge_modes) * len(judge_models) * len(evaluation_protocols)}")
 
     if args.dry_run:
         for index, run in enumerate(planned_runs, start=1):
@@ -438,7 +458,7 @@ def main() -> None:
         print(f"Position A model: {run['position_a_provider']}:{run['position_a_model']}")
         print(f"Position B model: {run['position_b_provider']}:{run['position_b_model']}")
 
-        evaluations: list[tuple[ModelSpec, str, dict[str, Any]]] = []
+        evaluations: list[tuple[ModelSpec, str, str, dict[str, Any]]] = []
         try:
             transcript = run_conversation(
                 topic=run["question"],
@@ -468,12 +488,13 @@ def main() -> None:
                 (
                     ModelSpec(provider="", model=""),
                     "",
+                    "",
                     {"winner": "Run error", "confidence": 0, "run_error": error_text},
                 )
             )
         else:
             if args.no_judge:
-                evaluations.append((ModelSpec(provider="", model=""), "", {"winner": "No judge", "confidence": 0}))
+                evaluations.append((ModelSpec(provider="", model=""), "", "", {"winner": "No judge", "confidence": 0}))
             else:
                 case = make_discussion_case(
                     run["question"],
@@ -483,23 +504,29 @@ def main() -> None:
                 )
                 for judge in judge_models:
                     for judge_mode in judge_modes:
-                        try:
-                            evaluation = judge_conversation(
-                                client=get_client(judge.provider),
-                                model=judge.model,
-                                case=case,
-                                transcript=transcript,
-                                judge_mode=judge_mode,
+                        for evaluation_protocol in evaluation_protocols:
+                            try:
+                                evaluation = judge_conversation(
+                                    client=get_client(judge.provider),
+                                    model=judge.model,
+                                    case=case,
+                                    transcript=transcript,
+                                    judge_mode=judge_mode,
+                                    evaluation_protocol=evaluation_protocol,
+                                )
+                            except Exception as error:
+                                error_text = f"Judge failed: {error}"
+                                print(error_text)
+                                evaluation = {"winner": "Judge error", "confidence": 0, "run_error": error_text}
+                            judge_content = json.dumps(evaluation, indent=2, ensure_ascii=False)
+                            judge_message = Message(
+                                speaker="Judge",
+                                role=f"{judge.provider}:{judge.model} {judge_mode} {evaluation_protocol} Evaluation",
+                                content=judge_content,
                             )
-                        except Exception as error:
-                            error_text = f"Judge failed: {error}"
-                            print(error_text)
-                            evaluation = {"winner": "Judge error", "confidence": 0, "run_error": error_text}
-                        judge_content = json.dumps(evaluation, indent=2, ensure_ascii=False)
-                        judge_message = Message(speaker="Judge", role=f"{judge.provider}:{judge.model} {judge_mode} Evaluation", content=judge_content)
-                        transcript.append(judge_message)
-                        print_message(judge_message)
-                        evaluations.append((judge, judge_mode, evaluation))
+                            transcript.append(judge_message)
+                            print_message(judge_message)
+                            evaluations.append((judge, judge_mode, evaluation_protocol, evaluation))
 
         transcript_json, transcript_markdown = save_transcript(
             transcript,
@@ -507,7 +534,7 @@ def main() -> None:
             run_label=f"{run_id}_{run['label']}",
         )
 
-        for judge, judge_mode, judge_result in evaluations:
+        for judge, judge_mode, evaluation_protocol, judge_result in evaluations:
             rows.append(
                 make_row(
                     run_id=run_id,
@@ -523,6 +550,7 @@ def main() -> None:
                     judge_model="" if args.no_judge else judge.model,
                     judge_provider="" if args.no_judge else judge.provider,
                     judge_mode=judge_mode,
+                    evaluation_protocol=evaluation_protocol,
                     role_assignment=run["role_assignment"],
                     start_style=run["start_style"],
                     speaker_order=run["speaker_order"],

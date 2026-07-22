@@ -18,6 +18,7 @@
 - Batch runs support `--benchmark-mode single|paired|permutations`; default is `paired` for `--model-a/--model-b` and `permutations` when `--models` is provided.
 - The legacy flag `--no-side-swap` now forces `single` mode for backward compatibility.
 - Use `--judge-mode winner_only|detailed|both`; `both` judges the same transcript twice so `analyze_results.py` can report judge-mode agreement.
+- Use `--evaluation-protocol holistic_persuasion|argument_quality|evidence_fact_check|deliberative_quality|all`; protocols multiply judge calls and allow method-sensitivity comparisons.
 - Use `--speaker-order balanced|a_first|b_first`; benchmark default is `balanced`, which runs both first/last-speaker orders to reduce recency bias.
 - Mixed-provider runs are supported with model prefixes like `ollama:llama3.2:3b` and `openai:gemma-4-31b-it`; result rows store provider columns for each role and judge.
 - Use `--judge-models` for multiple judges; this multiplies judge calls by `debates * judge_models * judge_modes`.
@@ -28,11 +29,13 @@
 - Transcripts are written to `results/conversations/`; benchmark CSV/JSON and analysis files are written to `results/`.
 - Generated `results/**/*.json`, `results/**/*.csv`, and `results/**/*.md` are ignored; only `.gitkeep` placeholders should be tracked there.
 - `analyze_results.py` reads the newest `results/*_results.csv` or `results/*_results.json` when `--input` is omitted.
-- `analyze_all_results.py` aggregates all `results/*_results.csv` files into `results/model_ranking_all_runs.md`; legacy rows without provider columns should be treated as Academic Cloud/SAIA.
+- `analyze_all_results.py` aggregates all `results/*_results.csv` files into `results/model_ranking_all_runs.md`, `results/all_model_rankings.md`, and `results/evaluation_protocol_bump_chart.svg`; legacy rows without provider columns should be treated as Academic Cloud/SAIA.
+- The all-runs report uses a qualified headline ranking requiring at least 5 valid debates per model, with low-sample models moved to a preliminary table.
 
 ## Focused Verification
 - Validate topic loading and planned benchmark runs without API calls: `python run_benchmark.py --topic-ids ai_assignments,remote_work --start-styles neutral,evidence --speaker-order balanced --dry-run`.
 - Validate mixed local/cloud planning: `python run_benchmark.py --topic-id ai_assignments --benchmark-mode single --model-a ollama:llama3.2:3b --model-b openai:qwen3-30b-a3b-instruct-2507 --judge-model openai:gemma-4-31b-it --judge-mode winner_only --dry-run`.
+- Validate protocol comparison planning: `python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --judge-mode winner_only --evaluation-protocol all --speaker-order balanced --dry-run`.
 - Cheap real API smoke test: `python run_benchmark.py --topic-id ai_assignments --start-styles evidence --no-side-swap --turns 2 --max-tokens 120`.
 - Verify aggregate analysis on an existing result: `python analyze_results.py --input results\<run_id>_benchmark_results.csv`.
 

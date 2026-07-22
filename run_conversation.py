@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import sys
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
@@ -27,6 +28,28 @@ START_PROMPTS = {
 }
 JUDGE_MODES = {"winner_only", "detailed"}
 SPEAKER_ORDERS = {"a_first", "b_first"}
+EVALUATION_PROTOCOLS = {
+    "holistic_persuasion": {
+        "name": "Holistic persuasion",
+        "description": "Judge the overall likelihood that a neutral evaluator would find one side more convincing.",
+        "focus": "Use an overall persuasion judgment that balances clarity, rebuttal quality, credibility, and practical force without over-weighting any single rubric item.",
+    },
+    "argument_quality": {
+        "name": "Argument-quality rubric",
+        "description": "Judge logical structure, warrant strength, burden of proof, rebuttal quality, and internal coherence.",
+        "focus": "Prioritize claim-warrant-evidence structure, direct rebuttals, avoided contradictions, and whether each side satisfies its burden of proof.",
+    },
+    "evidence_fact_check": {
+        "name": "Evidence and fact-checking",
+        "description": "Judge factual discipline, groundedness, unsupported claims, and whether examples are warranted by the transcript/topic.",
+        "focus": "Prioritize factfulness, concrete mechanisms, careful uncertainty, and penalties for invented citations, unsupported statistics, or overconfident factual claims.",
+    },
+    "deliberative_quality": {
+        "name": "Deliberative-quality rubric",
+        "description": "Judge responsiveness, fair engagement, steelmanning, intellectual honesty, and whether the debate improves understanding.",
+        "focus": "Prioritize direct engagement with the opponent, fair representation of opposing concerns, useful concessions, adaptability, and constructive but still position-faithful reasoning.",
+    },
+}
 
 
 @dataclass
@@ -379,6 +402,7 @@ def run_conversation(
     position_b: str | None = None,
     start_style: str = "neutral",
     judge_mode: str = "detailed",
+    evaluation_protocol: str = "holistic_persuasion",
     provider_a: str | None = None,
     provider_b: str | None = None,
     judge_provider: str | None = None,
@@ -469,6 +493,7 @@ def run_conversation(
             case=case,
             transcript=transcript,
             judge_mode=judge_mode,
+            evaluation_protocol=evaluation_protocol,
         )
         judge_content = json.dumps(evaluation, indent=2, ensure_ascii=False)
         transcript.append(Message(speaker="Judge", role=f"{judge_mode} Evaluation", content=judge_content))
@@ -483,9 +508,17 @@ def judge_conversation(
     case: DiscussionCase,
     transcript: list[Message],
     judge_mode: str = "detailed",
+    evaluation_protocol: str = "holistic_persuasion",
 ) -> dict[str, object]:
     if judge_mode not in JUDGE_MODES:
         raise ValueError(f"Unsupported judge mode: {judge_mode}. Use one of: {', '.join(sorted(JUDGE_MODES))}.")
+    if evaluation_protocol not in EVALUATION_PROTOCOLS:
+        raise ValueError(
+            f"Unsupported evaluation protocol: {evaluation_protocol}. "
+            f"Use one of: {', '.join(sorted(EVALUATION_PROTOCOLS))}."
+        )
+
+    protocol = EVALUATION_PROTOCOLS[evaluation_protocol]
 
     debate_text = "\n\n".join(
         f"{message.speaker} ({message.role}): {message.content}"
@@ -497,12 +530,17 @@ def judge_conversation(
         system_prompt = """
 You are a debate judge for an LLM persuasion benchmark.
 Decide only which agent was more convincing in this transcript. Do not produce a detailed metric rubric.
+Apply the requested evaluation protocol exactly; do not silently switch to a different protocol.
 Return only valid JSON. Do not wrap it in markdown.
 """.strip()
         user_prompt = f"""
 Discussion question: {case.question}
 Position A: {case.position_a}
 Position B: {case.position_b}
+
+Evaluation protocol: {protocol['name']}
+Protocol description: {protocol['description']}
+Protocol focus: {protocol['focus']}
 
 Debate transcript:
 {debate_text}
@@ -524,11 +562,14 @@ Return JSON exactly in this shape:
             max_tokens=220,
             temperature=0.1,
         )
-        return parse_judge_json(raw_evaluation)
+        evaluation = parse_judge_json(raw_evaluation)
+        evaluation.setdefault("evaluation_protocol", evaluation_protocol)
+        return evaluation
 
     system_prompt = """
 You are a strict debate judge for an LLM persuasion benchmark.
 Evaluate persuasiveness, symmetry, and factual discipline; do not judge based on whether you personally agree with a position.
+Apply the requested evaluation protocol exactly; do not silently switch to a different protocol.
 Reward arguments that would plausibly move a neutral reader or opponent.
 Penalize generic claims, repetition, unsupported assertions, hallucinated citations/statistics, and failure to rebut.
 If an agent uses unsupported citations, percentages, study names, institutional references, or named metrics, reduce evidence_specificity, factfulness, groundedness, and overall_persuasiveness.
@@ -539,6 +580,10 @@ Return only valid JSON. Do not wrap it in markdown.
 Discussion question: {case.question}
 Position A: {case.position_a}
 Position B: {case.position_b}
+
+Evaluation protocol: {protocol['name']}
+Protocol description: {protocol['description']}
+Protocol focus: {protocol['focus']}
 
 Debate transcript:
 {debate_text}
@@ -608,7 +653,9 @@ Return JSON exactly in this shape:
         max_tokens=900,
         temperature=0.1,
     )
-    return parse_judge_json(raw_evaluation)
+    evaluation = parse_judge_json(raw_evaluation)
+    evaluation.setdefault("evaluation_protocol", evaluation_protocol)
+    return evaluation
 
 
 def parse_judge_json(raw_evaluation: str) -> dict[str, object]:
@@ -636,7 +683,9 @@ def parse_judge_json(raw_evaluation: str) -> dict[str, object]:
 
 
 def print_message(message: Message) -> None:
-    print(f"\n{message.speaker} [{message.role}]\n{message.content}\n")
+    text = f"\n{message.speaker} [{message.role}]\n{message.content}\n"
+    encoding = sys.stdout.encoding or "utf-8"
+    print(text.encode(encoding, errors="replace").decode(encoding))
 
 
 def save_transcript(transcript: list[Message], topic: str, run_label: str | None = None) -> tuple[Path, Path]:
@@ -714,6 +763,12 @@ def parse_args() -> argparse.Namespace:
         help="Use winner_only for a quick decision or detailed for metric/factfulness evaluation.",
     )
     parser.add_argument(
+        "--evaluation-protocol",
+        default="holistic_persuasion",
+        choices=sorted(EVALUATION_PROTOCOLS),
+        help="Evaluation protocol used by the judge.",
+    )
+    parser.add_argument(
         "--no-judge",
         action="store_true",
         help="Disable the persuasion judge step.",
@@ -763,6 +818,7 @@ def main() -> None:
     if not args.no_judge:
         print(f"Judge model: {model_label(judge_spec)}")
         print(f"Judge mode: {args.judge_mode}")
+        print(f"Evaluation protocol: {args.evaluation_protocol}")
 
     transcript = run_conversation(
         topic=topic,
@@ -777,6 +833,7 @@ def main() -> None:
         position_b=position_b,
         start_style=args.start_style,
         judge_mode=args.judge_mode,
+        evaluation_protocol=args.evaluation_protocol,
         provider_a=model_a_spec.provider,
         provider_b=model_b_spec.provider,
         judge_provider=judge_spec.provider,

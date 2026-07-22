@@ -136,12 +136,19 @@ Judge confidence: `0.85`
 - The legacy negative-framed side had an easier persuasive angle on this topic because it could focus on academic integrity, unverifiable cognition, and assessment validity.
 - A separate structural bias existed in early runs: Agent A always opened and Agent B always gave the last closing statement, which likely inflated Position B wins through recency/closing-order effects.
 - The benchmark now supports `--speaker-order balanced`, which runs both `a_first` and `b_first` orders so Position A and Position B each receive first-speaker and last-closing opportunities.
+- Mentor feedback added a protocol-sensitivity requirement: the same transcript can now be judged under four protocols (`holistic_persuasion`, `argument_quality`, `evidence_fact_check`, and `deliberative_quality`) to see whether model rankings depend on evaluation method.
+- The protocol comparison graph is implemented as a bump chart/rank-flow chart in `results/evaluation_protocol_bump_chart.svg`.
+- The all-runs report now separates qualified rankings from preliminary low-sample models, requiring at least 5 valid debates for the headline leaderboard.
+- Length-bias diagnostics are included by comparing transcript word counts with judge winners.
 - The judge needs groundedness scoring because hallucinated citations or unsupported statistics can sound persuasive.
 - To get mentor-ready results, we need repeated runs across topics, model-role permutations, moderator starts, and multiple judges.
 
 ## Next Evaluation Improvements
 
 - Run each topic across model-role permutations and balanced speaker orders to measure position, model, and recency effects.
+- Run a fair reset batch where every selected model gets at least 5-6 valid debates before presenting a final leaderboard.
+- Run `--evaluation-protocol all` on a fixed transcript set and inspect whether the protocol bump chart shows stable or unstable rankings.
+- Inspect length bias and other judging biases before trusting aggregate rankings.
 - Use at least two judge models and compare agreement.
 - Add a structured CSV/JSON results table for all runs.
 - Add topic batches instead of one-off prompts.

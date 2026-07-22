@@ -150,6 +150,7 @@ def analyze(rows: list[dict[str, Any]], input_path: Path) -> dict[str, Any]:
     benchmark_mode_stats: dict[str, dict[str, Any]] = defaultdict(lambda: {"debates": 0, "confidence": [], "agent_a_wins": 0, "agent_b_wins": 0, "ties": 0})
     speaker_order_stats: dict[str, dict[str, Any]] = defaultdict(lambda: {"debates": 0, "confidence": [], "agent_a_wins": 0, "agent_b_wins": 0, "ties": 0})
     judge_mode_stats: dict[str, dict[str, Any]] = defaultdict(lambda: {"debates": 0, "confidence": [], "agent_a_wins": 0, "agent_b_wins": 0, "ties": 0})
+    evaluation_protocol_stats: dict[str, dict[str, Any]] = defaultdict(lambda: {"debates": 0, "confidence": [], "agent_a_wins": 0, "agent_b_wins": 0, "ties": 0})
     judge_model_stats: dict[str, dict[str, Any]] = defaultdict(lambda: {"debates": 0, "confidence": [], "agent_a_wins": 0, "agent_b_wins": 0, "ties": 0})
     judge_agreement_groups: dict[str, dict[str, str]] = defaultdict(dict)
     position_a_overall: list[float] = []
@@ -164,6 +165,7 @@ def analyze(rows: list[dict[str, Any]], input_path: Path) -> dict[str, Any]:
         position_b_model = model_display(row, "position_b")
         benchmark_mode = str(row.get("benchmark_mode") or "legacy")
         judge_mode = str(row.get("judge_mode") or "legacy")
+        evaluation_protocol = str(row.get("evaluation_protocol") or "legacy")
         judge_model = judge_display(row) or "unknown"
         debate_id = str(row.get("debate_id") or "")
         if debate_id and judge_mode:
@@ -219,6 +221,7 @@ def analyze(rows: list[dict[str, Any]], input_path: Path) -> dict[str, Any]:
             (benchmark_mode, benchmark_mode_stats),
             (str(row.get("speaker_order") or "a_first (legacy)"), speaker_order_stats),
             (judge_mode, judge_mode_stats),
+            (evaluation_protocol, evaluation_protocol_stats),
             (judge_model, judge_model_stats),
         ):
             group = stats[group_key]
@@ -268,6 +271,7 @@ def analyze(rows: list[dict[str, Any]], input_path: Path) -> dict[str, Any]:
         "benchmark_mode_summary": summarize_group_counts(benchmark_mode_stats, "benchmark_mode"),
         "speaker_order_summary": summarize_group_counts(speaker_order_stats, "speaker_order"),
         "judge_mode_summary": summarize_group_counts(judge_mode_stats, "judge_mode"),
+        "evaluation_protocol_summary": summarize_group_counts(evaluation_protocol_stats, "evaluation_protocol"),
         "judge_model_summary": summarize_group_counts(judge_model_stats, "judge_model"),
         "judge_mode_agreement": summarize_judge_mode_agreement(judge_agreement_groups),
     }
@@ -438,6 +442,10 @@ def render_markdown(analysis: dict[str, Any]) -> str:
         "## Judge Mode Summary",
         "",
         table(analysis["judge_mode_summary"], ["judge_mode", "debates", "agent_a_wins", "agent_b_wins", "ties", "position_a_win_rate", "position_b_win_rate", "avg_confidence"]),
+        "",
+        "## Evaluation Protocol Summary",
+        "",
+        table(analysis["evaluation_protocol_summary"], ["evaluation_protocol", "debates", "agent_a_wins", "agent_b_wins", "ties", "position_a_win_rate", "position_b_win_rate", "avg_confidence"]),
         "",
         "## Judge Model Summary",
         "",

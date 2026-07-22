@@ -167,6 +167,21 @@ Judge modes:
 - `detailed`: judge returns the full metric rubric, factfulness/groundedness scores, weaknesses, and unsupported claims.
 - `both`: runs both judge modes on the same transcript so analysis can measure whether the decision changes.
 
+Compare evaluation protocols on the same transcript:
+
+```powershell
+python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --judge-mode winner_only --evaluation-protocol all --speaker-order balanced --dry-run
+```
+
+Evaluation protocols:
+
+- `holistic_persuasion`: overall neutral-reader persuasiveness.
+- `argument_quality`: claim-warrant structure, burden of proof, coherence, and rebuttal strength.
+- `evidence_fact_check`: factfulness, groundedness, and unsupported-claim penalties.
+- `deliberative_quality`: responsiveness, fair engagement, steelmanning, and intellectual honesty.
+
+Use `--evaluation-protocols holistic_persuasion,evidence_fact_check` to run a subset. Protocols multiply judge calls, so use `--dry-run` before real runs.
+
 Mix Ollama and Academic Cloud models in the same benchmark by prefixing model IDs with `ollama:` or `openai:`:
 
 ```powershell
@@ -238,7 +253,13 @@ Build a combined ranking across every benchmark CSV in `results/`:
 python analyze_all_results.py
 ```
 
-This writes `results/model_ranking_all_runs.md`. Older unprefixed SAIA rows are labeled as `academic_cloud`, and invalid judge parse/error rows are skipped rather than counted as losses.
+This writes `results/model_ranking_all_runs.md`, `results/all_model_rankings.md`, and `results/evaluation_protocol_bump_chart.svg`. The SVG is a bump chart/rank-flow chart: the x-axis is evaluation protocol and the y-axis is model rank, so it shows whether protocol choice changes model ordering. Older unprefixed SAIA rows are labeled as `academic_cloud`, invalid judge parse/error rows are skipped rather than counted as losses, and the headline ranking requires at least 5 valid debates per model to avoid tiny-sample leaders.
+
+Recommended fair rerun for mentor-ready rankings:
+
+```powershell
+python run_benchmark.py --topic-ids ai_assignments,remote_work,assessment_design --benchmark-mode permutations --models openai:qwen3-30b-a3b-instruct-2507,openai:mistral-large-3-675b-instruct-2512,openai:apertus-70b-instruct-2509,ollama:qwen2.5:3b --judge-model openai:gemma-4-31b-it --judge-mode winner_only --evaluation-protocol all --speaker-order balanced --turns 2 --max-tokens 120 --dry-run
+```
 
 Optional model override:
 
