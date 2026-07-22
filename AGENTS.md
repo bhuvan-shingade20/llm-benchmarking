@@ -15,7 +15,10 @@
 - Saved benchmark cases live in `topics/phase1_topics.json`; each object should have `id`, `question`, `position_a`, and `position_b`.
 - `run_conversation.py` accepts either a custom `--topic` with optional `--position-a/--position-b`, or a saved `--topic-id` from the topics file.
 - `run_benchmark.py` reads `topics/phase1_topics.json` by default; use `--topic-id` or comma-separated `--topic-ids` for focused runs.
-- Batch runs support `--benchmark-mode single|paired|permutations`; default is `paired` for `--model-a/--model-b` and `permutations` when `--models` is provided.
+- Batch runs support `--benchmark-mode single|paired|permutations|same_position`; default is `paired` for `--model-a/--model-b` and `permutations` when `--models` is provided.
+- Mentor Mode 1 is `single`, `paired`, or `permutations`: one transcript is judged and the judge chooses whether Agent A or Agent B argued better.
+- Mentor Mode 2 is `same_position`: `--model-a` is the fixed opponent, candidate models from `--models` argue the same target position in separate debates, and the judge compares which candidate argued that same position better.
+- In `same_position`, candidates argue `position_b` by default; use `--same-position-target position_a` to flip the target side.
 - The legacy flag `--no-side-swap` now forces `single` mode for backward compatibility.
 - Use `--judge-mode winner_only|detailed|both`; `both` judges the same transcript twice so `analyze_results.py` can report judge-mode agreement.
 - Use `--evaluation-protocol holistic_persuasion|argument_quality|evidence_fact_check|deliberative_quality|all`; protocols multiply judge calls and allow method-sensitivity comparisons.
@@ -36,6 +39,7 @@
 - Validate topic loading and planned benchmark runs without API calls: `python run_benchmark.py --topic-ids ai_assignments,remote_work --start-styles neutral,evidence --speaker-order balanced --dry-run`.
 - Validate mixed local/cloud planning: `python run_benchmark.py --topic-id ai_assignments --benchmark-mode single --model-a ollama:llama3.2:3b --model-b openai:qwen3-30b-a3b-instruct-2507 --judge-model openai:gemma-4-31b-it --judge-mode winner_only --dry-run`.
 - Validate protocol comparison planning: `python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --judge-mode winner_only --evaluation-protocol all --speaker-order balanced --dry-run`.
+- Validate same-position Mode 2 planning: `python run_benchmark.py --topic-id ai_assignments --benchmark-mode same_position --model-a openai:qwen3-30b-a3b-instruct-2507 --models openai:apertus-70b-instruct-2509,openai:meta-llama-3.1-8b-instruct --judge-mode winner_only --dry-run`.
 - Cheap real API smoke test: `python run_benchmark.py --topic-id ai_assignments --start-styles evidence --no-side-swap --turns 2 --max-tokens 120`.
 - Verify aggregate analysis on an existing result: `python analyze_results.py --input results\<run_id>_benchmark_results.csv`.
 

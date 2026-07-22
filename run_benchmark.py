@@ -22,6 +22,7 @@ from run_conversation import (
     ModelSpec,
     build_client,
     judge_conversation,
+    judge_same_position_comparison,
     load_topics,
     make_discussion_case,
     model_label,
@@ -29,11 +30,12 @@ from run_conversation import (
     print_message,
     run_conversation,
     save_transcript,
+    transcript_debate_text,
 )
 
 
 RESULTS_DIR = Path("results")
-BENCHMARK_MODES = {"single", "paired", "permutations"}
+BENCHMARK_MODES = {"single", "paired", "permutations", "same_position"}
 BENCHMARK_SPEAKER_ORDERS = {"a_first", "b_first", "balanced"}
 
 
@@ -284,6 +286,85 @@ def build_runs(
     return runs
 
 
+def build_same_position_comparisons(
+    cases: list[DiscussionCase],
+    fixed_opponent: ModelSpec,
+    candidates: list[ModelSpec],
+    start_styles: list[str],
+    speaker_orders: list[str],
+    candidate_position: str,
+) -> list[dict[str, Any]]:
+    if len(candidates) < 2:
+        raise SystemExit("same_position mode requires at least two candidate models in --models.")
+    if candidate_position not in {"position_a", "position_b"}:
+        raise SystemExit("--same-position-target must be position_a or position_b.")
+
+    comparisons: list[dict[str, Any]] = []
+    candidate_pairs = [
+        (left, right)
+        for left_index, left in enumerate(candidates)
+        for right in candidates[left_index + 1 :]
+    ]
+    for case in cases:
+        for start_style in start_styles:
+            for speaker_order in speaker_orders:
+                for pair_index, (candidate_1, candidate_2) in enumerate(candidate_pairs, start=1):
+                    pair_id = f"pair{pair_index:02d}"
+                    label = f"{case.id}_same_position_{candidate_position}_{start_style}_{speaker_order}_{pair_id}"
+                    if candidate_position == "position_b":
+                        candidate_1_run = {
+                            "position_a_provider": fixed_opponent.provider,
+                            "position_a_model": fixed_opponent.model,
+                            "position_b_provider": candidate_1.provider,
+                            "position_b_model": candidate_1.model,
+                        }
+                        candidate_2_run = {
+                            "position_a_provider": fixed_opponent.provider,
+                            "position_a_model": fixed_opponent.model,
+                            "position_b_provider": candidate_2.provider,
+                            "position_b_model": candidate_2.model,
+                        }
+                    else:
+                        candidate_1_run = {
+                            "position_a_provider": candidate_1.provider,
+                            "position_a_model": candidate_1.model,
+                            "position_b_provider": fixed_opponent.provider,
+                            "position_b_model": fixed_opponent.model,
+                        }
+                        candidate_2_run = {
+                            "position_a_provider": candidate_2.provider,
+                            "position_a_model": candidate_2.model,
+                            "position_b_provider": fixed_opponent.provider,
+                            "position_b_model": fixed_opponent.model,
+                        }
+
+                    comparisons.append(
+                        {
+                            "topic_id": case.id or "",
+                            "question": case.question,
+                            "position_a": case.position_a,
+                            "position_b": case.position_b,
+                            "benchmark_mode": "same_position",
+                            "role_assignment": f"same_position_{candidate_position}",
+                            "candidate_position": candidate_position,
+                            "start_style": start_style,
+                            "speaker_order": speaker_order,
+                            "candidate_1_provider": candidate_1.provider,
+                            "candidate_1_model": candidate_1.model,
+                            "candidate_2_provider": candidate_2.provider,
+                            "candidate_2_model": candidate_2.model,
+                            "fixed_opponent_provider": fixed_opponent.provider,
+                            "fixed_opponent_model": fixed_opponent.model,
+                            "candidate_1_run": candidate_1_run,
+                            "candidate_2_run": candidate_2_run,
+                            "pair_id": pair_id,
+                            "round_index": "1",
+                            "label": label,
+                        }
+                    )
+    return comparisons
+
+
 def filter_cases_by_ids(cases: list[DiscussionCase], topic_ids: list[str]) -> list[DiscussionCase]:
     if not topic_ids:
         return cases
@@ -352,7 +433,13 @@ def parse_args() -> argparse.Namespace:
         "--mode",
         dest="benchmark_mode",
         choices=sorted(BENCHMARK_MODES),
-        help="single runs one model-role assignment; paired runs both reversed rounds; permutations runs all ordered model-role pairs.",
+        help="single/paired/permutations judge one transcript; same_position compares two same-position candidates across separate debates.",
+    )
+    parser.add_argument(
+        "--same-position-target",
+        default="position_b",
+        choices=["position_a", "position_b"],
+        help="For same_position mode, choose whether candidate models argue Position A or Position B against the fixed --model-a opponent.",
     )
     parser.add_argument("--turns", type=int, default=4, help="Debate turns before closing statements.")
     parser.add_argument("--max-tokens", type=int, default=220, help="Maximum tokens per debate turn.")
@@ -398,15 +485,25 @@ def main() -> None:
     speaker_orders = sorted(SPEAKER_ORDERS) if args.speaker_order == "balanced" else [args.speaker_order]
 
     run_id = f"{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}_{os.getpid()}_benchmark"
-    planned_runs = build_runs(
-        cases=cases,
-        model_a=model_a,
-        model_b=model_b,
-        models=models,
-        start_styles=start_styles,
-        benchmark_mode=benchmark_mode,
-        speaker_orders=speaker_orders,
-    )
+    if benchmark_mode == "same_position":
+        planned_runs = build_same_position_comparisons(
+            cases=cases,
+            fixed_opponent=model_a,
+            candidates=models,
+            start_styles=start_styles,
+            speaker_orders=speaker_orders,
+            candidate_position=args.same_position_target,
+        )
+    else:
+        planned_runs = build_runs(
+            cases=cases,
+            model_a=model_a,
+            model_b=model_b,
+            models=models,
+            start_styles=start_styles,
+            benchmark_mode=benchmark_mode,
+            speaker_orders=speaker_orders,
+        )
 
     judge_modes = [] if args.no_judge else (["winner_only", "detailed"] if args.judge_mode == "both" else [args.judge_mode])
     requested_protocols = parse_csv_list(args.evaluation_protocols) or [args.evaluation_protocol]
@@ -428,17 +525,35 @@ def main() -> None:
         print(f"Evaluation protocol(s): {', '.join(evaluation_protocols)}")
     print(f"Start styles: {', '.join(start_styles)}")
     print(f"Speaker order: {args.speaker_order} ({', '.join(speaker_orders)})")
-    print(f"Topics: {len(cases)} | Planned debates: {len(planned_runs)}")
+    planned_debates = len(planned_runs) * 2 if benchmark_mode == "same_position" else len(planned_runs)
+    print(f"Topics: {len(cases)} | Planned debates: {planned_debates}")
     if judge_modes:
         print(f"Planned judge evaluations: {len(planned_runs) * len(judge_modes) * len(judge_models) * len(evaluation_protocols)}")
 
     if args.dry_run:
         for index, run in enumerate(planned_runs, start=1):
-            print(
-                f"{index}. {run['label']} | Position A={run['position_a_provider']}:{run['position_a_model']} | "
-                f"Position B={run['position_b_provider']}:{run['position_b_model']} | mode={run['benchmark_mode']} | "
-                f"round={run['round_index']} | speaker_order={run['speaker_order']} | start={run['start_style']} | {run['question']}"
-            )
+            if benchmark_mode == "same_position":
+                first = run["candidate_1_run"]
+                second = run["candidate_2_run"]
+                print(
+                    f"{index}. {run['label']} | fixed_opponent={run['fixed_opponent_provider']}:{run['fixed_opponent_model']} | "
+                    f"candidate_position={run['candidate_position']} | candidate_1={run['candidate_1_provider']}:{run['candidate_1_model']} | "
+                    f"candidate_2={run['candidate_2_provider']}:{run['candidate_2_model']} | speaker_order={run['speaker_order']} | start={run['start_style']}"
+                )
+                print(
+                    f"   debate A: Position A={first['position_a_provider']}:{first['position_a_model']} | "
+                    f"Position B={first['position_b_provider']}:{first['position_b_model']}"
+                )
+                print(
+                    f"   debate B: Position A={second['position_a_provider']}:{second['position_a_model']} | "
+                    f"Position B={second['position_b_provider']}:{second['position_b_model']} | {run['question']}"
+                )
+            else:
+                print(
+                    f"{index}. {run['label']} | Position A={run['position_a_provider']}:{run['position_a_model']} | "
+                    f"Position B={run['position_b_provider']}:{run['position_b_model']} | mode={run['benchmark_mode']} | "
+                    f"round={run['round_index']} | speaker_order={run['speaker_order']} | start={run['start_style']} | {run['question']}"
+                )
         return
 
     rows: list[dict[str, Any]] = []
@@ -448,6 +563,164 @@ def main() -> None:
         if provider not in client_cache:
             client_cache[provider] = build_client(provider)
         return client_cache[provider]
+
+    if benchmark_mode == "same_position":
+        for index, run in enumerate(planned_runs, start=1):
+            print(f"\n=== Same-position comparison {index}/{len(planned_runs)}: {run['label']} ===")
+            print(f"Question: {run['question']}")
+            print(f"Target candidate position: {run['candidate_position']}")
+            print(f"Fixed opponent: {run['fixed_opponent_provider']}:{run['fixed_opponent_model']}")
+            print(f"Candidate 1: {run['candidate_1_provider']}:{run['candidate_1_model']}")
+            print(f"Candidate 2: {run['candidate_2_provider']}:{run['candidate_2_model']}")
+            print(f"Start style: {run['start_style']} | Speaker order: {run['speaker_order']}")
+
+            comparison_transcript: list[Message] = [
+                Message(speaker="System", role="Same-position Comparison", content=f"Discussion question: {run['question']}"),
+            ]
+            evaluations: list[tuple[ModelSpec, str, str, dict[str, Any]]] = []
+            try:
+                candidate_1_run = run["candidate_1_run"]
+                candidate_2_run = run["candidate_2_run"]
+                candidate_1_transcript = run_conversation(
+                    topic=run["question"],
+                    turns=args.turns,
+                    provider=args.provider,
+                    model_a=candidate_1_run["position_a_model"],
+                    model_b=candidate_1_run["position_b_model"],
+                    judge_model=judge_models[0].model,
+                    judge_enabled=False,
+                    max_tokens=args.max_tokens,
+                    position_a=run["position_a"],
+                    position_b=run["position_b"],
+                    start_style=run["start_style"],
+                    provider_a=candidate_1_run["position_a_provider"],
+                    provider_b=candidate_1_run["position_b_provider"],
+                    judge_provider=judge_models[0].provider,
+                    speaker_order=run["speaker_order"],
+                )
+                candidate_2_transcript = run_conversation(
+                    topic=run["question"],
+                    turns=args.turns,
+                    provider=args.provider,
+                    model_a=candidate_2_run["position_a_model"],
+                    model_b=candidate_2_run["position_b_model"],
+                    judge_model=judge_models[0].model,
+                    judge_enabled=False,
+                    max_tokens=args.max_tokens,
+                    position_a=run["position_a"],
+                    position_b=run["position_b"],
+                    start_style=run["start_style"],
+                    provider_a=candidate_2_run["position_a_provider"],
+                    provider_b=candidate_2_run["position_b_provider"],
+                    judge_provider=judge_models[0].provider,
+                    speaker_order=run["speaker_order"],
+                )
+            except Exception as error:
+                error_text = f"Conversation failed: {error}"
+                print(error_text)
+                comparison_transcript.append(Message(speaker="System", role="Run Error", content=error_text))
+                evaluations.append((ModelSpec(provider="", model=""), "", "", {"winner": "Run error", "confidence": 0, "run_error": error_text}))
+            else:
+                comparison_transcript.extend(
+                    [
+                        Message(speaker="System", role="Candidate 1 Transcript", content=transcript_debate_text(candidate_1_transcript)),
+                        Message(speaker="System", role="Candidate 2 Transcript", content=transcript_debate_text(candidate_2_transcript)),
+                    ]
+                )
+                if args.no_judge:
+                    evaluations.append((ModelSpec(provider="", model=""), "", "", {"winner": "No judge", "confidence": 0}))
+                else:
+                    case = make_discussion_case(
+                        run["question"],
+                        position_a=run["position_a"],
+                        position_b=run["position_b"],
+                        case_id=run["topic_id"],
+                    )
+                    for judge in judge_models:
+                        for judge_mode in judge_modes:
+                            for evaluation_protocol in evaluation_protocols:
+                                try:
+                                    evaluation = judge_same_position_comparison(
+                                        client=get_client(judge.provider),
+                                        model=judge.model,
+                                        case=case,
+                                        candidate_position=run["candidate_position"],
+                                        candidate_1_label=f"{run['candidate_1_provider']}:{run['candidate_1_model']}",
+                                        candidate_1_transcript=candidate_1_transcript,
+                                        candidate_2_label=f"{run['candidate_2_provider']}:{run['candidate_2_model']}",
+                                        candidate_2_transcript=candidate_2_transcript,
+                                        judge_mode=judge_mode,
+                                        evaluation_protocol=evaluation_protocol,
+                                    )
+                                except Exception as error:
+                                    error_text = f"Judge failed: {error}"
+                                    print(error_text)
+                                    evaluation = {"winner": "Judge error", "confidence": 0, "run_error": error_text}
+                                judge_content = json.dumps(evaluation, indent=2, ensure_ascii=False)
+                                judge_message = Message(
+                                    speaker="Judge",
+                                    role=f"{judge.provider}:{judge.model} same_position {judge_mode} {evaluation_protocol} Evaluation",
+                                    content=judge_content,
+                                )
+                                comparison_transcript.append(judge_message)
+                                print_message(judge_message)
+                                evaluations.append((judge, judge_mode, evaluation_protocol, evaluation))
+
+            transcript_json, transcript_markdown = save_transcript(
+                comparison_transcript,
+                run["question"],
+                run_label=f"{run_id}_{run['label']}",
+            )
+            target_position = run["position_a"] if run["candidate_position"] == "position_a" else run["position_b"]
+            for judge, judge_mode, evaluation_protocol, judge_result in evaluations:
+                row = make_row(
+                    run_id=run_id,
+                    debate_id=run["label"],
+                    benchmark_mode=run["benchmark_mode"],
+                    pair_id=run["pair_id"],
+                    round_index=int(run["round_index"]),
+                    topic_id=run["topic_id"],
+                    question=run["question"],
+                    position_a=target_position,
+                    position_b=target_position,
+                    provider="mixed" if run["candidate_1_provider"] != run["candidate_2_provider"] else run["candidate_1_provider"],
+                    judge_model="" if args.no_judge else judge.model,
+                    judge_provider="" if args.no_judge else judge.provider,
+                    judge_mode=judge_mode,
+                    evaluation_protocol=evaluation_protocol,
+                    role_assignment=run["role_assignment"],
+                    start_style=run["start_style"],
+                    speaker_order=run["speaker_order"],
+                    position_a_model=run["candidate_1_model"],
+                    position_a_provider=run["candidate_1_provider"],
+                    position_b_model=run["candidate_2_model"],
+                    position_b_provider=run["candidate_2_provider"],
+                    transcript_json=transcript_json,
+                    transcript_markdown=transcript_markdown,
+                    judge_result=judge_result,
+                )
+                row.update(
+                    {
+                        "comparison_type": "same_position",
+                        "candidate_position": run["candidate_position"],
+                        "fixed_opponent_provider": run["fixed_opponent_provider"],
+                        "fixed_opponent_model": run["fixed_opponent_model"],
+                        "candidate_1_provider": run["candidate_1_provider"],
+                        "candidate_1_model": run["candidate_1_model"],
+                        "candidate_2_provider": run["candidate_2_provider"],
+                        "candidate_2_model": run["candidate_2_model"],
+                    }
+                )
+                rows.append(row)
+
+            results_json, results_csv = write_results(rows, run_id)
+            print(f"Partial results saved: {results_csv}")
+
+        results_json, results_csv = write_results(rows, run_id)
+        print("\nBenchmark completed")
+        print(f"Results JSON: {results_json}")
+        print(f"Results CSV: {results_csv}")
+        return
 
     for index, run in enumerate(planned_runs, start=1):
         print(f"\n=== Debate {index}/{len(planned_runs)}: {run['label']} ===")

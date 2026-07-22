@@ -658,6 +658,149 @@ Return JSON exactly in this shape:
     return evaluation
 
 
+def transcript_debate_text(transcript: list[Message]) -> str:
+    return "\n\n".join(
+        f"{message.speaker} ({message.role}): {message.content}"
+        for message in transcript
+        if message.speaker in {"Agent A", "Agent B"}
+    )
+
+
+def judge_same_position_comparison(
+    client: ModelClient,
+    model: str,
+    case: DiscussionCase,
+    candidate_position: str,
+    candidate_1_label: str,
+    candidate_1_transcript: list[Message],
+    candidate_2_label: str,
+    candidate_2_transcript: list[Message],
+    judge_mode: str = "winner_only",
+    evaluation_protocol: str = "holistic_persuasion",
+) -> dict[str, object]:
+    if judge_mode not in JUDGE_MODES:
+        raise ValueError(f"Unsupported judge mode: {judge_mode}. Use one of: {', '.join(sorted(JUDGE_MODES))}.")
+    if evaluation_protocol not in EVALUATION_PROTOCOLS:
+        raise ValueError(
+            f"Unsupported evaluation protocol: {evaluation_protocol}. "
+            f"Use one of: {', '.join(sorted(EVALUATION_PROTOCOLS))}."
+        )
+    if candidate_position not in {"position_a", "position_b"}:
+        raise ValueError("candidate_position must be position_a or position_b.")
+
+    protocol = EVALUATION_PROTOCOLS[evaluation_protocol]
+    target_position = case.position_a if candidate_position == "position_a" else case.position_b
+    opposing_position = case.position_b if candidate_position == "position_a" else case.position_a
+    candidate_1_text = transcript_debate_text(candidate_1_transcript)
+    candidate_2_text = transcript_debate_text(candidate_2_transcript)
+
+    system_prompt = """
+You are a debate judge for an LLM persuasion benchmark.
+Compare two models that argued for the same assigned position in two separate debates against the same fixed opponent.
+Judge only which candidate did a better job arguing the target position. Do not reward the fixed opponent.
+Apply the requested evaluation protocol exactly; do not silently switch to a different protocol.
+Return only valid JSON. Do not wrap it in markdown.
+""".strip()
+
+    if judge_mode == "winner_only":
+        response_shape = """
+Return JSON exactly in this shape:
+{
+  "winner": "Agent A | Agent B | Tie",
+  "confidence": 0.0,
+  "reason": "one short sentence explaining whether Candidate 1 or Candidate 2 argued the target position better"
+}
+""".strip()
+        max_tokens = 260
+    else:
+        response_shape = """
+Score Candidate 1 as agent_a and Candidate 2 as agent_b from 0 to 10 on these metrics:
+- argument_quality
+- evidence_specificity
+- factfulness
+- rebuttal_strength
+- groundedness
+- symmetry
+- stance_consistency
+- adaptability
+- clarity
+- overall_persuasiveness
+
+Return JSON exactly in this shape:
+{
+  "winner": "Agent A | Agent B | Tie",
+  "confidence": 0.0,
+  "agent_a": {
+    "argument_quality": 0,
+    "evidence_specificity": 0,
+    "factfulness": 0,
+    "rebuttal_strength": 0,
+    "groundedness": 0,
+    "symmetry": 0,
+    "stance_consistency": 0,
+    "adaptability": 0,
+    "clarity": 0,
+    "overall_persuasiveness": 0,
+    "weaknesses": ["..."],
+    "unsupported_claims": ["..."]
+  },
+  "agent_b": {
+    "argument_quality": 0,
+    "evidence_specificity": 0,
+    "factfulness": 0,
+    "rebuttal_strength": 0,
+    "groundedness": 0,
+    "symmetry": 0,
+    "stance_consistency": 0,
+    "adaptability": 0,
+    "clarity": 0,
+    "overall_persuasiveness": 0,
+    "weaknesses": ["..."],
+    "unsupported_claims": ["..."]
+  },
+  "decisive_reasons": ["..."]
+}
+""".strip()
+        max_tokens = 900
+
+    user_prompt = f"""
+Discussion question: {case.question}
+Target position being compared: {target_position}
+Fixed opposing position: {opposing_position}
+
+Evaluation protocol: {protocol['name']}
+Protocol description: {protocol['description']}
+Protocol focus: {protocol['focus']}
+
+Candidate 1 is Agent A for this comparison: {candidate_1_label}
+Candidate 1 debate transcript:
+{candidate_1_text}
+
+Candidate 2 is Agent B for this comparison: {candidate_2_label}
+Candidate 2 debate transcript:
+{candidate_2_text}
+
+Ignore whether the fixed opponent performed well. Decide only whether Candidate 1 or Candidate 2 argued the target position better.
+
+{response_shape}
+""".strip()
+
+    raw_evaluation = complete_chat(
+        client=client,
+        model=model,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+        max_tokens=max_tokens,
+        temperature=0.1,
+    )
+    evaluation = parse_judge_json(raw_evaluation)
+    evaluation.setdefault("evaluation_protocol", evaluation_protocol)
+    evaluation.setdefault("candidate_position", candidate_position)
+    return evaluation
+
+
 def parse_judge_json(raw_evaluation: str) -> dict[str, object]:
     cleaned = raw_evaluation.strip()
     if cleaned.startswith("```"):

@@ -133,6 +133,7 @@ Choose the benchmark protocol:
 python run_benchmark.py --topic-id ai_assignments --benchmark-mode single --dry-run
 python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --dry-run
 python run_benchmark.py --topic-id ai_assignments --benchmark-mode permutations --models mistral-large-3-675b-instruct-2512,qwen3-30b-a3b-instruct-2507,gemma-4-31b-it --dry-run
+python run_benchmark.py --topic-id ai_assignments --benchmark-mode same_position --model-a openai:qwen3-30b-a3b-instruct-2507 --models openai:apertus-70b-instruct-2509,openai:meta-llama-3.1-8b-instruct --judge-mode winner_only --dry-run
 ```
 
 Benchmark modes:
@@ -140,6 +141,9 @@ Benchmark modes:
 - `single`: one assignment only, e.g. Model A argues Position A and Model B argues Position B.
 - `paired`: two rounds for each model pair, first original assignment and then reversed positions. This is the default for `--model-a/--model-b`.
 - `permutations`: all ordered model-role pairs from `--models`. This is the default when `--models` is provided.
+- `same_position`: Mode 2 comparison. A fixed opponent from `--model-a` debates candidate 1 and candidate 2 in separate debates, then the judge decides which candidate argued the same target position better. Candidate models come from `--models`.
+
+For `same_position`, candidates argue Position B by default and the fixed opponent argues Position A. Use `--same-position-target position_a` to make candidates argue Position A instead.
 
 Control first/last speaker bias:
 

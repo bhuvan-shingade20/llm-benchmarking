@@ -146,6 +146,7 @@ Judge confidence: `0.85`
 ## Next Evaluation Improvements
 
 - Run each topic across model-role permutations and balanced speaker orders to measure position, model, and recency effects.
+- Compare Mode 1 direct debate judging against Mode 2 same-position judging, where two candidate models argue the same position in separate debates against one fixed opponent.
 - Run a fair reset batch where every selected model gets at least 5-6 valid debates before presenting a final leaderboard.
 - Run `--evaluation-protocol all` on a fixed transcript set and inspect whether the protocol bump chart shows stable or unstable rankings.
 - Inspect length bias and other judging biases before trusting aggregate rankings.
