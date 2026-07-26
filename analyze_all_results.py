@@ -331,7 +331,7 @@ def ranking_from_stats(stats: dict[tuple[str, str], dict[str, Any]]) -> list[dic
 def append_ranking_table(lines: list[str], ranking: list[dict[str, Any]], include_status: bool = False) -> None:
     status_column = " | Status" if include_status else ""
     status_separator = "--------|" if include_status else ""
-    lines.append(f"| Rank | Model | Provider | Debates | Wins | Losses | Ties | Win Rate | Avg Overall | Avg Factfulness | Avg Groundedness | Avg Confidence{status_column} |")
+    lines.append(f"| Rank | Model | Provider | Judge Evaluations | Wins | Losses | Ties | Win Rate | Avg Overall | Avg Factfulness | Avg Groundedness | Avg Confidence{status_column} |")
     lines.append(f"|------|-------|----------|---------|------|--------|------|----------|-------------|-----------------|------------------|----------------|{status_separator}")
     for index, item in enumerate(ranking, start=1):
         status = ""
@@ -346,7 +346,7 @@ def append_ranking_table(lines: list[str], ranking: list[dict[str, Any]], includ
 
 
 def append_group_table(lines: list[str], title: str, name_column: str, groups: dict[str, dict[str, int]]) -> None:
-    lines.extend(["", title, "", f"| {name_column} | Debates | Agent A Wins | Agent B Wins | Ties |", "|---|---:|---:|---:|---:|"])
+    lines.extend(["", title, "", f"| {name_column} | Judge Evaluations | Agent A Wins | Agent B Wins | Ties |", "|---|---:|---:|---:|---:|"])
     for name, item in sorted(groups.items()):
         lines.append(f"| {protocol_label(name)} | {item['debates']} | {item['agent_a_wins']} | {item['agent_b_wins']} | {item['ties']} |")
 
@@ -463,7 +463,7 @@ def build_report(files: list[str], rows: list[dict[str, str]], stats: dict[str, 
         "",
         f"Generated from {len(valid_rows)} valid judge evaluations across {len(files)} benchmark result files.",
         f"Skipped {len(invalid_rows)} rows with judge parse errors, run errors, or missing model fields.",
-        f"Headline ranking requires at least {MIN_DEBATES_FOR_QUALIFIED_RANKING} valid debates per model to avoid tiny-sample leaders.",
+        f"Headline ranking requires at least {MIN_DEBATES_FOR_QUALIFIED_RANKING} valid judge evaluations per model to avoid tiny-sample leaders.",
         f"Evaluation protocol bump chart: `{chart_path}`.",
         "",
         "## Mentor Summary",
@@ -472,7 +472,7 @@ def build_report(files: list[str], rows: list[dict[str, str]], stats: dict[str, 
         "|-------|----------------|",
         "| Four evaluation protocols | Implemented: holistic persuasion, argument quality, evidence/fact-checking, and deliberative quality. Use `--evaluation-protocol all` to judge the same transcript under all four. |",
         "| Protocol comparison graph | Implemented as a bump chart in `results/evaluation_protocol_bump_chart.svg`; x-axis is evaluation protocol, y-axis is model rank. |",
-        "| Better model ranking | Headline ranking now filters out models with fewer than 5 valid debates; low-sample models are listed separately as preliminary. |",
+        "| Better model ranking | Headline ranking now filters out models with fewer than 5 valid judge evaluations; low-sample models are listed separately as preliminary. |",
         "| Judging bias checks | Report now includes position/order bias and a length-bias diagnostic based on transcript word counts. |",
         "| Balanced position/order control | `--speaker-order balanced` remains the default for benchmark runs. |",
         "| Provider diversity | Academic Cloud and Ollama rows are both included; legacy unprefixed rows are labeled as `academic_cloud`. |",
@@ -489,7 +489,7 @@ def build_report(files: list[str], rows: list[dict[str, str]], stats: dict[str, 
         "",
         "## Qualified Model Ranking",
         "",
-        f"Models below {MIN_DEBATES_FOR_QUALIFIED_RANKING} valid debates are excluded from this headline table.",
+        f"Models below {MIN_DEBATES_FOR_QUALIFIED_RANKING} valid judge evaluations are excluded from this headline table.",
         "",
     ])
     append_ranking_table(lines, qualified_ranking)
@@ -498,7 +498,7 @@ def build_report(files: list[str], rows: list[dict[str, str]], stats: dict[str, 
         "",
         "## Preliminary Low-Sample Models",
         "",
-        "These models have promising or poor win rates, but too few debates for a fair leaderboard position.",
+        "These models have promising or poor win rates, but too few judge evaluations for a fair leaderboard position.",
         "",
     ])
     append_ranking_table(lines, preliminary_ranking)
@@ -521,7 +521,7 @@ def build_report(files: list[str], rows: list[dict[str, str]], stats: dict[str, 
     ])
     append_ranking_table(lines, balanced_ranking, include_status=True)
 
-    lines.extend(["", "## Per-Provider Summary", "", "| Provider | Total Debates | Wins | Losses | Ties | Win Rate |", "|----------|---------------|------|--------|------|----------|"])
+    lines.extend(["", "## Per-Provider Summary", "", "| Provider | Total Judge Evaluations | Wins | Losses | Ties | Win Rate |", "|----------|---------------|------|--------|------|----------|"])
     for provider, item in sorted(provider_stats.items()):
         win_rate = item["wins"] / item["debates"] if item["debates"] else 0
         lines.append(f"| {provider} | {item['debates']} | {item['wins']} | {item['losses']} | {item['ties']} | {win_rate:.2f} |")
@@ -545,7 +545,7 @@ def build_report(files: list[str], rows: list[dict[str, str]], stats: dict[str, 
         "",
         "## Position Win Rates",
         "",
-        "| Position | Debates | Wins | Win Rate |",
+        "| Position | Judge Evaluations | Wins | Win Rate |",
         "|----------|---------|------|----------|",
     ])
     for position, item in sorted(stats["position_stats"].items()):
@@ -567,7 +567,7 @@ def build_report(files: list[str], rows: list[dict[str, str]], stats: dict[str, 
         "| Position/order bias | See `Position Win Rates` and `Speaker Order Effects` above | Legacy rows should not drive final conclusions. |",
     ])
 
-    lines.extend(["", "## Per-Topic Summary", "", "| Topic | Debates | Decisive Wins |", "|-------|---------|---------------|"])
+    lines.extend(["", "## Per-Topic Summary", "", "| Topic | Judge Evaluations | Decisive Wins |", "|-------|---------|---------------|"])
     for topic, item in sorted(stats["topic_stats"].items()):
         lines.append(f"| {topic} | {item['debates']} | {item['decisive']} |")
 
@@ -575,17 +575,17 @@ def build_report(files: list[str], rows: list[dict[str, str]], stats: dict[str, 
         "",
         "## Recommended Fair Rerun Plan",
         "",
-        "Use a fixed model pool and enough topics so every model gets at least 5-6 valid debates under balanced order. Example:",
+        "Use a fixed model pool and enough topics so every model gets at least 5-6 valid judge evaluations under balanced order. Example:",
         "",
         "```powershell",
-        "python run_benchmark.py --topic-ids ai_assignments,remote_work,assessment_design --benchmark-mode permutations --models openai:qwen3-30b-a3b-instruct-2507,openai:mistral-large-3-675b-instruct-2512,openai:apertus-70b-instruct-2509,ollama:qwen2.5:3b --judge-model openai:gemma-4-31b-it --judge-mode winner_only --evaluation-protocol all --speaker-order balanced --turns 2 --max-tokens 120 --dry-run",
+        "python run_benchmark.py --topic-ids political_ads,de_extinction_ethics,energy_transition_infrastructure --benchmark-mode permutations --models openai:qwen3-30b-a3b-instruct-2507,openai:glm-4.7,openai:meta-llama-3.1-8b-instruct,ollama:qwen2.5:3b --judge-model openai:gemma-4-31b-it --judge-mode winner_only --evaluation-protocol all --speaker-order balanced --turns 2 --max-tokens 120 --dry-run",
         "```",
         "",
         "Remove `--dry-run` only after checking the planned judge-evaluation count, because protocols multiply judge calls by four.",
         "",
         "## Questions For Mentor",
         "",
-        "1. Should the final leaderboard include only qualified models with at least 5-6 valid debates?",
+        "1. Should the final leaderboard include only qualified models with at least 5-6 valid judge evaluations?",
         "2. Should the paper report the four protocol rankings separately or average them into one meta-ranking?",
         "3. Is the bump chart the right visualization for protocol sensitivity, or should we also add bar charts of win rate by protocol?",
         "4. Should length bias be corrected statistically, or only reported as a diagnostic?",
@@ -615,7 +615,7 @@ def build_report(files: list[str], rows: list[dict[str, str]], stats: dict[str, 
         "| Slow or unstable endpoints | Some Academic Cloud endpoints returned empty/500 responses or timed out | Treat endpoint reliability as a separate experimental observation. |",
         "| Legacy position-order bias | Older rows lack `speaker_order` and default to `a_first (legacy)` | Use balanced speaker-order runs for future conclusions. |",
         "",
-        "## Individual Valid Debates",
+        "## Individual Valid Judge Evaluations",
         "",
         "| Run ID | Topic | Protocol | Speaker Order | Position A Model | Position B Model | Winner | Confidence |",
         "|--------|-------|----------|---------------|------------------|------------------|--------|------------|",

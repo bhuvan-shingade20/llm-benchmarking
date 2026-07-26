@@ -547,10 +547,13 @@ Debate transcript:
 
 Return JSON exactly in this shape:
 {{
-  "winner": "Agent A | Agent B | Tie",
+  "winner": "Agent A",
   "confidence": 0.0,
   "reason": "one short sentence explaining the decision"
 }}
+
+The `winner` value must be exactly one of these three strings: `Agent A`, `Agent B`, or `Tie`.
+Do not copy an option list into the JSON value.
 """.strip()
         raw_evaluation = complete_chat(
             client=client,
@@ -609,7 +612,7 @@ Also provide:
 
 Return JSON exactly in this shape:
 {{
-  "winner": "Agent A | Agent B | Tie",
+  "winner": "Agent A",
   "confidence": 0.0,
   "agent_a": {{
     "argument_quality": 0,
@@ -641,6 +644,9 @@ Return JSON exactly in this shape:
   }},
   "decisive_reasons": ["..."]
 }}
+
+The `winner` value must be exactly one of these three strings: `Agent A`, `Agent B`, or `Tie`.
+Do not copy an option list into the JSON value.
 """.strip()
 
     raw_evaluation = complete_chat(
@@ -706,10 +712,13 @@ Return only valid JSON. Do not wrap it in markdown.
         response_shape = """
 Return JSON exactly in this shape:
 {
-  "winner": "Agent A | Agent B | Tie",
+  "winner": "Agent A",
   "confidence": 0.0,
   "reason": "one short sentence explaining whether Candidate 1 or Candidate 2 argued the target position better"
 }
+
+The `winner` value must be exactly one of these three strings: `Agent A`, `Agent B`, or `Tie`.
+Do not copy an option list into the JSON value.
 """.strip()
         max_tokens = 260
     else:
@@ -728,7 +737,7 @@ Score Candidate 1 as agent_a and Candidate 2 as agent_b from 0 to 10 on these me
 
 Return JSON exactly in this shape:
 {
-  "winner": "Agent A | Agent B | Tie",
+  "winner": "Agent A",
   "confidence": 0.0,
   "agent_a": {
     "argument_quality": 0,
@@ -760,6 +769,9 @@ Return JSON exactly in this shape:
   },
   "decisive_reasons": ["..."]
 }
+
+The `winner` value must be exactly one of these three strings: `Agent A`, `Agent B`, or `Tie`.
+Do not copy an option list into the JSON value.
 """.strip()
         max_tokens = 900
 

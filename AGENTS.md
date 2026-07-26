@@ -15,6 +15,7 @@
 - Saved benchmark cases live in `topics/phase1_topics.json`; each object should have `id`, `question`, `position_a`, and `position_b`.
 - `run_conversation.py` accepts either a custom `--topic` with optional `--position-a/--position-b`, or a saved `--topic-id` from the topics file.
 - `run_benchmark.py` reads `topics/phase1_topics.json` by default; use `--topic-id` or comma-separated `--topic-ids` for focused runs.
+- For future paper experiments, do not use `ai_assignments`; prefer harder non-AI topics such as `political_ads`, `de_extinction_ethics`, `energy_transition_infrastructure`, `criminal_justice_framework`, `cultural_repatriation`, and `economic_safety_net`.
 - Batch runs support `--benchmark-mode single|paired|permutations|same_position`; default is `paired` for `--model-a/--model-b` and `permutations` when `--models` is provided.
 - Mentor Mode 1 is `single`, `paired`, or `permutations`: one transcript is judged and the judge chooses whether Agent A or Agent B argued better.
 - Mentor Mode 2 is `same_position`: `--model-a` is the fixed opponent, candidate models from `--models` argue the same target position in separate debates, and the judge compares which candidate argued that same position better.
@@ -30,17 +31,18 @@
 
 ## Outputs
 - Transcripts are written to `results/conversations/`; benchmark CSV/JSON and analysis files are written to `results/`.
+- For every future experiment, create a dated descriptive folder such as `results/YYYY-MM-DD_experiment_name/`, copy that experiment's CSV/JSON outputs into it, and write all folder-specific reports/graphs there with `analyze_all_results.py --input-glob "results/YYYY-MM-DD_experiment_name/*_results.csv" --output-dir "results/YYYY-MM-DD_experiment_name" --output-prefix "experiment_name"`.
 - Generated `results/**/*.json`, `results/**/*.csv`, and `results/**/*.md` are ignored; only `.gitkeep` placeholders should be tracked there.
 - `analyze_results.py` reads the newest `results/*_results.csv` or `results/*_results.json` when `--input` is omitted.
 - `analyze_all_results.py` aggregates all `results/*_results.csv` files into `results/model_ranking_all_runs.md`, `results/all_model_rankings.md`, and `results/evaluation_protocol_bump_chart.svg`; legacy rows without provider columns should be treated as Academic Cloud/SAIA.
 - The all-runs report uses a qualified headline ranking requiring at least 5 valid debates per model, with low-sample models moved to a preliminary table.
 
 ## Focused Verification
-- Validate topic loading and planned benchmark runs without API calls: `python run_benchmark.py --topic-ids ai_assignments,remote_work --start-styles neutral,evidence --speaker-order balanced --dry-run`.
-- Validate mixed local/cloud planning: `python run_benchmark.py --topic-id ai_assignments --benchmark-mode single --model-a ollama:llama3.2:3b --model-b openai:qwen3-30b-a3b-instruct-2507 --judge-model openai:gemma-4-31b-it --judge-mode winner_only --dry-run`.
-- Validate protocol comparison planning: `python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --judge-mode winner_only --evaluation-protocol all --speaker-order balanced --dry-run`.
-- Validate same-position Mode 2 planning: `python run_benchmark.py --topic-id ai_assignments --benchmark-mode same_position --model-a openai:qwen3-30b-a3b-instruct-2507 --models openai:apertus-70b-instruct-2509,openai:meta-llama-3.1-8b-instruct --judge-mode winner_only --dry-run`.
-- Cheap real API smoke test: `python run_benchmark.py --topic-id ai_assignments --start-styles evidence --no-side-swap --turns 2 --max-tokens 120`.
+- Validate topic loading and planned benchmark runs without API calls: `python run_benchmark.py --topic-ids political_ads,de_extinction_ethics --start-styles neutral,evidence --speaker-order balanced --dry-run`.
+- Validate mixed local/cloud planning: `python run_benchmark.py --topic-id political_ads --benchmark-mode single --model-a ollama:llama3.2:3b --model-b openai:qwen3-30b-a3b-instruct-2507 --judge-model openai:gemma-4-31b-it --judge-mode winner_only --dry-run`.
+- Validate protocol comparison planning: `python run_benchmark.py --topic-id de_extinction_ethics --benchmark-mode paired --judge-mode winner_only --evaluation-protocol all --speaker-order balanced --dry-run`.
+- Validate same-position Mode 2 planning: `python run_benchmark.py --topic-id energy_transition_infrastructure --benchmark-mode same_position --model-a openai:qwen3-30b-a3b-instruct-2507 --models openai:apertus-70b-instruct-2509,openai:meta-llama-3.1-8b-instruct --judge-mode winner_only --dry-run`.
+- Cheap real API smoke test: `python run_benchmark.py --topic-id political_ads --start-styles evidence --no-side-swap --turns 2 --max-tokens 120`.
 - Verify aggregate analysis on an existing result: `python analyze_results.py --input results\<run_id>_benchmark_results.csv`.
 
 ## Coupled Changes
