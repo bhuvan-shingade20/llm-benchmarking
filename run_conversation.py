@@ -697,6 +697,8 @@ def judge_same_position_comparison(
     protocol = EVALUATION_PROTOCOLS[evaluation_protocol]
     target_position = case.position_a if candidate_position == "position_a" else case.position_b
     opposing_position = case.position_b if candidate_position == "position_a" else case.position_a
+    candidate_transcript_role = "Agent A" if candidate_position == "position_a" else "Agent B"
+    opponent_transcript_role = "Agent B" if candidate_position == "position_a" else "Agent A"
     candidate_1_text = transcript_debate_text(candidate_1_transcript)
     candidate_2_text = transcript_debate_text(candidate_2_transcript)
 
@@ -717,6 +719,7 @@ Return JSON exactly in this shape:
   "reason": "one short sentence explaining whether Candidate 1 or Candidate 2 argued the target position better"
 }
 
+For the JSON winner only, `Agent A` means Candidate 1 and `Agent B` means Candidate 2.
 The `winner` value must be exactly one of these three strings: `Agent A`, `Agent B`, or `Tie`.
 Do not copy an option list into the JSON value.
 """.strip()
@@ -770,6 +773,7 @@ Return JSON exactly in this shape:
   "decisive_reasons": ["..."]
 }
 
+For the JSON winner only, `Agent A` means Candidate 1 and `Agent B` means Candidate 2.
 The `winner` value must be exactly one of these three strings: `Agent A`, `Agent B`, or `Tie`.
 Do not copy an option list into the JSON value.
 """.strip()
@@ -784,11 +788,15 @@ Evaluation protocol: {protocol['name']}
 Protocol description: {protocol['description']}
 Protocol focus: {protocol['focus']}
 
-Candidate 1 is Agent A for this comparison: {candidate_1_label}
+In each debate transcript, the candidate arguing the target position appears as transcript {candidate_transcript_role}.
+The fixed opponent appears as transcript {opponent_transcript_role}.
+Do not confuse transcript speaker labels with the JSON winner labels.
+
+Candidate 1 comparison label is Agent A: {candidate_1_label}
 Candidate 1 debate transcript:
 {candidate_1_text}
 
-Candidate 2 is Agent B for this comparison: {candidate_2_label}
+Candidate 2 comparison label is Agent B: {candidate_2_label}
 Candidate 2 debate transcript:
 {candidate_2_text}
 

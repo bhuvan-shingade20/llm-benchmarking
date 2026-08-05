@@ -300,6 +300,8 @@ def collect_stats(rows: list[dict[str, str]]) -> dict[str, Any]:
         "topic_stats": topic_stats,
         "run_stats": run_stats,
         "length_bias": length_bias,
+        "has_same_position": any(row.get("benchmark_mode") == "same_position" for row in valid_rows),
+        "all_same_position": bool(valid_rows) and all(row.get("benchmark_mode") == "same_position" for row in valid_rows),
     }
 
 
@@ -545,6 +547,13 @@ def build_report(files: list[str], rows: list[dict[str, str]], stats: dict[str, 
         "",
         "## Position Win Rates",
         "",
+    ])
+    if stats.get("has_same_position"):
+        lines.extend([
+            "Note: in `same_position` rows, `Position A` and `Position B` are candidate comparison labels, not the original debate sides.",
+            "",
+        ])
+    lines.extend([
         "| Position | Judge Evaluations | Wins | Win Rate |",
         "|----------|---------|------|----------|",
     ])
@@ -557,6 +566,18 @@ def build_report(files: list[str], rows: list[dict[str, str]], stats: dict[str, 
         "",
         "## Judging Bias Diagnostics",
         "",
+    ])
+    if stats.get("all_same_position"):
+        lines.extend([
+            "Note: this report contains only `same_position` rows, so role/position and transcript-length diagnostics describe candidate comparison labels rather than original debate-side behavior.",
+            "",
+        ])
+    elif stats.get("has_same_position"):
+        lines.extend([
+            "Note: this report mixes regular debate rows and `same_position` rows, so interpret role/position and length diagnostics cautiously.",
+            "",
+        ])
+    lines.extend([
         "| Bias Check | Result | Interpretation |",
         "|------------|--------|----------------|",
         f"| Length bias | Longer agent won {length_bias['longer_won']} / {length_bias['comparable']} comparable rows ({fmt(longer_win_rate)}) | Values well above 0.50 suggest judges may reward verbosity. |",

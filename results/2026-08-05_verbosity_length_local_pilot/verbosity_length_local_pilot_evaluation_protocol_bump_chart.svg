@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="260" viewBox="0 0 920 260">
+  <rect width="920" height="260" fill="#f4f5f0"/>
+  <text x="30" y="55" font-family="Arial" font-size="22" font-weight="700">Evaluation Protocol Bump Chart</text>
+  <text x="30" y="95" font-family="Arial" font-size="15">Run `--evaluation-protocol all` to compare model rankings across the four protocols.</text>
+</svg>
