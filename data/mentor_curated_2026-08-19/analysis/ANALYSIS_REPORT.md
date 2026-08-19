@@ -6,7 +6,7 @@ This analysis follows the experiment structure specified by Gerrit: Dataset I co
 
 The raw dataset contains 240 four-round debates over 10 topics and four models. The different-position file contains 240 transcript-level judgement rows and 720 judge evaluations. The same-position file contains 480 rows and 1,440 judge evaluations, but these correspond to 240 substantive comparison conditions, each presented twice with Candidate 1 and Candidate 2 reversed. Model-performance estimates therefore use the balanced presentations, while order-stability calculations explicitly pair the two presentations.
 
-## Coverage of Gerrit's requested experiments
+## Coverage of requested experiments
 
 | Requested analysis | Status from these files |
 | --- | --- |
