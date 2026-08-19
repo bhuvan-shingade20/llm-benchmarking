@@ -125,3 +125,9 @@ The files were checked for:
 - No duplicate same-position comparison keys.
 
 All checks passed on 2026-08-19.
+
+## Reproducible Analysis
+
+The initial paper-oriented analysis is in [`analysis/ANALYSIS_REPORT.md`](analysis/ANALYSIS_REPORT.md).
+
+The analysis treats the 480 same-position rows as 240 substantive comparison conditions with two candidate-order presentations. This distinction is required when interpreting effective sample size and candidate-order sensitivity.
