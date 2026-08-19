@@ -269,8 +269,3 @@ Judge confidence is self-reported and uses different value distributions across 
 - Topic-level intervals cover transcript variation in this dataset only. With ten deliberately selected topics, they do not establish population-wide effects.
 - Confidence values are not calibrated across judge models.
 
-## Clarifications to request before final paper claims
-
-1. Should zero-confidence non-tie judgments be treated as valid low-confidence decisions, or as malformed confidence outputs to be re-judged?
-2. For the final paper, should the primary ranking collapse each Candidate 1/2 reversal pair into one comparison unit, or retain both order-balanced presentations while clustering uncertainty by pair? This analysis uses the latter and states the 240-unit effective structure.
-3. Does Gerrit want ideological positions pre-annotated by the research team, or should that experiment remain outside the current paper until an annotation protocol is agreed?
