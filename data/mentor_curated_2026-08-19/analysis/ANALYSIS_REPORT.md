@@ -8,16 +8,16 @@ The validated design contains 240 four-round debates: 10 topics x 6 unordered mo
 
 ## Experiment 1: Same-Position Versus Different-Position Ranking
 
-The clearest comparison is the aggregate model ranking under the two evaluation modes. Models are ranked by tie-adjusted win rate, `(wins + 0.5 x ties) / evaluations`, after pooling the three cloud judges. Rank 1 is best.
+Models are ranked by tie-adjusted win rate, `(wins + 0.5 x ties) / evaluations`, separately for each judge and mode. The final two columns are arithmetic mean ranks across the three cloud judges. Rank 1 is best; D and S denote different-position and same-position evaluation.
 
-| Model | Different-position rank | Same-position rank | Absolute change |
-| --- | --- | --- | --- |
-| meta-llama-3.1-8b-instruct | 1 | 4 | 3 |
-| qwen3-30b-a3b-instruct-2507 | 2 | 2 | 0 |
-| gemma-4-31b-it | 3 | 1 | 2 |
-| apertus-70b-instruct-2509 | 4 | 3 | 1 |
+| Model | Gemma D | Gemma S | Qwen D | Qwen S | GLM D | GLM S | Mean D | Mean S |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| apertus-70b-instruct-2509 | 4 | 3 | 1 | 1 | 4 | 3 | 3.00 | 2.33 |
+| gemma-4-31b-it | 3 | 1 | 2 | 3 | 2 | 1 | 2.33 | 1.67 |
+| meta-llama-3.1-8b-instruct | 1 | 4 | 4 | 4 | 1 | 4 | 2.00 | 4.00 |
+| qwen3-30b-a3b-instruct-2507 | 2 | 2 | 3 | 2 | 3 | 2 | 2.67 | 2.00 |
 
-The mean absolute rank change across the four models is 1.5 places. Meta-Llama changes most, moving from rank 1 under different-position evaluation to rank 4 under same-position evaluation. Gemma moves from rank 3 to rank 1, Qwen remains rank 2, and Apertus moves from rank 4 to rank 3. This rank table is more interpretable than a correlation computed from only four models and should be the primary Experiment 1 result.
+Pooling the underlying judge evaluations gives a mean absolute rank change of 1.5 places. Meta-Llama changes most, moving from rank 1 under different-position evaluation to rank 4 under same-position evaluation. Gemma moves from rank 3 to rank 1, Qwen remains rank 2, and Apertus moves from rank 4 to rank 3. This rank table is more interpretable than a correlation computed from only four models and should be the primary Experiment 1 result.
 
 Ties are uneven across modes: 164 of 720 different-position evaluations (22.8%) and 4 of 1,440 same-position evaluations (0.3%). The ranking uses a fixed half-win treatment for ties, but the difference in tie frequency must be reported because it can affect cross-mode comparisons. These are LLM-judge rankings, not human-validated persuasion rankings.
 
@@ -54,14 +54,14 @@ This is observational: length is chosen by the debating model and may correlate 
 
 ### Judge self-preference
 
-The two judges that also appear as debaters are summarized across both modes. A self-win means that the judge selected its own model as better than the competing model; ties are not counted as self-wins.
+For every row involving judge-model X, the self-selection indicator is compared with judgments from models that are not participants in that debate. When two uninvolved judges are available, their binary selections are averaged so every debate receives equal weight. Ties count as non-selections.
 
-| Model acting as judge | Comparisons involving itself | Selected itself | Self-win rate |
-| --- | --- | --- | --- |
-| gemma-4-31b-it | 360 | 217 | 60.3% |
-| qwen3-30b-a3b-instruct-2507 | 360 | 188 | 52.2% |
+| Model acting as judge | Relevant rows | Self-selection rate | Uninvolved-judge baseline | Difference |
+| --- | ---: | ---: | ---: | ---: |
+| gemma-4-31b-it | 360 | 60.3% | 63.2% | -2.9 pp |
+| qwen3-30b-a3b-instruct-2507 | 360 | 52.2% | 65.4% | -13.2 pp |
 
-This descriptive rate mixes possible self-preference with each judge's stable evaluation criteria. It is a diagnostic, not a causal estimate of self-bias.
+The pooled data therefore do not show positive self-preference under Gerrit's proposed diagnostic. This remains descriptive because the judges may apply systematically different evaluation criteria.
 
 ### Ideological preference
 
@@ -85,15 +85,15 @@ Energy infrastructure is the strongest current numerical asymmetry: Position B w
 1. The primary Experiment 1 result is a direct rank comparison: Meta-Llama falls from first to fourth, Gemma rises from third to first, Qwen remains second, and Apertus rises from fourth to third. The mean absolute movement is 1.5 rank places.
 2. Position, speaking order, and candidate order belong under Experiment 2. Their effects vary substantially across judge models.
 3. Pooled verbosity summaries show the observed word counts of winners and losers, but cannot establish an independent length preference.
-4. Gemma selects itself in 217 of 360 relevant evaluations (60.3%); Qwen does so in 188 of 360 (52.2%).
+4. Gemma and Qwen select themselves less often than uninvolved judges select them on the same debate subsets: -2.9 pp and -13.2 pp, respectively.
 5. The current strongest position-difficulty example is energy infrastructure. A deliberately extreme moral-control topic remains to be generated.
 
 ## Recorded Follow-Ups
 
 These items are recorded for later iterations; they are not required before the first paper revision.
 
-- Consider a forced-choice re-judging pass to remove ties, while preserving the original judgments and documenting the changed protocol.
-- Add one or more pre-specified, strongly asymmetric control topics. Gerrit should confirm the exact wording before generation.
+- [ ] Re-judge tied outcomes with a forced-choice, no-tie protocol while preserving the original judgments and documenting the protocol change.
+- [ ] Add pre-specified easy control debates with one clearly more reasonable position, including an extreme moral case only after Gerrit approves the exact wording.
 - Run controlled matched-length or shortened-argument comparisons before making a causal verbosity claim.
 - Add controlled style variants and ideological annotations only if those analyses remain in the final paper scope.
 
