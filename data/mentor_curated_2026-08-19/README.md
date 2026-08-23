@@ -2,7 +2,7 @@
 
 Date: 2026-08-19
 
-This folder contains the cleaned CSV files generated for the mentor-reviewed benchmark schema. The files are intended to separate raw debate generation from later judging and analysis.
+This folder contains the cleaned CSV files generated under the validated benchmark schema. The files separate raw debate generation from subsequent judging and analysis.
 
 ## Dataset I: Debate Generation
 
