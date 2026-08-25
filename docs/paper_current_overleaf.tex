@@ -39,7 +39,6 @@
 % - Use a comma after "e.g." and "i.e." (e.g., blah blah blah; i.e., blah blah blah).
 % - Use title case for paragraph, section, and subsection titles. See: https://capitalizemytitle.com/
 % - End paragraph titles with a period.
-% - Use LaTeX comments or TODO notes for comments and open issues in the text.
 % - Use \citep{} for "[Xu et al., 2026]" and \citet{} for "Xu et al. [2026]".
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -50,7 +49,7 @@
 \title{What Shapes the Verdict?\\Peculiarities of LLM-Based Persuasion Evaluation}
 
 \author{
-  Bhuvan Bhuvan Shingade\\
+  Bhuvan Shingade\\
   RPTU Kaiserslautern-Landau\\
   \texttt{bhuvan.shingade@edu.rptu.de}
   \And
@@ -82,7 +81,11 @@ LLMs can produce fluent, adaptive arguments in multi-turn settings. This makes t
 
 Because human evaluation is expensive, LLM judges are often used as scalable evaluators. Strong LLM judges can approximate human preferences in some pairwise comparison tasks \citep{zheng2023judge}. However, they are not neutral measurement devices. Prior work reports position bias, verbosity bias, self-preference, and other evaluator artifacts \citep{wang2024faireval,shi2024positionbias,panickssery2024selfpreference,chen2024judgementbias}. These issues are especially important for persuasion, where side framing, length, and rhetorical style may change the verdict.
 
-This paper reports a small controlled benchmark for studying these effects. The goal is not a final leaderboard. Instead, we ask which design choices shape the outcome of LLM-judged persuasive debates. Our current evidence supports three claims. First, stronger cloud judging improves parseability and reduces some local-judge artifacts. Second, rankings change substantially between different-position and same-position comparison, even when both target positions are covered. Third, position, speaking order, and candidate presentation order remain consequential enough that aggregate win rates are unsafe without controls.
+We introduce a controlled benchmark that asks which design choices shape
+LLM-judged persuasive debates rather than treating the outcome as a final
+leaderboard. Rankings change between different-position and same-position
+comparison, and judge identity, position, speaking order, and candidate order
+remain consequential enough that aggregate win rates require explicit controls.
 
 
 \section{Data Generation}
@@ -90,127 +93,75 @@ This paper reports a small controlled benchmark for studying these effects. The 
 
 \subsection{Setup}
 
-We use $X=10$ debate topics and $Y=4$ debating models: Apertus-70B, Llama-3.1-8B, Qwen-30B, and Gemma-31B. Each topic specifies two symmetric alternatives, denoted \emph{Position A} and \emph{Position B}. Each debate contains eight alternating messages, corresponding to four turns per model. The assigned starting model produces the first message and the other model produces the final message. Responses are limited to 220 tokens per message.
+We use $X=10$ topics and $Y=4$ debating models: Apertus-70B,
+Llama-3.1-8B, Qwen-30B, and Gemma-31B. Each topic defines symmetric
+\emph{Position A} and \emph{Position B} alternatives. A debate contains eight
+alternating messages, four per model, limited to 220 tokens each.
 
 \subsection{Debate Generation}
-For every topic and unordered pair of models, we generate four debates: both possible position assignments (which model defends Position A) crossed with both possible speaking orders (Position A or Position B starts). With $X$ topics and $Y$ models, there are $\binom{Y}{2}=Y(Y-1)/2$ unique model pairs. The total number of debates is therefore
-\[
-N
-= X \cdot \binom{Y}{2} \cdot 2 \cdot 2
-= X \cdot \frac{Y(Y-1)}{2} \cdot 4.
-\]
-For $X=10$ topics and $Y=4$ models, this gives $N=10\cdot6\cdot4=240$ debates.
-
-
-Failed generations are repeated until one valid debate is obtained for every
-condition. Model identities, position assignments, and speaking order are
-recorded separately. This distinction is important because model slots are
-experimental units, whereas Position~A and Position~B are the two substantive
-alternatives being defended.
+For every topic and unordered model pair, we cross both position assignments
+with both speaking orders. The design therefore contains
+$N=X\binom{Y}{2}\cdot4=10\cdot6\cdot4=240$ debates. Failed generations are
+repeated until every condition has one valid transcript. Model identity,
+position, and order are recorded separately so model slots are not confused
+with the substantive alternatives.
 
 \subsection{Judgment Generation}
 
-We evaluate the generated debates using three independent judge models:
-Gemma-4-31B-IT, Qwen3-30B-A3B-Instruct-2507, and GLM-4.7. Each judge returns a
-winner and a self-reported confidence value. We consider two evaluation modes
-and pool the three judges unless a result is explicitly judge-specific.
+Three judges evaluate the debates: Gemma-4-31B-IT,
+Qwen3-30B-A3B-Instruct-2507, and GLM-4.7. Each returns a winner and
+self-reported confidence. We pool judges unless reporting judge-specific results.
 
 \paragraph{Mode 1: Different-Position Evaluation.}
-Each judge receives a single debate transcript and selects which of the two
-models argued its assigned position better. This mode resembles an ordinary
-debate verdict, but model quality can be confounded with how easy the assigned
-position is to defend. Evaluating all 240 debates with three judges yields 720
-individual judgments.
-
-The current export additionally stores the winning position and self-reported
-confidence for each judge. These fields are retained as diagnostics; the
-primary ranking uses only the winner fields.
+Each judge selects which model argued its assigned position better in one
+transcript. This resembles an ordinary debate verdict, but confounds model
+quality with position difficulty. The mode yields $240\cdot3=720$ judgments.
 
 
 \paragraph{Mode 2: Same-Position Evaluation.}
-To reduce confounding by position difficulty, we construct matched comparisons.
-For each topic, unordered model pair
-$\{M_i,M_j\}$, tested position $p\in\{A,B\}$, and candidate-speaking condition,
-we identify two role-swapped debates
-\[
-(M_i[p] \text{ vs. } M_j)
-\qquad\text{and}\qquad
-(M_j[p] \text{ vs. } M_i),
-\]
-where each candidate defends $p$ in its respective debate and either starts in
-both debates or does not start in both. Each judge receives both transcripts and
-selects which candidate defended the tested position better. Every underlying
-comparison is presented twice with the candidate order reversed.
-
-This mode asks a narrower question than an ordinary debate verdict: which model
-made the stronger case for the same proposition? Holding the defended position
-and candidate-speaking condition fixed makes the comparison more directly
-interpretable as relative argument quality. All judge models evaluate every
-presentation.
-
-With $X = 10$ topics and $Y = 4$ models, this gives
-\[
-  N_{\mathrm{same}}
-  = 10 \cdot \binom{4}{2} \cdot 2 \cdot 2 \cdot 2
-  = 480
-\]
-presentations. The factors are 10 topics, six unordered model pairs, two tested
-positions, two candidate-speaking conditions, and two candidate orders. Thus,
-the design represents 240 underlying comparisons and 480 order-balanced
-presentations. Three judges produce $480\cdot3=1440$ individual judgments.
+To reduce position confounding, we match role-swapped debates in which each
+candidate defends the same position and either starts in both transcripts or
+does not start in both. Judges select which candidate made the stronger case for
+that proposition. Each underlying comparison is shown in both candidate orders.
+The resulting $10\binom{4}{2}\cdot2\cdot2\cdot2=480$ presentations represent
+240 matched comparisons and yield $480\cdot3=1{,}440$ judgments.
 
 
 \subsection{Protocol and Prompting Details}
 
 \paragraph{Debate Protocol.}
 
-For the analyzed run, each model receives the question, both position texts, and
-a system instruction assigning exactly one position. The instruction requires
-the model to maintain that position, address the opponent's strongest recent
-point, and use concrete mechanisms, trade-offs, examples, or failure modes. It
-also prohibits references to judges, benchmarks, prompts, or model identities
-and discourages unsupported citations and numerical claims. The assigned
-speaking order determines the first model; the models then produce
-eight alternating messages, four per model. Generation uses a maximum of 220
-tokens per message and temperature 0.75 through an OpenAI-compatible cloud API.
-The question and symmetric position descriptions serve as the initial
-instruction, but are not stored as a moderator turn in the transcript.
+Each model receives the question, both position texts, and one assigned
+position. It must maintain that position, answer the opponent's strongest recent
+point, and use concrete mechanisms, trade-offs, examples, or failure modes.
+References to judges, prompts, benchmarks, and model identities are prohibited.
+Generation uses temperature 0.75 and a 220-token limit per message through an
+OpenAI-compatible cloud API.
 
 \paragraph{Judging Protocol.}
-Different-position judges receive one transcript, the two position texts, the
-position assignment, and the starting model. They are instructed to evaluate
-argument quality, responsiveness, factual discipline, and persuasive clarity,
-while ignoring their own policy preference. Same-position judges receive two
-transcripts and are instructed to compare only the candidates defending the
-specified common position. Candidate order is balanced by presenting every
-underlying comparison in both orders. In both modes, ties are allowed and the
-judge returns only a model identifier (or \texttt{Tie}) and confidence in
-$[0,1]$ as JSON. Judge calls use temperature 0.1 and a 220-token output limit.
-The judges do not use external retrieval, so factual discipline is assessed
-from the supplied topic and transcripts rather than independent fact checking.
+Judges score argument quality, responsiveness, factual discipline, and
+persuasive clarity while ignoring personal policy preference. Same-position
+judges compare only the two candidates defending the specified proposition.
+Ties are allowed; output is JSON containing a model identifier (or
+\texttt{Tie}) and confidence in $[0,1]$. Calls use temperature 0.1 and a
+220-token limit. Without retrieval, factual discipline is assessed only from
+the supplied topic and transcripts.
 
 \paragraph{Generation and Parsing Controls.}
-API failures during generation and judging are retried, and judge responses are
-parsed from structured JSON. Completed judgments are written incrementally so
-interrupted runs can resume without replacing valid observations. The data were then
-checked for balanced factorial coverage, valid debate references, alternating
-speaker order, admissible winner labels, and confidence values in $[0,1]$.
+API failures are retried and valid JSON judgments are stored incrementally. We
+verify factorial coverage, debate references, alternating turns, winner labels,
+and confidence values.
 
 
 \section{Experimental Analysis}
 
 \subsection{Experiment 1: Evaluation Design and Judge Agreement}
 
-We first ask whether a model ranking is a stable property of the models or a
-consequence of how persuasion is operationalized. Different-position evaluation
-measures success in complete debates, where argument quality, position
-difficulty, and interaction dynamics jointly determine the verdict.
-Same-position evaluation instead compares two models defending the same
-proposition under a matched speaking condition. If the two modes measure the
-same underlying capability, their rankings should be similar; large rank changes
-indicate that the benchmark conclusion depends on the evaluation construct. We
-therefore report rankings separately for every judge and mode and then average
-ranks across judges.
+We ask whether rankings are stable across evaluation constructs.
+Different-position verdicts combine argument quality, position difficulty, and
+interaction dynamics; same-position comparisons hold the proposition and
+speaking condition fixed. We report ranks by judge and mode, then average ranks
+across judges.
 
 \paragraph{Results.}
 Table~\ref{tab:current-mode-ranks} gives the primary comparison for
@@ -218,15 +169,14 @@ this experiment. Within each judge and mode, models are ranked using the
 tie-adjusted score $(\mathrm{wins}+0.5\,\mathrm{ties})/\mathrm{evaluations}$.
 The final two columns average each model's rank across the three judges. When
 the underlying evaluations are pooled instead, the mean absolute change
-between modes is 1.5 rank positions.
+between modes is 1.5 rank positions. Rank 1 is best.
 
 \begin{table}[t]
   \centering
   \footnotesize
   \setlength{\tabcolsep}{3pt}
-  \caption{\textbf{Exp.~1 -- Evaluation Design:} Model ranks under
-  different-position (D) and same-position (S) evaluation, separately for each
-  judge and averaged across judges. Rank 1 is best.}
+  \caption{\textbf{Exp.~1 -- Model Ranking:} Per-judge ranks by evaluation
+  mode (D: different-position; S: same-position).}
   \label{tab:current-mode-ranks}
   \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}Xcccccccc@{}}
     \toprule
@@ -257,7 +207,7 @@ by different debates. High agreement would support treating judges as
 interchangeable evaluators; low agreement implies that a reported ranking is
 partly judge-specific.
 
-\paragraph{Current Agreement.}
+\paragraph{Judge Agreement.}
 All three judges give the same winner in 21 of 240 different-position rows
 (8.8\%) and 254 of 480 same-position rows (52.9\%). In the
 different-position mode, 48 rows have three distinct verdicts and therefore no
@@ -265,19 +215,22 @@ majority winner; every same-position row has a majority. This is descriptive
 agreement among the three current cloud judges, not agreement with human
 persuasion judgments.
 
+\begin{comment}
 \paragraph{Debater Confidence.}
 Rate the confidence of each model in each debate and score it. Then see how well the judgment (who wins) is correlated with who sounded more confident.
 The current data do not contain a validated measure of how confident each
 debater sounds, so this relationship is not estimated here.
 
-\paragraph{Current Confidence Diagnostic.}
+\paragraph{Confidence Diagnostic.}
 The existing confidence fields measure judge confidence, not how confident the
 debaters sounded, and therefore cannot answer the proposed correlation. Mean
 judge confidence in different-position evaluation is 0.838 for Gemma, 0.709
 for GLM, and 0.910 for Qwen; in same-position evaluation it is 0.967, 0.730,
 and 0.948, respectively. Without a human or otherwise validated correctness
 label, these values describe judge certainty but do not establish calibration.
+\end{comment}
 
+\begin{comment}
 \paragraph{Repeated-Judgment Stability.}
 This analysis requires additional judgments but no new debates. We re-evaluate
 all $N=240$ transcripts five times with each judge using the same judging prompt.
@@ -292,7 +245,9 @@ reversals for Gemma (79.2\%), 91 for Qwen (37.9\%), and 166 for GLM (69.2\%).
 Because the manipulation changes candidate presentation order, this result is
 reported as an order effect in Experiment~2 rather than as stochastic
 repeatability.
+\end{comment}
 
+\begin{comment}
 \paragraph{Sensitivity to Style.}
 This analysis requires an additional perturbed version of the debate transcripts.
 For each transcript, we generate one style-normalized version that preserves the
@@ -305,6 +260,7 @@ No controlled style-normalized or paraphrased transcript variants are present
 in the curated files. Natural style differences are confounded with model
 identity and argument content, so style sensitivity cannot be estimated from
 the current data without the proposed perturbation experiment.
+\end{comment}
 
 \paragraph{Prompt-Phrasing Sensitivity.}
 Judge instructions are part of the measurement instrument: semantically similar
@@ -330,7 +286,7 @@ of decisive judgments won by each position and by the starting speaker. Because
 the starter also forfeits the final turn, the latter quantity measures the joint
 effect of opening rather than closing; it is not a pure recency estimate.
 
-\paragraph{Current Results.}
+\paragraph{Results.}
 Across the 720 different-position judge evaluations, Position~A wins 303,
 Position~B wins 253, and 164 are ties. Table~\ref{tab:current-position-order}
 reports shares among decisive verdicts. Since the non-starting model also gives
@@ -394,11 +350,10 @@ reasoning, rewarding output length even when substantive quality is unchanged.
 For each decisive judgment, we compare the total word count produced by the
 selected model with that of the non-selected model. A larger mean among winners
 is the expected observational signature of verbosity preference, but it is not
-causal: stronger models or arguments may also be longer. A controlled follow-up
-will shorten the longer argument to match its opponent for 100 pre-sampled
-debates and re-run the judgments.
+causal: stronger models or arguments may also be longer. A causal test requires
+paired variants that preserve argument content while equalizing length.
 
-\paragraph{Current Results.}
+\paragraph{Results.}
 Table~\ref{tab:current-verbosity} pools both evaluation modes and reports one
 row per judge. Values are word counts rather than tokenizer-
 specific token counts, and variances are sample variances in squared words.
@@ -436,7 +391,7 @@ same comparison. Using identical cases holds debate difficulty fixed, while
 excluding both participants prevents the reference group from containing a
 second self-judgment.
 
-\paragraph{Current Results.}
+\paragraph{Results.}
 For every row involving judge-model $X$, we compare $X$'s self-selection with
 the judgments of models that are not participants in that debate. When two
 uninvolved judges are available, their binary selections are averaged so every
@@ -448,6 +403,7 @@ are $-2.9$ and $-13.2$ percentage points, respectively, so the pooled data do
 not show positive self-preference under this diagnostic. These comparisons
 remain descriptive because judge-specific evaluation criteria can differ.
 
+\begin{comment}
 \paragraph{Ideological Preference.}
 This analysis requires an additional annotation of the debate positions. We select the politically relevant topics and ask three independent annotator models to classify Position A and Position B on a five-point scale from strongly liberal to strongly conservative. The majority annotation is used as the position label. We then compare, for each judge, the probability that the liberal or conservative position wins. Because each model argues both sides and both speaking orders, these effects can be estimated while controlling for debater identity and speaking order.
 
@@ -456,6 +412,7 @@ The present topics do not have validated ideological annotations. The current
 data support judge-specific position preferences, but not a defensible claim
 about ideological preference. We therefore do not estimate this effect until an
 annotation protocol is fixed.
+\end{comment}
 
 
 
@@ -471,7 +428,7 @@ makes this statistic less dependent on a particular debater, although judge
 preferences and generation variation still prevent a causal or human-validated
 interpretation.
 
-\paragraph{Current Results.}
+\paragraph{Results.}
 Table~\ref{tab:current-position-difficulty} shows the four largest observed
 departures from an even split. Counts pool the three judges and are descriptive
 rather than human-validated measures of intrinsic position difficulty.
@@ -505,9 +462,11 @@ selection criteria are pre-specified.
 
 
 
-\subsection{(Optional) Experiment 4: Comparison with Human Debate Judgments}
+\begin{comment}
+\subsection{Experiment 4: Comparison with Human Debate Judgments}
 
 As an external validation, we use the Debate.org (DDO) dataset (\url{https://esdurmus.github.io/ddo.html}), which contains human-written debates in which other human users voted on the winning side. More specifically, we use the cleaned subset introduced by Rescala et al.\ (EMNLP 2024) for studying whether LLMs can recognize convincing arguments. This subset contains 833 political debates with clear Pro/Con positions and retains the human votes indicating the winner. We apply the same LLM judges used in our experiments to these debate transcripts, without revealing the human votes, and compare their verdicts with the human majority winner. We report LLM--human agreement, inter-LLM agreement, and additionally test whether position, verbosity, and ideological biases observed in our generated debates also occur when judging human debates.
+\end{comment}
 
 
 
@@ -540,12 +499,33 @@ Debate has been proposed as a mechanism for eliciting useful information from co
 \citet{zheng2023judge} introduce MT-Bench and Chatbot Arena and show that strong LLM judges can be useful for pairwise model comparison. Subsequent work highlights systematic limitations. \citet{wang2024faireval} study unfairness in LLM evaluation and propose position calibration. \citet{shi2024positionbias} analyze position bias across judges and tasks. \citet{panickssery2024selfpreference} show that LLM evaluators can favor their own generations, while \citet{chen2024judgementbias} compare human and LLM judging biases. These results motivate our controls for judge identity, role assignment, speaker order, and output parsing.
 
 \section{Conclusions and Future Work}
-The current study shows that rankings from LLM-judged debates depend on both the
-comparison protocol and judge identity. Future experiments will extend the panel
-with one substantially stronger and one substantially weaker model and will use
-the same model set for debate generation and judgment. Additional priorities are
-forced-choice judging without ties, prompt-phrasing sensitivity, deliberately
-easy control debates, and human validation.
+This benchmark shows that an LLM-judged persuasion ranking is not a property of
+the debating model alone. Changing the comparison construct from a complete
+different-position debate to a matched same-position comparison substantially
+reorders the four models, and the three judges often disagree on identical
+inputs. Candidate presentation order is especially consequential for Qwen,
+while the prompt-phrasing pilot shows that even meaning-preserving judge
+instructions can move verdicts across the tie boundary or reverse a decisive
+winner. The observed association between response length and winning, the
+matched self-preference comparison, and the topic-level position asymmetries
+further illustrate why aggregate win rates require explicit controls.
+
+These findings support a methodological conclusion rather than a claim about
+which model is most persuasive to people: evaluator identity, evaluation mode,
+position assignment, and presentation order are components of the measurement
+instrument. The current results are descriptive cloud-judge outcomes and have
+no human persuasion ground truth. A stronger validation should therefore
+repeat judgments under forced-choice and repeated-sampling protocols, add
+pre-specified topics with a clearly easier position, and compare model verdicts
+with human judgments.
+
+The next benchmark iteration will also broaden the capability range by adding
+one substantially stronger and one substantially weaker model. The same
+six-model set will serve as both debaters and judges, enabling self-preference
+comparisons without changing the evaluator population across roles. Controlled
+length and style interventions, validated ideological annotations, and repeated
+prompt variants can then separate causal evaluator effects from the
+observational patterns reported here.
 
 
 
