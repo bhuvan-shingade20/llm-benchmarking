@@ -1,0 +1,139 @@
+{
+  "design": "paired fixed-transcript judge-prompt phrasing sensitivity",
+  "sample_size_debates": 12,
+  "prompt_variants": {
+    "canonical": "You are an impartial debate judge.\nSelect which model argued its assigned position better in this debate.\nJudge argument quality, responsiveness, factual discipline, and persuasive clarity.\nDo not judge which policy position you personally agree with.\nReturn only valid JSON.",
+    "paraphrased": "You are evaluating a two-sided debate as a neutral reviewer.\nChoose the model whose advocacy of its assigned position is stronger.\nBase the decision on reasoning quality, engagement with opposing points, care with factual claims, and clarity of persuasion.\nSet aside your own view of the policies.\nOutput valid JSON only."
+  },
+  "judges": [
+    "gemma-4-31b-it",
+    "qwen3-30b-a3b-instruct-2507"
+  ],
+  "temperature": 0.1,
+  "max_tokens": 220,
+  "sampling_rule": "Two debates per unordered model pair; balanced Model1 position, starting model, and whether Position A starts; distributed over all topics.",
+  "debate_ids": [
+    "23",
+    "42",
+    "68",
+    "76",
+    "117",
+    "131",
+    "134",
+    "151",
+    "173",
+    "194",
+    "225",
+    "232"
+  ],
+  "sample": [
+    {
+      "debate_id": "23",
+      "topic_id": "agricultural_future",
+      "model_1": "gemma-4-31b-it",
+      "model_2": "qwen3-30b-a3b-instruct-2507",
+      "model_1_position": "A",
+      "starting": "Model1",
+      "position_a_starts": "yes"
+    },
+    {
+      "debate_id": "42",
+      "topic_id": "criminal_justice_framework",
+      "model_1": "gemma-4-31b-it",
+      "model_2": "meta-llama-3.1-8b-instruct",
+      "model_1_position": "B",
+      "starting": "Model1",
+      "position_a_starts": "no"
+    },
+    {
+      "debate_id": "68",
+      "topic_id": "cultural_repatriation",
+      "model_1": "gemma-4-31b-it",
+      "model_2": "meta-llama-3.1-8b-instruct",
+      "model_1_position": "A",
+      "starting": "Model2",
+      "position_a_starts": "no"
+    },
+    {
+      "debate_id": "76",
+      "topic_id": "de_extinction_ethics",
+      "model_1": "apertus-70b-instruct-2509",
+      "model_2": "meta-llama-3.1-8b-instruct",
+      "model_1_position": "B",
+      "starting": "Model1",
+      "position_a_starts": "no"
+    },
+    {
+      "debate_id": "117",
+      "topic_id": "digital_media_ownership",
+      "model_1": "gemma-4-31b-it",
+      "model_2": "qwen3-30b-a3b-instruct-2507",
+      "model_1_position": "B",
+      "starting": "Model2",
+      "position_a_starts": "yes"
+    },
+    {
+      "debate_id": "131",
+      "topic_id": "economic_safety_net",
+      "model_1": "apertus-70b-instruct-2509",
+      "model_2": "gemma-4-31b-it",
+      "model_1_position": "B",
+      "starting": "Model2",
+      "position_a_starts": "yes"
+    },
+    {
+      "debate_id": "134",
+      "topic_id": "economic_safety_net",
+      "model_1": "meta-llama-3.1-8b-instruct",
+      "model_2": "qwen3-30b-a3b-instruct-2507",
+      "model_1_position": "A",
+      "starting": "Model2",
+      "position_a_starts": "no"
+    },
+    {
+      "debate_id": "151",
+      "topic_id": "energy_transition_infrastructure",
+      "model_1": "apertus-70b-instruct-2509",
+      "model_2": "qwen3-30b-a3b-instruct-2507",
+      "model_1_position": "B",
+      "starting": "Model2",
+      "position_a_starts": "yes"
+    },
+    {
+      "debate_id": "173",
+      "topic_id": "exploration_priority",
+      "model_1": "apertus-70b-instruct-2509",
+      "model_2": "qwen3-30b-a3b-instruct-2507",
+      "model_1_position": "A",
+      "starting": "Model1",
+      "position_a_starts": "yes"
+    },
+    {
+      "debate_id": "194",
+      "topic_id": "mega_event_hosting",
+      "model_1": "apertus-70b-instruct-2509",
+      "model_2": "meta-llama-3.1-8b-instruct",
+      "model_1_position": "A",
+      "starting": "Model2",
+      "position_a_starts": "no"
+    },
+    {
+      "debate_id": "225",
+      "topic_id": "political_ads",
+      "model_1": "apertus-70b-instruct-2509",
+      "model_2": "gemma-4-31b-it",
+      "model_1_position": "A",
+      "starting": "Model1",
+      "position_a_starts": "yes"
+    },
+    {
+      "debate_id": "232",
+      "topic_id": "political_ads",
+      "model_1": "meta-llama-3.1-8b-instruct",
+      "model_2": "qwen3-30b-a3b-instruct-2507",
+      "model_1_position": "B",
+      "starting": "Model1",
+      "position_a_starts": "no"
+    }
+  ]
+}

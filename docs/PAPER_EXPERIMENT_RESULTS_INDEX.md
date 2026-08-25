@@ -1,5 +1,27 @@
 # Paper Experiment Results Index
 
+The consolidated checklist for incomplete and planned experiments is
+[EXPERIMENT_TODO.md](EXPERIMENT_TODO.md).
+
+## Current Curated Evidence
+
+The August 2026 curated dataset supersedes the pilot-era completion notes below
+for the current paper analysis:
+
+- 240 balanced four-round debates over 10 topics and four models;
+- 720 complete different-position cloud judgments;
+- 1,440 complete same-position cloud judgments over 240 underlying comparisons
+  shown in both candidate orders; and
+- three cloud judges: Gemma-4-31B-IT, Qwen3-30B-A3B-Instruct-2507, and GLM-4.7.
+
+The primary report is
+[ANALYSIS_REPORT.md](../data/mentor_curated_2026-08-19/analysis/ANALYSIS_REPORT.md).
+The small prompt-phrasing diagnostic is reported in
+[PROMPT_PHRASING_SENSITIVITY.md](../data/mentor_curated_2026-08-19/analysis/PROMPT_PHRASING_SENSITIVITY.md).
+Older sections in this index remain as provenance for preliminary local and
+cloud pilots and should not be used to infer the completion status of the
+curated dataset.
+
 Date: 2026-08-05
 
 This file is the handoff document for turning the benchmark results into paper prose. It lists what was run, where the results are stored, what claims are supported, and what should be treated only as diagnostic evidence.
@@ -267,33 +289,26 @@ Use in paper: position difficulty is real enough to motivate controls and per-to
 
 | Claim | Why Not Yet |
 |---|---|
-| Final judge-agreement statistics across strong judges | Cloud quota blocked; local judges showed parse/label artifacts. |
+| Human-referenced judge validity | Current cloud-judge agreement is complete, but no human persuasion labels are available. |
 | Full repeated-judgment stability | Only one local judge, one topic, four transcripts. |
 | True style robustness to rewritten text | Current run changes moderator framing, not post-hoc rewritten transcript style. |
 | Causal verbosity bias | Token-limit pilot is not equivalent to shortening the same argument. |
 | Ideological judge preference | Local ideological run collapsed into Agent A label bias. |
-| Self-preference bias | Local self-judge run is confounded by label bias. |
 | Fully adjusted position difficulty with uncertainty intervals | Current result is design-controlled descriptive analysis, not regression/bootstrap inference. |
 
 ## Recommended Paper Framing
 
 1. Present the benchmark infrastructure and controls.
 2. Present baseline validation: local judge artifacts, then cloud judge improvement.
-3. Present protocol/mode comparison as the central experiment, with the caveat that same-position `position_a` was partial due to rate limits.
+3. Present the complete curated different-position versus same-position ranking comparison as the central experiment.
 4. Present bias diagnostics as methodological findings rather than nuisance details.
 5. Treat local pilots as stress tests showing where naive evaluation breaks.
-6. State explicitly that ideological/self-preference and strong judge-agreement require follow-up cloud runs.
+6. State explicitly that ideological preference and human-referenced judge validity remain unresolved; present self-preference only as a matched descriptive diagnostic.
 
-## Follow-Up Runs To Finish Later
+## Follow-Up Experiments
 
-When Academic Cloud quota recovers, rerun:
-
-```powershell
-python run_benchmark.py --topic-ids political_ads,de_extinction_ethics,energy_transition_infrastructure --benchmark-mode same_position --same-position-target position_a --model-a openai:qwen3-30b-a3b-instruct-2507 --models openai:apertus-70b-instruct-2509,openai:meta-llama-3.1-8b-instruct --judge-model openai:gemma-4-31b-it --judge-mode winner_only --evaluation-protocol all --speaker-order balanced --turns 2 --max-tokens 120 --dry-run
-```
-
-And a clean cloud judge-agreement run:
-
-```powershell
-python run_benchmark.py --topic-ids political_ads,de_extinction_ethics,energy_transition_infrastructure --benchmark-mode paired --model-a openai:apertus-70b-instruct-2509 --model-b openai:meta-llama-3.1-8b-instruct --judge-models openai:gemma-4-31b-it,openai:qwen3-30b-a3b-instruct-2507 --judge-mode winner_only --evaluation-protocol holistic_persuasion --speaker-order balanced --turns 2 --max-tokens 120 --dry-run
-```
+All incomplete experiments, including the no-tie rerun, six-model balanced
+panel, easy-position controls, repeated judgments, controlled verbosity and
+style, ideology annotation, human validation, and completion of the
+prompt-phrasing diagnostic with GLM-4.7, are maintained in
+[EXPERIMENT_TODO.md](EXPERIMENT_TODO.md).

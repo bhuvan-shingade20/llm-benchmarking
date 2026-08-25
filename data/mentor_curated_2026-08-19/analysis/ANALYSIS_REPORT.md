@@ -2,7 +2,11 @@
 
 ## Scope
 
-Dataset I contains the generated debates, Dataset II Mode 1 evaluates models arguing different positions, and Dataset II Mode 2 compares models defending the same position. The analysis uses only the three curated CSV files and does not add model generations or judge calls.
+Dataset I contains the generated debates, Dataset II Mode 1 evaluates models
+arguing different positions, and Dataset II Mode 2 compares models defending
+the same position. The primary analyses use only the three curated CSV files.
+A separately identified prompt-phrasing diagnostic adds new judgments on 12
+fixed debates but does not generate new debate text.
 
 The validated design contains 240 four-round debates: 10 topics x 6 unordered model pairs x 2 position assignments x 2 starting models. All debates have eight alternating messages. Mode 1 contains 720 judge evaluations. Mode 2 contains 1,440 evaluations representing 240 substantive comparisons shown in both candidate orders.
 
@@ -20,6 +24,17 @@ Models are ranked by tie-adjusted win rate, `(wins + 0.5 x ties) / evaluations`,
 Pooling the underlying judge evaluations gives a mean absolute rank change of 1.5 places. Meta-Llama changes most, moving from rank 1 under different-position evaluation to rank 4 under same-position evaluation. Gemma moves from rank 3 to rank 1, Qwen remains rank 2, and Apertus moves from rank 4 to rank 3. The direct rank table exposes these model-level changes more clearly than a single correlation computed from four models.
 
 Ties are uneven across modes: 164 of 720 different-position evaluations (22.8%) and 4 of 1,440 same-position evaluations (0.3%). The ranking uses a fixed half-win treatment for ties, but the difference in tie frequency must be reported because it can affect cross-mode comparisons. These are LLM-judge rankings, not human-validated persuasion rankings.
+
+### Prompt-phrasing sensitivity diagnostic
+
+A balanced 12-debate subset was re-judged under the canonical judge instruction
+and a meaning-preserving paraphrase. Gemma and Qwen completed 24 paired
+comparisons. Exact winner agreement was 14/24 (58.3%); the 10 changes comprised
+two decisive winner reversals and eight transitions between a winner and a tie.
+The result is diagnostic because one sample per prompt cannot distinguish
+wording sensitivity from residual API nondeterminism. Full design and results
+are in
+[PROMPT_PHRASING_SENSITIVITY.md](PROMPT_PHRASING_SENSITIVITY.md).
 
 ## Experiment 2: Biases in persuasion judging
 
@@ -71,14 +86,19 @@ The current topics are not annotated on an ideological scale. The files support 
 
 To keep the presentation compact, the table reports the four topics with the largest observed departure from a 50/50 split. Counts pool the three judges.
 
-| Topic | Favored position | Position A share | A wins | B wins | Ties |
-| --- | --- | --- | --- | --- | --- |
-| energy_transition_infrastructure | Position B | 31.0% | 18 | 40 | 14 |
-| mega_event_hosting | Position A | 63.0% | 34 | 20 | 18 |
-| cultural_repatriation | Position A | 62.3% | 38 | 23 | 11 |
-| exploration_priority | Position A | 61.8% | 34 | 21 | 17 |
+| Topic | Observationally easier position | Observationally harder position | Easier-position share | Easy wins | Hard wins | Ties |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+| Energy infrastructure | Decentralized renewable microgrids | Centralized nuclear fission | 69.0% | 40 | 18 | 14 |
+| Mega-event hosting | Multi-country co-hosting | Single-nation hosting | 63.0% | 34 | 20 | 18 |
+| Cultural repatriation | Repatriate artifacts and use digital replicas | Retain artifacts in universal museums | 62.3% | 38 | 23 | 11 |
+| Exploration priority | Prioritize deep-sea exploration | Prioritize space exploration | 61.8% | 34 | 21 | 17 |
 
-Energy infrastructure is the strongest current numerical asymmetry: Position B wins 40 decisive evaluations versus 18 for Position A. However, the ten-topic dataset contains no deliberately obvious moral-control item. A strong extreme-case demonstration therefore cannot be claimed from the present files; any such control should be pre-specified before a future generation run.
+Energy infrastructure is the strongest current numerical asymmetry:
+decentralized renewable microgrids win 40 decisive evaluations versus 18 for
+centralized nuclear fission. However, the ten-topic dataset contains no
+deliberately obvious moral-control item. A strong extreme-case demonstration
+therefore cannot be claimed from the present files; any such control should be
+pre-specified before a future generation run.
 
 ## Summary of Findings
 
@@ -86,7 +106,9 @@ Energy infrastructure is the strongest current numerical asymmetry: Position B w
 2. Position, speaking order, and candidate order belong under Experiment 2. Their effects vary substantially across judge models.
 3. Pooled verbosity summaries show the observed word counts of winners and losers, but cannot establish an independent length preference.
 4. Gemma and Qwen select themselves less often than uninvolved judges select them on the same debate subsets: -2.9 pp and -13.2 pp, respectively.
-5. The current strongest position-difficulty example is energy infrastructure. A deliberately extreme moral-control topic remains to be generated.
+5. The current strongest position-difficulty example favors decentralized
+   renewable microgrids over centralized nuclear fission. A deliberately extreme
+   moral-control topic remains to be generated.
 
 ## Open Experimental Extensions
 
@@ -94,8 +116,18 @@ These extensions address limitations of the current experimental design.
 
 - [ ] Re-judge tied outcomes with a forced-choice, no-tie protocol while preserving the original judgments and documenting the protocol change.
 - [ ] Add pre-specified easy control debates with one clearly more reasonable position; define the topic wording and selection criteria before generation.
-- Run controlled matched-length or shortened-argument comparisons before making a causal verbosity claim.
-- Add controlled style variants and ideological annotations only if those analyses remain in the final paper scope.
+- [ ] Add one stronger and one weaker model, and use the same six-model set for
+  both debate generation and judgment.
+- [x] Run a controlled prompt-phrasing sensitivity diagnostic on fixed
+  transcripts with Gemma and Qwen. Repeated confirmation and GLM completion
+  remain open.
+- [ ] Run controlled matched-length or shortened-argument comparisons before
+  making a causal verbosity claim.
+- [ ] Add controlled style variants and ideological annotations only if those
+  analyses remain in the final paper scope.
+
+The full prioritized checklist and reporting requirements are maintained in
+[docs/EXPERIMENT_TODO.md](../../../docs/EXPERIMENT_TODO.md).
 
 ## Interpretation Boundaries
 

@@ -130,4 +130,11 @@ All checks passed on 2026-08-19.
 
 The initial paper-oriented analysis is in [`analysis/ANALYSIS_REPORT.md`](analysis/ANALYSIS_REPORT.md).
 
+The follow-up judge-prompt diagnostic is in
+[`analysis/PROMPT_PHRASING_SENSITIVITY.md`](analysis/PROMPT_PHRASING_SENSITIVITY.md),
+with its validated 48-row judgment file and manifest in
+[`analysis/prompt_phrasing_sensitivity/`](analysis/prompt_phrasing_sensitivity/).
+The consolidated list of incomplete experiments is maintained in
+[`docs/EXPERIMENT_TODO.md`](../../docs/EXPERIMENT_TODO.md).
+
 The analysis treats the 480 same-position rows as 240 substantive comparison conditions with two candidate-order presentations. This distinction is required when interpreting effective sample size and candidate-order sensitivity.
