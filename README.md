@@ -20,98 +20,144 @@ The paper-oriented findings are in
 [`data/paper_dataset/analysis/ANALYSIS_REPORT.md`](data/paper_dataset/analysis/ANALYSIS_REPORT.md).
 The current paper source is in [`paper`](paper).
 
-## Final Report Plan
+## Final Report Experiments
 
-Only unfinished work is listed below. No additional experiment should be
-started or resumed until this plan and its scope are approved.
+Only unfinished work is listed below. Data collection is paused at a resumable
+checkpoint while the experiment plan and debate-position sets are reviewed.
 
-Data collection is paused at a resumable checkpoint while this plan is under
-review.
+### Experiment 1: Extended replication of the paper
 
-### 1. Lock the final protocol
+**Question.** Do the paper's findings persist with a broader model panel, no
+ties, identical debater and judge panels, and several deliberately clear
+position contrasts?
 
-- [ ] Confirm the six-model panel: Apertus-70B, Llama-3.1-8B, Qwen3-30B,
-  Gemma-4-31B, Qwen3.5-397B as the stronger anchor, and TinyLlama-1.1B as the
-  deliberately weak anchor.
-- [ ] Use the same six models as debaters and judges in the definitive generated
-  benchmark.
-- [ ] Use forced-choice judgments throughout the new experiments; preserve the
-  original tie-permitting judgments as a separate preliminary dataset.
-- [ ] Confirm whether the final report should reproduce both different-position
-  and same-position evaluation with the six-model panel.
-- [ ] Freeze prompts, decoding settings, sample sizes, exclusions, and primary
-  measures before resuming API calls.
+**Design.** Repeat the paper's different-position and matched same-position
+experiments with Apertus-70B, Llama-3.1-8B, Qwen3-30B, Gemma-4-31B,
+Qwen3.5-397B as the stronger anchor, and TinyLlama-1.1B as the deliberately
+weak anchor. The same six models act as debaters and judges. All new judgments
+are forced choices. The original 10 topics are retained and supplemented with
+a small pre-specified set of extreme controls in which one proposition is
+clearly more defensible.
 
-### 2. Complete real-world benchmarking and robustness
+**Remaining work.**
 
-- [ ] Finish forced-choice evaluation by all six judges on the 740 PoliProp
-  debates with decisive human-majority outcomes.
-- [ ] Complete the balanced 120-debate robustness sample with repeated canonical
-  judgments, reversed candidate order, and a paraphrased judging prompt.
-- [ ] Annotate the ideological direction of the human-written propositions with
-  independent annotators and report agreement and exclusions.
-- [ ] Report judge-human accuracy, inter-judge agreement, repeated-judgment
-  stability, candidate-order sensitivity, prompt-phrasing sensitivity, and
-  judge-specific ideological preference.
+- [ ] Freeze the extreme-control positions and expected directions.
+- [ ] Audit the full and sampled same-position designs before fixing call counts.
+- [ ] Generate the balanced six-model debates and forced-choice judgments.
+- [ ] Report rankings for every judge and evaluation mode, averaged rankings,
+  judge agreement, position and speaking-order effects, candidate-order
+  sensitivity, verbosity associations, self-preference, and position difficulty.
+- [ ] Check whether the original qualitative conclusions replicate rather than
+  assuming that they will.
 
-### 3. Complete the six-model generated benchmark
+### Experiment 2: Robustness and ablation study
 
-- [ ] Generate and validate the balanced 600-debate panel across 10 political
-  topics, all unordered model pairs, both proposition assignments, and both
-  speaking orders.
-- [ ] Obtain forced-choice judgments from the same six-model panel.
-- [ ] Produce per-judge and averaged model rankings, with uncertainty estimates
-  and sensitivity checks rather than a single pooled leaderboard.
-- [ ] Estimate whether each model performs differently when defending liberal
-  and conservative propositions while controlling topic, opponent, assignment,
-  order, and judge.
-- [ ] Reassess self-preference by comparing a model's judgment of its own debate
-  with judgments from models not participating in that debate.
-- [ ] If both evaluation modes are retained, construct and judge the matched
-  same-position comparisons from this panel under the same forced-choice rule.
+**Question.** Are verdicts stable under small, plausible changes to the judging
+procedure?
 
-### 4. Add clear-position controls
+**Design.** Use a pre-specified balanced subset of 120 saved transcripts. For
+each judge and transcript, obtain three canonical judgments, one judgment with
+candidate order reversed, and one judgment using a single meaning-preserving
+paraphrase of the judging prompt. No new debates are required.
 
-- [ ] Pre-specify a small set of debates with one clearly more defensible
-  proposition and one deliberately difficult proposition.
-- [ ] Freeze wording and expected direction before generation.
-- [ ] Verify that the judges recover the expected direction and include at least
-  one strong qualitative example.
+**Remaining work.**
 
-### 5. Validate and write the final report
+- [ ] Freeze the transcript sample and the one paraphrased prompt before judging.
+- [ ] Report within-prompt repeat agreement and winner-change rates.
+- [ ] Report order-invariant agreement after reversing candidate presentation.
+- [ ] Report agreement between the paraphrased prompt and the canonical modal
+  verdict.
+- [ ] Keep this study deliberately small and avoid searching over many prompt
+  variants after observing results.
 
-- [ ] Validate row counts, unique experimental keys, balanced assignments,
-  parse success, winner labels, and missing values before analysis.
-- [ ] Keep partial or failed runs out of scientific summaries.
-- [ ] Structure the report around the protocol comparison, real-world validity,
-  robustness, ideological effects, and judge-specific behavior.
-- [ ] Prefer concise rankings and effect summaries in the main text; place
-  detailed per-topic, per-model, and failure tables in the appendix.
-- [ ] Report uncertainty, distinguish observational associations from causal
-  effects, and document all exclusions and provider failures.
-- [ ] Select representative extreme cases only after quantitative analyses and
-  selection criteria are fixed.
+### Experiment 3: Political-position alignment
 
-### 6. Deferred follow-ups
+**Question.** Do judges systematically prefer one region of a political
+spectrum, and do debaters perform differently when assigned liberal rather than
+conservative positions?
 
-These analyses are not required before the core final-report experiments above:
+**Design.** Freeze a balanced political topic panel and have three independent
+annotators label each proposition on a liberal-to-conservative scale before any
+debates are analyzed. Generate the balanced six-model debate panel and use the
+same six models as forced-choice judges.
+
+**Remaining work.**
+
+- [ ] Approve and freeze the political position set and ideological mappings.
+- [ ] Complete independent annotations and report agreement and exclusions.
+- [ ] Estimate judge-specific ideological preference while controlling for
+  topic, debater identities, proposition assignment, and speaking order.
+- [ ] Estimate each debater's relative performance on liberal and conservative
+  positions while controlling for opponent, topic, order, and judge.
+- [ ] Report uncertainty and avoid interpreting measured behavior as a model's
+  personal political belief.
+
+### Experiment 4: Agreement with human judgments
+
+**Question.** How closely do LLM judges agree with human judgments on
+real-world debates?
+
+**Design.** Use the 740 PoliProp debates with decisive human-majority outcomes.
+Each of the same six judges evaluates every debate once using forced choice.
+The 93 human ties remain available for a separate secondary analysis and are
+not converted into artificial binary ground truth.
+
+**Remaining work.**
+
+- [ ] Complete all six judge streams on the 740 decisive debates.
+- [ ] Report accuracy and bootstrap uncertainty against human-majority outcomes.
+- [ ] Report inter-judge agreement, judge-specific error patterns, and
+  first-candidate or side-selection rates.
+- [ ] Analyze human-tie cases separately, without treating either side as the
+  correct answer.
+
+## Dependencies and Execution
+
+The four experiments use separately versioned inputs and outputs.
+
+- Experiment 1 requires the extreme-control positions to be frozen.
+- Experiment 2 requires only a frozen subset of Experiment 1 transcripts; it
+  does not depend on completion of Experiment 1 judgments.
+- Experiment 3 requires its political position set and annotations to be frozen
+  but is otherwise independent of Experiments 1, 2, and 4.
+- Experiment 4 uses existing human-written debates and can run independently of
+  all generated-debate experiments.
+
+Each experiment must have its own resumable runner, validation step, output
+directory, and analysis command. The combined runner is optional convenience,
+not a dependency between experiments.
+
+## Final Report Structure
+
+1. Reproduce and extend the paper benchmark with the corrected protocol.
+2. Test robustness to repeated judging, candidate order, and prompt wording.
+3. Analyze judge and debater behavior across the political spectrum.
+4. Validate LLM judges against human judgments on real-world debates.
+5. Summarize limitations, uncertainty, provider failures, and scope conditions.
+
+Detailed pending tasks are maintained in
+[`docs/FUTURE_EXPERIMENTS.md`](docs/FUTURE_EXPERIMENTS.md). The complete
+pre-analysis design is in
+[`docs/FINAL_REPORT_EXPERIMENT_PLAN_2026-08-31.md`](docs/FINAL_REPORT_EXPERIMENT_PLAN_2026-08-31.md).
+
+## Deferred Work
+
+The following studies are outside the four core final-report experiments unless
+they are explicitly added later:
 
 - [ ] Controlled verbosity using matched-length transcript variants.
 - [ ] Controlled style using meaning-preserving normalized variants.
 - [ ] A validated annotation study of perceived debater confidence.
-- [ ] Direct human evaluation of a benchmark subset, subject to resources and
-  any required ethics review.
+- [ ] Direct human evaluation of a newly collected benchmark subset, subject to
+  resources and any required ethics review.
 
-## Execution Rules
+## Data Integrity Rules
 
-- All generation and judging stages must be incremental and resumable.
-- Completed observations must never be overwritten during retries.
-- Original, follow-up, and failed/incomplete runs must remain separately
-  versioned.
-- Exact model identifiers, prompts, temperatures, API dates, failures, and
-  exclusions must be retained with every run.
-- Analysis begins only after the relevant stage passes its validation checks.
-
-The detailed frozen designs are documented in
-[`docs/EXPERIMENT_EXTENSION_PROTOCOL_2026-08-29.md`](docs/EXPERIMENT_EXTENSION_PROTOCOL_2026-08-29.md)
-and [`docs/FOLLOWUP_EXPERIMENT_PROTOCOL_2026-08-28.md`](docs/FOLLOWUP_EXPERIMENT_PROTOCOL_2026-08-28.md).
+- Preserve the original tie-permitting judgments unchanged.
+- Keep original, follow-up, and incomplete runs separately versioned.
+- Resume by unique experimental key and never overwrite completed observations.
+- Record exact models, prompts, decoding settings, API dates, failures, and
+  exclusions.
+- Validate row counts, balance, labels, uniqueness, and missing values before
+  reporting results.
+- Do not report partial numerical findings as scientific results.

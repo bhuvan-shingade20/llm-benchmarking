@@ -1,90 +1,81 @@
 # Remaining Experiment Checklist
 
-The top-level [`README.md`](../README.md) is the shareable final-report plan.
-This file records the corresponding unfinished experimental tasks in more
-detail. Completed pilots and preliminary numerical findings are intentionally
-excluded.
+This checklist contains only unfinished work for the final report. The four
+experiments are defined in the top-level [`README.md`](../README.md) and the
+detailed [final-report plan](FINAL_REPORT_EXPERIMENT_PLAN_2026-08-31.md).
 
-## Required Before Resuming
+## Shared Prerequisites
 
-- [ ] Approve the final-report scope and ordering of experiments.
-- [ ] Confirm the frozen panel of Apertus-70B, Llama-3.1-8B, Qwen3-30B,
-  Gemma-4-31B, Qwen3.5-397B, and TinyLlama-1.1B, and use the same models as
-  debaters and judges.
-- [ ] Confirm that all new judgments use a forced-choice schema without ties.
-- [ ] Decide whether the definitive six-model benchmark includes both
-  different-position and matched same-position evaluation.
-- [ ] Recheck planned call counts, context limits, model availability, and
-  output-schema compliance.
+- [ ] Approve the six-model panel and exact model identifiers.
+- [ ] Approve forced-choice judging for every new experiment.
+- [ ] Freeze the original-topic extension, extreme-control positions, and
+  political-spectrum positions before generation.
+- [ ] Fix prompts, decoding settings, exclusions, and primary measures.
+- [ ] Audit API calls, context limits, and schema compliance.
+- [ ] Provide an independent runner and validator for each experiment.
 
-## Core Final-Report Experiments
+## Experiment 1: Extended Paper Replication
 
-### Real-world human-debate benchmark
+- [ ] Retain the original 10 topics and add the approved extreme controls.
+- [ ] Generate balanced six-model debates across model pairs, proposition
+  assignments, and speaking orders.
+- [ ] Use the same six models as forced-choice judges.
+- [ ] Reproduce both different-position and matched same-position evaluation.
+- [ ] Decide whether same-position comparisons are exhaustive or a
+  pre-specified balanced sample after the call-count audit.
+- [ ] Report per-judge and averaged rankings for both modes.
+- [ ] Re-evaluate judge agreement, order effects, verbosity associations,
+  self-preference, and position difficulty.
+- [ ] Verify the expected direction on the extreme controls and select examples
+  using pre-declared criteria.
 
-- [ ] Complete all six judge streams on the 740 decisive PoliProp debates.
-- [ ] Complete the balanced 120-debate robustness sample.
-- [ ] Measure accuracy against human-majority outcomes with bootstrap
-  uncertainty.
-- [ ] Measure inter-judge agreement and judge-specific error patterns.
-- [ ] Measure within-prompt stability across repeated canonical judgments.
-- [ ] Measure candidate-order robustness after reversing presentation order.
-- [ ] Measure prompt-phrasing robustness against the canonical modal verdict.
+## Experiment 2: Robustness and Ablation
 
-### Ideological preference on human-written debates
+- [ ] Freeze a balanced 120-transcript sample from Experiment 1.
+- [ ] Freeze one meaning-preserving paraphrase of the judge prompt.
+- [ ] Collect three canonical judgments per transcript and judge.
+- [ ] Collect one candidate-order reversal and one prompt-paraphrase judgment.
+- [ ] Report repeat agreement, any-winner-change rates, order-invariant
+  agreement, prompt agreement, and judge-specific results.
+- [ ] Do not add prompt variants after inspecting outcomes.
 
-- [ ] Complete independent ideological annotations of both propositions.
-- [ ] Report annotator agreement, political relevance, and excluded cases.
-- [ ] Estimate each judge's preference for liberal versus conservative
-  propositions while controlling for available debate covariates.
-- [ ] Keep judge preference distinct from claims about human persuasion or a
-  model's political beliefs.
+## Experiment 3: Political-Position Alignment
 
-### Six-model generated benchmark
+- [ ] Approve and freeze the balanced political topic panel.
+- [ ] Obtain three independent ideological annotations per proposition.
+- [ ] Report annotation agreement, political relevance, and exclusions.
+- [ ] Generate balanced debates using the same six-model panel.
+- [ ] Complete forced-choice judging with the same six models.
+- [ ] Estimate each judge's relative preference for liberal and conservative
+  positions with appropriate controls and uncertainty.
+- [ ] Estimate each debater's relative performance on liberal and conservative
+  positions with appropriate controls and uncertainty.
 
-- [ ] Complete and validate 600 debates across the frozen 10-topic panel.
-- [ ] Complete forced-choice judgments using the same six-model panel.
-- [ ] Report model rankings separately for each judge and averaged across
-  judges, with uncertainty estimates.
-- [ ] Estimate model performance by ideological position while controlling for
-  topic, opponent, position assignment, speaking order, and judge.
-- [ ] Re-estimate self-preference against uninvolved-judge baselines.
-- [ ] Measure candidate-order and speaking-order sensitivity under the balanced
-  design.
-- [ ] If retained in scope, generate matched same-position comparisons and
-  analyze them under the same forced-choice protocol.
+## Experiment 4: Human-Judge Agreement
 
-### Clear-position controls
+- [ ] Complete six forced-choice judge streams on the 740 decisive PoliProp
+  debates.
+- [ ] Report accuracy with bootstrap uncertainty against human majorities.
+- [ ] Report inter-judge agreement and judge-specific error patterns.
+- [ ] Report first-candidate and proposition-side selection rates.
+- [ ] Analyze the 93 human-tie cases separately without binary ground truth.
 
-- [ ] Pre-specify clearly defensible and deliberately difficult propositions.
-- [ ] Freeze wording, selection criteria, and expected direction before any
-  generation.
-- [ ] Run balanced debates and forced-choice judging with the approved panel.
-- [ ] Confirm the expected strong effect and select a qualitative example using
-  pre-declared criteria.
+## Final Analysis and Writing
 
-## Final Analysis and Reporting
-
-- [ ] Run structural validation before calculating any result.
-- [ ] Exclude incomplete streams and document every exclusion.
-- [ ] Compare real-world validity, robustness, ideological effects, and
-  generated-debate rankings without pooling incompatible protocols.
-- [ ] Use concise main-text tables and move detailed diagnostics to appendices.
-- [ ] Report uncertainty and avoid causal language for observational effects.
-- [ ] Update the analysis report only after all primary stages validate.
+- [ ] Validate each experiment independently before calculating results.
+- [ ] Keep incompatible protocols and incomplete streams out of pooled results.
+- [ ] Use concise main-text rankings and effect summaries; move detailed tables
+  to appendices.
+- [ ] Report uncertainty and distinguish observational effects from causal
+  claims.
+- [ ] Document all exclusions, retries, rate limits, and provider failures.
+- [ ] Update the final analysis report only after all four experiments pass
+  validation.
 
 ## Deferred Work
 
-- [ ] Run a matched-length intervention for controlled verbosity.
-- [ ] Run meaning-preserving style normalization with semantic validation.
-- [ ] Define and validate perceived-debater-confidence annotations.
-- [ ] Conduct direct human evaluation only if resources and ethics requirements
-  permit it.
-
-## Data Integrity Rules
-
-- Preserve the original tie-permitting judgments unchanged.
-- Store follow-up judgments and failed/incomplete attempts separately.
-- Resume by unique experimental key and never overwrite completed observations.
-- Record exact model identifiers, prompts, decoding settings, API dates,
-  failures, and exclusions.
-- Do not report partial numerical findings as scientific results.
+- [ ] Controlled verbosity with matched-length variants.
+- [ ] Controlled style with semantic-preservation checks.
+- [ ] Validated perceived-debater-confidence annotations.
+- [ ] Newly collected direct human evaluation, subject to resources and ethics
+  requirements.

@@ -1,5 +1,9 @@
 # Paper Extension Protocol
 
+Planning status: retained as the protocol record for observations already
+started under this design. The current four-experiment structure is defined in
+`FINAL_REPORT_EXPERIMENT_PLAN_2026-08-31.md`.
+
 Date frozen: 2026-08-29
 
 This protocol incorporates the requirements received after the initial paper

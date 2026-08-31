@@ -1,5 +1,8 @@
 # Follow-up Experiment Protocol
 
+Planning status: historical protocol. The current four-experiment structure is
+defined in `FINAL_REPORT_EXPERIMENT_PLAN_2026-08-31.md`.
+
 Date frozen: 2026-08-28
 
 This document records the design before the follow-up results are analyzed. The
