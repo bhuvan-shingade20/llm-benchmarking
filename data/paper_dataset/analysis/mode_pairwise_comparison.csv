@@ -1,0 +1,7 @@
+model_left,model_right,different_position_preference,same_position_preference,preference_changed,different_left_score,same_left_score
+apertus-70b-instruct-2509,gemma-4-31b-it,gemma-4-31b-it,gemma-4-31b-it,False,0.321,0.283
+apertus-70b-instruct-2509,meta-llama-3.1-8b-instruct,meta-llama-3.1-8b-instruct,apertus-70b-instruct-2509,True,0.3,0.887
+apertus-70b-instruct-2509,qwen3-30b-a3b-instruct-2507,qwen3-30b-a3b-instruct-2507,qwen3-30b-a3b-instruct-2507,False,0.317,0.273
+gemma-4-31b-it,meta-llama-3.1-8b-instruct,meta-llama-3.1-8b-instruct,gemma-4-31b-it,True,0.333,0.858
+gemma-4-31b-it,qwen3-30b-a3b-instruct-2507,gemma-4-31b-it,gemma-4-31b-it,False,0.525,0.554
+meta-llama-3.1-8b-instruct,qwen3-30b-a3b-instruct-2507,qwen3-30b-a3b-instruct-2507,qwen3-30b-a3b-instruct-2507,False,0.454,0.106

@@ -16,9 +16,9 @@ from generate_judgement_files import (
 )
 
 
-DEFAULT_RAW = Path("data/mentor_curated_2026-08-19/RawDebates.csv")
+DEFAULT_RAW = Path("data/paper_dataset/RawDebates.csv")
 DEFAULT_TOPICS = Path("topics/phase1_topics.json")
-DEFAULT_OUTPUT_DIR = Path("results/2026-08-25_prompt_phrasing_sensitivity")
+DEFAULT_OUTPUT_DIR = Path("runs/prompt_phrasing_sensitivity")
 
 PROMPT_VARIANTS = {
     "canonical": """

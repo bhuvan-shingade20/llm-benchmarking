@@ -1,0 +1,4 @@
+judge,position_a_wins,position_b_wins,ties,position_a_share_decisive,starter_wins,nonstarter_wins,starter_share_decisive,model1_wins,model2_wins,model1_share_decisive
+gemma-4-31b-it,58,69,113,0.457,64,63,0.504,7,120,0.055
+glm-4.7,126,114,0,0.525,114,126,0.475,56,184,0.233
+qwen3-30b-a3b-instruct-2507,119,70,51,0.63,75,114,0.397,125,64,0.661

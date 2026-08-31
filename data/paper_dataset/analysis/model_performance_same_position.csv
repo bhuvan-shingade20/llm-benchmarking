@@ -1,0 +1,17 @@
+judge,model,evaluations,wins,losses,ties,score,decisive_win_rate
+gemma-4-31b-it,gemma-4-31b-it,240,200,40,0,0.833,0.833
+gemma-4-31b-it,qwen3-30b-a3b-instruct-2507,240,185,51,4,0.779,0.784
+gemma-4-31b-it,apertus-70b-instruct-2509,240,86,153,1,0.36,0.36
+gemma-4-31b-it,meta-llama-3.1-8b-instruct,240,5,232,3,0.027,0.021
+qwen3-30b-a3b-instruct-2507,apertus-70b-instruct-2509,240,142,98,0,0.592,0.592
+qwen3-30b-a3b-instruct-2507,qwen3-30b-a3b-instruct-2507,240,140,100,0,0.583,0.583
+qwen3-30b-a3b-instruct-2507,gemma-4-31b-it,240,132,108,0,0.55,0.55
+qwen3-30b-a3b-instruct-2507,meta-llama-3.1-8b-instruct,240,66,174,0,0.275,0.275
+glm-4.7,gemma-4-31b-it,240,179,61,0,0.746,0.746
+glm-4.7,qwen3-30b-a3b-instruct-2507,240,169,71,0,0.704,0.704
+glm-4.7,apertus-70b-instruct-2509,240,118,122,0,0.492,0.492
+glm-4.7,meta-llama-3.1-8b-instruct,240,14,226,0,0.058,0.058
+all judges,gemma-4-31b-it,720,511,209,0,0.71,0.71
+all judges,qwen3-30b-a3b-instruct-2507,720,494,222,4,0.689,0.69
+all judges,apertus-70b-instruct-2509,720,346,373,1,0.481,0.481
+all judges,meta-llama-3.1-8b-instruct,720,85,632,3,0.12,0.119

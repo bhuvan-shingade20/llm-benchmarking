@@ -1,370 +1,117 @@
-# LLM Persuasion Benchmark Starter
-
-This starter project runs a two-agent LLM persuasion benchmark. You provide a discussion question with two symmetric positions, Agent A defends Position A, Agent B defends Position B, and a judge evaluates persuasiveness and factual discipline.
-
-## Initial Models
-
-The default setup now uses local open-source models through Ollama:
-
-- Agent A: `llama3.2:3b`
-- Agent B: `qwen2.5:3b`
-
-These models run locally, so you do not need an OpenAI API key or paid quota for the prototype.
-
-## Setup
-
-Install Ollama from:
-
-```text
-https://ollama.com/download
-```
-
-Then pull two small open-source models:
-
-```powershell
-ollama pull llama3.2:3b
-ollama pull qwen2.5:3b
-```
-
-If Ollama is not already running, start it:
-
-```powershell
-ollama serve
-```
-
-In another terminal, set up the Python project:
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-Copy-Item .env.example .env
-```
-
-Default `.env` for local open-source models:
-
-```env
-LLM_PROVIDER=ollama
-OLLAMA_BASE_URL=http://localhost:11434
-MODEL_A=llama3.2:3b
-MODEL_B=qwen2.5:3b
-MODEL_JUDGE=llama3.2:3b
-```
-
-No API key is needed for Ollama.
-
-If Academic Cloud/SAIA later provides an OpenAI-compatible endpoint, set `LLM_PROVIDER=openai`, set `OPENAI_BASE_URL` to that endpoint, add your API key, and set `MODEL_A` / `MODEL_B` to the model names provided by the service.
-
-Academic Cloud/SAIA example:
-
-```env
-LLM_PROVIDER=openai
-OPENAI_API_KEY=your_saia_key_here
-OPENAI_BASE_URL=https://chat-ai.academiccloud.de/v1
-MODEL_A=meta-llama-3.1-8b-instruct
-MODEL_B=qwen3-30b-a3b-instruct-2507
-MODEL_JUDGE=gemma-4-31b-it
-```
-
-Good first SAIA model pairings:
-
-- Lightweight test: `meta-llama-3.1-8b-instruct` vs `meta-llama-3.1-8b-instruct`
-- Stronger debate: `mistral-large-3-675b-instruct-2512` vs `qwen3.5-122b-a10b`
-- Reasoning-heavy debate: `deepseek-r1-distill-llama-70b` vs `qwen3-30b-a3b-instruct-2507`
-- Fast open-weight debate: `meta-llama-3.1-8b-instruct` vs `qwen3-30b-a3b-instruct-2507`
-
-Use the exact model names from the SAIA docs if these names change.
-
-You can list the models your key can access:
-
-```powershell
-python run_conversation.py --provider openai --list-models
-```
-
-## Run
-
-Run a one-off custom topic from the terminal:
-
-```powershell
-python run_conversation.py --topic "What policy should universities adopt for student use of AI tools in graded assignments?" --position-a "Universities should permit AI tools when students disclose usage and are assessed on critique, revision, and understanding." --position-b "Universities should restrict AI tools when they make student understanding, authorship, or cognitive effort difficult to verify." --turns 6
-```
-
-Or run one saved topic from `topics/phase1_topics.json` by ID:
-
-```powershell
-python run_conversation.py --topic-id ai_assignments --turns 6
-```
-
-Choose a moderator opening style:
-
-```powershell
-python run_conversation.py --topic-id ai_assignments --start-style assumptions --turns 6
-```
-
-## Batch Benchmark
-
-Run multiple topics with the default two model-role assignments and structured results:
-
-```powershell
-python run_benchmark.py --topics topics/phase1_topics.json --turns 4 --max-tokens 220
-```
-
-Quick dry run without API calls:
-
-```powershell
-python run_benchmark.py --limit 2 --dry-run
-```
-
-Run one saved topic by ID:
-
-```powershell
-python run_benchmark.py --topic-id ai_assignments --dry-run
-```
-
-Run several saved topics by ID:
-
-```powershell
-python run_benchmark.py --topic-ids ai_assignments,remote_work,urban_transport --dry-run
-```
-
-Choose the benchmark protocol:
-
-```powershell
-python run_benchmark.py --topic-id ai_assignments --benchmark-mode single --dry-run
-python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --dry-run
-python run_benchmark.py --topic-id ai_assignments --benchmark-mode permutations --models mistral-large-3-675b-instruct-2512,qwen3-30b-a3b-instruct-2507,gemma-4-31b-it --dry-run
-python run_benchmark.py --topic-id ai_assignments --benchmark-mode same_position --model-a openai:qwen3-30b-a3b-instruct-2507 --models openai:apertus-70b-instruct-2509,openai:meta-llama-3.1-8b-instruct --judge-mode winner_only --dry-run
-```
-
-Benchmark modes:
-
-- `single`: one assignment only, e.g. Model A argues Position A and Model B argues Position B.
-- `paired`: two rounds for each model pair, first original assignment and then reversed positions. This is the default for `--model-a/--model-b`.
-- `permutations`: all ordered model-role pairs from `--models`. This is the default when `--models` is provided.
-- `same_position`: Mode 2 comparison. A fixed opponent from `--model-a` debates candidate 1 and candidate 2 in separate debates, then the judge decides which candidate argued the same target position better. Candidate models come from `--models`.
-
-For `same_position`, candidates argue Position B by default and the fixed opponent argues Position A. Use `--same-position-target position_a` to make candidates argue Position A instead.
-
-Control first/last speaker bias:
-
-```powershell
-python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --speaker-order balanced --dry-run
-python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --speaker-order a_first --dry-run
-python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --speaker-order b_first --dry-run
-```
-
-Speaker-order modes:
-
-- `balanced`: runs every planned debate twice, once with Agent A opening/closing first and once with Agent B opening/closing first. This is the benchmark default because it reduces recency and closing-order bias.
-- `a_first`: legacy order; Agent A opens and Agent B closes last.
-- `b_first`: reversed order; Agent B opens and Agent A closes last.
-
-Compare quick judging with detailed fact-checking evaluation:
-
-```powershell
-python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --judge-mode both --dry-run
-```
-
-Judge modes:
-
-- `winner_only`: judge returns only winner, confidence, and a short reason.
-- `detailed`: judge returns the full metric rubric, factfulness/groundedness scores, weaknesses, and unsupported claims.
-- `both`: runs both judge modes on the same transcript so analysis can measure whether the decision changes.
-
-Compare evaluation protocols on the same transcript:
-
-```powershell
-python run_benchmark.py --topic-id ai_assignments --benchmark-mode paired --judge-mode winner_only --evaluation-protocol all --speaker-order balanced --dry-run
-```
-
-Evaluation protocols:
-
-- `holistic_persuasion`: overall neutral-reader persuasiveness.
-- `argument_quality`: claim-warrant structure, burden of proof, coherence, and rebuttal strength.
-- `evidence_fact_check`: factfulness, groundedness, and unsupported-claim penalties.
-- `deliberative_quality`: responsiveness, fair engagement, steelmanning, and intellectual honesty.
-
-Use `--evaluation-protocols holistic_persuasion,evidence_fact_check` to run a subset. Protocols multiply judge calls, so use `--dry-run` before real runs.
-
-Mix Ollama and Academic Cloud models in the same benchmark by prefixing model IDs with `ollama:` or `openai:`:
-
-```powershell
-python run_benchmark.py --topic-id ai_assignments --benchmark-mode single --model-a ollama:llama3.2:3b --model-b openai:qwen3-30b-a3b-instruct-2507 --judge-model openai:gemma-4-31b-it --judge-mode winner_only --dry-run
-```
-
-Use multiple judge models from different providers:
-
-```powershell
-python run_benchmark.py --topic-ids ai_assignments,remote_work --benchmark-mode paired --models ollama:llama3.2:3b,openai:mistral-large-3-675b-instruct-2512 --judge-models openai:gemma-4-31b-it,ollama:llama3.2:3b --judge-mode both --dry-run
-```
-
-Try multiple moderator openings:
-
-```powershell
-python run_benchmark.py --limit 2 --start-styles neutral,evidence,assumptions --dry-run
-```
-
-Permute all model-role assignments across a model pool:
-
-```powershell
-python run_benchmark.py --limit 1 --models mistral-large-3-675b-instruct-2512,qwen3-30b-a3b-instruct-2507,gemma-4-31b-it --start-styles neutral,evidence --dry-run
-```
-
-Small API test using one topic and the default model-role assignments:
-
-```powershell
-python run_benchmark.py --limit 1 --turns 4 --max-tokens 220
-```
-
-Disable the second default model-role assignment:
-
-```powershell
-python run_benchmark.py --limit 3 --no-side-swap
-```
-
-Batch outputs are saved in `results/`:
-
-- `*_results.csv`: spreadsheet-friendly metric summary
-- `*_results.json`: full structured result summary
-
-Transcript files are saved in `results/conversations/`.
-
-## Analyze Results
-
-Analyze the latest benchmark result file:
-
-```powershell
-python analyze_results.py
-```
-
-Analyze a specific result file:
-
-```powershell
-python analyze_results.py --input results\20260616_200632_benchmark_results.csv
-```
-
-Write aggregate analysis files back to `results/`:
-
-```powershell
-python analyze_results.py --input results\20260616_200632_benchmark_results.csv --write-files
-```
-
-The analysis reports provider-aware model leaderboards, role-specific leaderboards, benchmark-mode leaderboards, Position A/B win rates, speaker-order effects, average confidence, average metric scores, start-style effects, judge-model summaries, judge-mode agreement, topic-level results, and unsupported-claim counts.
-
-Build a combined ranking across every benchmark CSV in `results/`:
-
-```powershell
-python analyze_all_results.py
-```
-
-This writes `results/model_ranking_all_runs.md`, `results/all_model_rankings.md`, and `results/evaluation_protocol_bump_chart.svg`. The SVG is a bump chart/rank-flow chart: the x-axis is evaluation protocol and the y-axis is model rank, so it shows whether protocol choice changes model ordering. Older unprefixed SAIA rows are labeled as `academic_cloud`, invalid judge parse/error rows are skipped rather than counted as losses, and the headline ranking requires at least 5 valid debates per model to avoid tiny-sample leaders.
-
-Recommended fair rerun for mentor-ready rankings:
-
-```powershell
-python run_benchmark.py --topic-ids ai_assignments,remote_work,assessment_design --benchmark-mode permutations --models openai:qwen3-30b-a3b-instruct-2507,openai:mistral-large-3-675b-instruct-2512,openai:apertus-70b-instruct-2509,ollama:qwen2.5:3b --judge-model openai:gemma-4-31b-it --judge-mode winner_only --evaluation-protocol all --speaker-order balanced --turns 2 --max-tokens 120 --dry-run
-```
-
-Optional model override:
-
-```powershell
-python run_conversation.py --topic "Remote work improves productivity" --provider ollama --model-a llama3.2:3b --model-b qwen2.5:3b --turns 8
-```
-
-OpenAI-compatible mode for later:
-
-```powershell
-python run_conversation.py --provider openai --topic "Remote work improves productivity" --model-a meta-llama-3.1-8b-instruct --model-b qwen3-30b-a3b-instruct-2507 --judge-model gemma-4-31b-it --turns 8
-```
-
-Disable judging if you only want the raw conversation:
-
-```powershell
-python run_conversation.py --topic "Remote work improves productivity" --turns 6 --no-judge
-```
-
-## Output
-
-The script prints the conversation and saves transcripts in `results/conversations/`:
-
-- JSON transcript for later analysis
-- Markdown transcript for easy reading
-
-Generated transcripts are ignored by Git so API outputs are not accidentally committed.
-Generated batch results are also ignored by Git.
-
-## Current Conversation Flow
-
-1. System announces the discussion question and positions.
-2. A Moderator opening prompt starts the discussion.
-3. The selected speaker order decides whether Agent A or Agent B speaks first.
-4. Agent A defends Position A and Agent B defends Position B.
-5. Agents alternate for the requested number of turns.
-6. Closing statements follow the same selected speaker order.
-7. A strict judge model evaluates persuasiveness, symmetry, and factual discipline.
-8. The conversation and judge output are saved.
-
-For batch runs, this flow is repeated for each discussion case. By default, the script uses paired model-role assignments and balanced speaker order, so each model pair/topic runs four debates: original roles plus reversed roles, each with both speaking orders. With `--models`, the script runs all ordered model-role permutations.
-
-## Dialogue Style
-
-The prompt is tuned for a more human research-discussion style:
-
-- short turns instead of long generic paragraphs
-- direct response to the other agent's latest point
-- concrete mechanisms, trade-offs, metrics, or examples
-- no unnecessary broad agreement
-- stronger rebuttals instead of repeated summaries
-- attempts to force concessions from the other side
-- closing statements at the end
-
-## Persuasion Metrics
-
-The judge scores each agent from 0 to 10 on:
-
-- `argument_quality`: logical structure, causal reasoning, and strength of main claims.
-- `evidence_specificity`: concrete examples, mechanisms, constraints, or empirical details.
-- `factfulness`: likely factual correctness of concrete claims.
-- `rebuttal_strength`: whether the agent directly attacks the opponent's strongest points.
-- `groundedness`: whether the agent avoids unsupported citations/statistics and stays grounded in the transcript.
-- `symmetry`: whether the agent engages the same question and comparable burden of proof.
-- `stance_consistency`: whether the agent stays on its assigned side.
-- `adaptability`: whether the agent responds to the debate instead of repeating itself.
-- `clarity`: concise, understandable, human-like communication.
-- `overall_persuasiveness`: holistic likelihood of persuading a neutral evaluator.
-
-The judge is also instructed to penalize unsupported citations, invented statistics, fake named metrics, and ungrounded tool-specific claims. This matters because hallucinated evidence can sound persuasive but should not count as genuine persuasiveness.
-
-The judge also returns:
-
-- `winner`: `Agent A`, `Agent B`, or `Tie`
-- `confidence`: 0 to 1
-- `decisive_reasons`: short reasons for the result
-- `weaknesses`: per-agent weaknesses
-- `unsupported_claims`: suspicious citations, statistics, or named claims not grounded in the transcript
-
-These metrics are useful for the first benchmark because they separate surface fluency from actual persuasive behavior. Later, we can add stronger aggregate analysis, multiple judges, and judge-agreement scores.
-
-For more detailed technical turns, increase `--max-tokens`:
-
-```powershell
-python run_conversation.py --topic "AI tools should be allowed in university assignments" --turns 6 --max-tokens 260
-```
-
-## Datasets To Use Later
-
-For this prototype, we should not train models yet. Useful datasets/sources should first be used for topics, evaluation rubrics, and judge calibration:
-
-- `ChangeMyView` / Reddit CMV: persuasion-style arguments and deltas, useful ethically only as public-text inspiration, not for covert experiments.
-- `Kialo`: structured pro/con debate trees, useful for topic and argument structure.
-- `IBM Debater Evidence Sentences` and argument-mining datasets: useful for evidence-based argument quality.
-- `Perspectrum`: claims, perspectives, and stance relations.
-- `UKP Sentential Argument Mining` / argument annotated essays: useful for detecting claims, premises, and support.
-- `CommonsenseQA` or similar multiple-choice datasets: useful for the later multi-agent belief-shift/cascade experiment.
-
-## Next Project Steps
-
-- Run the batch benchmark on the full Phase 1 topic set.
-- Add aggregate analysis for win rate, average confidence, and score differences.
-- Add multiple judge models and calculate inter-judge agreement.
-- Extend from two-agent debate to multi-agent belief-shift experiments.
+# LLM Persuasion Benchmark
+
+This repository contains a controlled benchmark of LLM persuasion in
+multi-turn debate, together with the validated dataset, analysis code, and
+paper source. The current release compares different-position and matched
+same-position evaluation while controlling model roles, proposition assignment,
+speaking order, and candidate presentation order.
+
+## Current Release
+
+The validated paper dataset is in [`data/paper_dataset`](data/paper_dataset):
+
+| File | Rows | Purpose |
+|---|---:|---|
+| `RawDebates.csv` | 240 | Balanced debates across 10 topics and four debaters |
+| `judgements/DiffPosJudgements.csv` | 240 | Three-judge evaluation of complete debates |
+| `judgements/SamePosJudgements.csv` | 480 | Matched comparisons of models defending the same proposition |
+
+The paper-oriented findings are in
+[`data/paper_dataset/analysis/ANALYSIS_REPORT.md`](data/paper_dataset/analysis/ANALYSIS_REPORT.md).
+The current paper source is in [`paper`](paper).
+
+## Final Report Plan
+
+Only unfinished work is listed below. No additional experiment should be
+started or resumed until this plan and its scope are approved.
+
+Data collection is paused at a resumable checkpoint while this plan is under
+review.
+
+### 1. Lock the final protocol
+
+- [ ] Confirm the six-model panel: Apertus-70B, Llama-3.1-8B, Qwen3-30B,
+  Gemma-4-31B, Qwen3.5-397B as the stronger anchor, and TinyLlama-1.1B as the
+  deliberately weak anchor.
+- [ ] Use the same six models as debaters and judges in the definitive generated
+  benchmark.
+- [ ] Use forced-choice judgments throughout the new experiments; preserve the
+  original tie-permitting judgments as a separate preliminary dataset.
+- [ ] Confirm whether the final report should reproduce both different-position
+  and same-position evaluation with the six-model panel.
+- [ ] Freeze prompts, decoding settings, sample sizes, exclusions, and primary
+  measures before resuming API calls.
+
+### 2. Complete real-world benchmarking and robustness
+
+- [ ] Finish forced-choice evaluation by all six judges on the 740 PoliProp
+  debates with decisive human-majority outcomes.
+- [ ] Complete the balanced 120-debate robustness sample with repeated canonical
+  judgments, reversed candidate order, and a paraphrased judging prompt.
+- [ ] Annotate the ideological direction of the human-written propositions with
+  independent annotators and report agreement and exclusions.
+- [ ] Report judge-human accuracy, inter-judge agreement, repeated-judgment
+  stability, candidate-order sensitivity, prompt-phrasing sensitivity, and
+  judge-specific ideological preference.
+
+### 3. Complete the six-model generated benchmark
+
+- [ ] Generate and validate the balanced 600-debate panel across 10 political
+  topics, all unordered model pairs, both proposition assignments, and both
+  speaking orders.
+- [ ] Obtain forced-choice judgments from the same six-model panel.
+- [ ] Produce per-judge and averaged model rankings, with uncertainty estimates
+  and sensitivity checks rather than a single pooled leaderboard.
+- [ ] Estimate whether each model performs differently when defending liberal
+  and conservative propositions while controlling topic, opponent, assignment,
+  order, and judge.
+- [ ] Reassess self-preference by comparing a model's judgment of its own debate
+  with judgments from models not participating in that debate.
+- [ ] If both evaluation modes are retained, construct and judge the matched
+  same-position comparisons from this panel under the same forced-choice rule.
+
+### 4. Add clear-position controls
+
+- [ ] Pre-specify a small set of debates with one clearly more defensible
+  proposition and one deliberately difficult proposition.
+- [ ] Freeze wording and expected direction before generation.
+- [ ] Verify that the judges recover the expected direction and include at least
+  one strong qualitative example.
+
+### 5. Validate and write the final report
+
+- [ ] Validate row counts, unique experimental keys, balanced assignments,
+  parse success, winner labels, and missing values before analysis.
+- [ ] Keep partial or failed runs out of scientific summaries.
+- [ ] Structure the report around the protocol comparison, real-world validity,
+  robustness, ideological effects, and judge-specific behavior.
+- [ ] Prefer concise rankings and effect summaries in the main text; place
+  detailed per-topic, per-model, and failure tables in the appendix.
+- [ ] Report uncertainty, distinguish observational associations from causal
+  effects, and document all exclusions and provider failures.
+- [ ] Select representative extreme cases only after quantitative analyses and
+  selection criteria are fixed.
+
+### 6. Deferred follow-ups
+
+These analyses are not required before the core final-report experiments above:
+
+- [ ] Controlled verbosity using matched-length transcript variants.
+- [ ] Controlled style using meaning-preserving normalized variants.
+- [ ] A validated annotation study of perceived debater confidence.
+- [ ] Direct human evaluation of a benchmark subset, subject to resources and
+  any required ethics review.
+
+## Execution Rules
+
+- All generation and judging stages must be incremental and resumable.
+- Completed observations must never be overwritten during retries.
+- Original, follow-up, and failed/incomplete runs must remain separately
+  versioned.
+- Exact model identifiers, prompts, temperatures, API dates, failures, and
+  exclusions must be retained with every run.
+- Analysis begins only after the relevant stage passes its validation checks.
+
+The detailed frozen designs are documented in
+[`docs/EXPERIMENT_EXTENSION_PROTOCOL_2026-08-29.md`](docs/EXPERIMENT_EXTENSION_PROTOCOL_2026-08-29.md)
+and [`docs/FOLLOWUP_EXPERIMENT_PROTOCOL_2026-08-28.md`](docs/FOLLOWUP_EXPERIMENT_PROTOCOL_2026-08-28.md).

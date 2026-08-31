@@ -1,0 +1,4 @@
+judge,paired_comparisons,stable_model,model_reversal,tie_transition,both_tie,stable_rate,candidate1_wins,candidate2_wins,ties,candidate1_share_decisive
+gemma-4-31b-it,240,190,46,4,0,0.792,286,190,4,0.601
+qwen3-30b-a3b-instruct-2507,240,91,149,0,0,0.379,209,271,0,0.435
+glm-4.7,240,166,74,0,0,0.692,306,174,0,0.637

@@ -1,0 +1,4 @@
+judge_left,judge_right,rows,exact_agreement,cohen_kappa
+gemma-4-31b-it,qwen3-30b-a3b-instruct-2507,240,0.204,0.03
+gemma-4-31b-it,glm-4.7,240,0.438,0.312
+qwen3-30b-a3b-instruct-2507,glm-4.7,240,0.333,0.198

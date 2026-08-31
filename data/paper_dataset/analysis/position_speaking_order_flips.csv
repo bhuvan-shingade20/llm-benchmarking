@@ -1,0 +1,7 @@
+manipulation,judge,paired_conditions,same_winner,winner_reversal,tie_transition,both_tie,winner_reversal_rate,any_change_rate
+position_assignment,gemma-4-31b-it,120,36,3,49,32,0.025,0.433
+position_assignment,qwen3-30b-a3b-instruct-2507,120,37,38,39,6,0.317,0.642
+position_assignment,glm-4.7,120,90,30,0,0,0.25,0.25
+speaking_order,gemma-4-31b-it,120,40,5,37,38,0.042,0.35
+speaking_order,qwen3-30b-a3b-instruct-2507,120,52,26,33,9,0.217,0.492
+speaking_order,glm-4.7,120,94,26,0,0,0.217,0.217

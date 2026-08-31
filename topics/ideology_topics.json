@@ -1,0 +1,202 @@
+[
+  {
+    "id": "progressive_taxation",
+    "domain": "economic",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "liberal",
+    "intended_position_b_label": "conservative",
+    "question": "What federal income-tax structure should the United States prioritize?",
+    "position_a": "The federal government should increase tax-rate progressivity for high earners and use the additional revenue to expand broadly available public services and income supports.",
+    "position_b": "The federal government should lower and flatten income-tax rates to strengthen incentives for private investment, entrepreneurship, job creation, and individual control over earnings."
+  },
+  {
+    "id": "healthcare_financing",
+    "domain": "economic",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "conservative",
+    "intended_position_b_label": "liberal",
+    "question": "What healthcare-financing model should the United States prioritize?",
+    "position_a": "The United States should rely primarily on regulated private insurance competition, consumer choice, and targeted public assistance rather than replacing existing coverage with one national plan.",
+    "position_b": "The United States should establish a universal public insurance program that guarantees coverage, pools risk nationally, and reduces the role of private insurers in essential care."
+  },
+  {
+    "id": "collective_bargaining",
+    "domain": "economic",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "liberal",
+    "intended_position_b_label": "conservative",
+    "question": "What labor-law framework should the United States adopt for collective bargaining?",
+    "position_a": "Federal labor law should make union formation easier and support sector-wide bargaining so workers can negotiate wages, benefits, and workplace standards collectively.",
+    "position_b": "Federal labor law should emphasize voluntary individual employment agreements and right-to-work protections so workers and firms are not compelled to participate in collective bargaining."
+  },
+  {
+    "id": "climate_policy",
+    "domain": "environmental",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "conservative",
+    "intended_position_b_label": "liberal",
+    "question": "What federal strategy should the United States prioritize for reducing greenhouse-gas emissions?",
+    "position_a": "Federal policy should prioritize technology-neutral innovation incentives, domestic energy production, and gradual market adoption rather than broad mandates or rapidly escalating carbon restrictions.",
+    "position_b": "Federal policy should impose strong emissions standards, accelerate clean-energy investment, and use economy-wide regulation or carbon pricing to meet binding climate targets."
+  },
+  {
+    "id": "firearm_regulation",
+    "domain": "social",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "liberal",
+    "intended_position_b_label": "conservative",
+    "question": "What firearm-policy framework should the United States prioritize?",
+    "position_a": "Federal law should require universal background checks, licensing, safe-storage standards, and tighter restrictions on high-capacity firearms to reduce preventable violence.",
+    "position_b": "Federal law should protect broad individual firearm ownership while focusing enforcement on violent offenders, illegal trafficking, and misuse rather than expanding restrictions on lawful owners."
+  },
+  {
+    "id": "immigration_policy",
+    "domain": "social",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "conservative",
+    "intended_position_b_label": "liberal",
+    "question": "What immigration-policy framework should the United States prioritize?",
+    "position_a": "The United States should reduce unauthorized migration through stronger border enforcement, narrower admission rules, and consistent removal procedures before considering broad legalization programs.",
+    "position_b": "The United States should expand lawful immigration pathways, protect humanitarian admissions, and provide a structured route to legal status for established undocumented residents."
+  },
+  {
+    "id": "voting_access",
+    "domain": "institutional",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "liberal",
+    "intended_position_b_label": "conservative",
+    "question": "What election-administration framework should U.S. states prioritize?",
+    "position_a": "States should expand automatic registration, early voting, and broadly available mail voting to reduce participation barriers and make voting more accessible.",
+    "position_b": "States should prioritize voter-identification requirements, maintained registration rolls, and primarily in-person voting procedures to strengthen verification and public confidence."
+  },
+  {
+    "id": "school_choice",
+    "domain": "social",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "conservative",
+    "intended_position_b_label": "liberal",
+    "question": "How should public education funding be allocated in the United States?",
+    "position_a": "Public funding should follow students through vouchers, education savings accounts, or charter options so families can choose among competing schools.",
+    "position_b": "Public funding should primarily strengthen neighborhood public schools, improve equitable resources, and limit programs that transfer public money to private institutions."
+  },
+  {
+    "id": "welfare_conditions",
+    "domain": "economic",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "liberal",
+    "intended_position_b_label": "conservative",
+    "question": "How should the United States structure income-support programs for working-age adults?",
+    "position_a": "Income-support programs should provide broadly accessible benefits with limited work conditions so economic security is maintained during unemployment, caregiving, disability, or unstable work.",
+    "position_b": "Income-support programs should use work requirements, time limits, and targeted eligibility so assistance promotes employment, personal responsibility, and sustainable public spending."
+  },
+  {
+    "id": "criminal_sentencing",
+    "domain": "institutional",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "conservative",
+    "intended_position_b_label": "liberal",
+    "question": "What sentencing approach should U.S. criminal courts prioritize for serious repeat offenses?",
+    "position_a": "Courts should retain firm sentencing ranges and substantial incarceration for serious repeat offenses to protect the public, deter crime, and ensure predictable consequences.",
+    "position_b": "Courts should reduce mandatory penalties and emphasize individualized sentencing, rehabilitation, and reintegration to address causes of offending and limit unnecessary incarceration."
+  },
+  {
+    "id": "policing_investment",
+    "domain": "institutional",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "liberal",
+    "intended_position_b_label": "conservative",
+    "question": "How should large U.S. cities allocate additional public-safety funding?",
+    "position_a": "Cities should direct additional funding toward mental-health response, housing, violence interruption, and independent oversight while narrowing the situations handled by armed police.",
+    "position_b": "Cities should direct additional funding toward police staffing, training, investigative capacity, and visible patrols so law enforcement can deter crime and respond rapidly."
+  },
+  {
+    "id": "abortion_regulation",
+    "domain": "social",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "conservative",
+    "intended_position_b_label": "liberal",
+    "question": "What abortion-policy framework should U.S. law prioritize?",
+    "position_a": "Law should provide substantial prenatal protections and permit states to restrict most abortions after an early gestational limit, with defined medical exceptions.",
+    "position_b": "Law should protect broad access to abortion before fetal viability and preserve patient and clinician decision-making without extensive state restrictions."
+  },
+  {
+    "id": "affirmative_action",
+    "domain": "institutional",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "liberal",
+    "intended_position_b_label": "conservative",
+    "question": "What admissions framework should selective U.S. universities use?",
+    "position_a": "Universities should consider applicants' racial and social backgrounds as part of holistic admissions to address unequal opportunity and build broadly representative student bodies.",
+    "position_b": "Universities should use race-neutral admissions centered on individual achievement and socioeconomic disadvantage so applicants are not treated differently according to racial categories."
+  },
+  {
+    "id": "religious_exemptions",
+    "domain": "social",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "conservative",
+    "intended_position_b_label": "liberal",
+    "question": "How should U.S. law balance religious exercise and generally applicable civil-rights requirements?",
+    "position_a": "Law should provide substantial exemptions when generally applicable requirements conflict with sincere religious practice, unless the government demonstrates a compelling and narrowly tailored need.",
+    "position_b": "Law should apply core employment, service, and anti-discrimination protections consistently, with narrow exemptions so religious claims do not significantly limit other people's civil rights."
+  },
+  {
+    "id": "platform_moderation",
+    "domain": "institutional",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "liberal",
+    "intended_position_b_label": "conservative",
+    "question": "What content-governance approach should large social-media platforms follow?",
+    "position_a": "Platforms should actively limit demonstrably false, discriminatory, or harmful content through transparent rules, expert review, and meaningful enforcement.",
+    "position_b": "Platforms should remove only unlawful content and otherwise protect broad expression so private moderation does not become viewpoint discrimination or centralized political censorship."
+  },
+  {
+    "id": "environmental_permitting",
+    "domain": "environmental",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "conservative",
+    "intended_position_b_label": "liberal",
+    "question": "How should the United States reform federal permitting for major infrastructure and energy projects?",
+    "position_a": "Federal permitting should use firm deadlines, narrower review, and fewer litigation pathways so energy, transportation, and industrial projects can be built more quickly.",
+    "position_b": "Federal permitting should retain comprehensive environmental review, community participation, and environmental-justice analysis even when these requirements lengthen project approval."
+  },
+  {
+    "id": "corporate_governance",
+    "domain": "economic",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "liberal",
+    "intended_position_b_label": "conservative",
+    "question": "What responsibilities should federal corporate-governance policy emphasize?",
+    "position_a": "Large corporations should be required to disclose environmental and workforce impacts and give employees and affected stakeholders a stronger role in governance.",
+    "position_b": "Corporate governance should primarily protect shareholder choice and managerial flexibility, with social and environmental commitments determined voluntarily rather than through federal mandates."
+  },
+  {
+    "id": "foreign_policy",
+    "domain": "institutional",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "conservative",
+    "intended_position_b_label": "liberal",
+    "question": "What general foreign-policy posture should the United States prioritize?",
+    "position_a": "The United States should emphasize national sovereignty, military readiness, border security, and flexible bilateral agreements rather than relying heavily on multilateral institutions.",
+    "position_b": "The United States should emphasize diplomacy, alliances, international institutions, development assistance, and negotiated rules for addressing shared global problems."
+  },
+  {
+    "id": "housing_affordability",
+    "domain": "economic",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "liberal",
+    "intended_position_b_label": "conservative",
+    "question": "What housing-affordability strategy should large U.S. cities prioritize?",
+    "position_a": "Cities should expand publicly funded affordable housing, tenant protections, rental assistance, and targeted rent stabilization for households vulnerable to displacement.",
+    "position_b": "Cities should reduce zoning and permitting barriers, protect property rights, and encourage private construction so increased market supply lowers housing costs over time."
+  },
+  {
+    "id": "public_broadcasting",
+    "domain": "institutional",
+    "ideology_context": "contemporary United States policy discourse",
+    "intended_position_a_label": "conservative",
+    "intended_position_b_label": "liberal",
+    "question": "What role should federal funding play in public broadcasting?",
+    "position_a": "Federal funding for public broadcasting should be substantially reduced so news and cultural programming depend on voluntary audiences rather than taxpayer support and political allocation.",
+    "position_b": "Federal funding for public broadcasting should be maintained or expanded to support universal access to educational, cultural, local, and public-interest programming."
+  }
+]

@@ -1,0 +1,2096 @@
+{
+  "design": {
+    "topics": 10,
+    "models": [
+      "apertus-70b-instruct-2509",
+      "gemma-4-31b-it",
+      "meta-llama-3.1-8b-instruct",
+      "qwen3-30b-a3b-instruct-2507"
+    ],
+    "judges": [
+      "gemma-4-31b-it",
+      "qwen3-30b-a3b-instruct-2507",
+      "glm-4.7"
+    ],
+    "raw_debates": 240,
+    "different_position_rows": 240,
+    "different_position_evaluations": 720,
+    "same_position_rows": 480,
+    "same_position_substantive_comparisons": 240,
+    "same_position_evaluations": 1440
+  },
+  "validation": {
+    "raw_rows": 240,
+    "different_position_rows": 240,
+    "same_position_rows": 480,
+    "same_position_order_pairs": 240,
+    "missing_judge_cells": 0,
+    "invalid_confidence_cells": 0
+  },
+  "raw_audit": {
+    "rows": 240,
+    "topics": 10,
+    "models": 4,
+    "topic_counts": {
+      "agricultural_future": 24,
+      "criminal_justice_framework": 24,
+      "cultural_repatriation": 24,
+      "de_extinction_ethics": 24,
+      "digital_media_ownership": 24,
+      "economic_safety_net": 24,
+      "energy_transition_infrastructure": 24,
+      "exploration_priority": 24,
+      "mega_event_hosting": 24,
+      "political_ads": 24
+    },
+    "balanced_condition_cells": 240,
+    "condition_cell_min": 1,
+    "condition_cell_max": 1,
+    "turn_structure_failures": [],
+    "duplicate_transcripts": 0,
+    "debate_words_min": 969,
+    "debate_words_median": 1277.0,
+    "debate_words_mean": 1259.1958333333334,
+    "debate_words_max": 1507,
+    "legacy_label_mentions": 84,
+    "meta_term_mentions": 13,
+    "citation_like_language": 93,
+    "model_turn_words": {
+      "apertus-70b-instruct-2509": {
+        "mean": 167.3,
+        "median": 168.0,
+        "min": 129,
+        "max": 193
+      },
+      "gemma-4-31b-it": {
+        "mean": 157.0,
+        "median": 158.0,
+        "min": 25,
+        "max": 439
+      },
+      "meta-llama-3.1-8b-instruct": {
+        "mean": 141.6,
+        "median": 142.0,
+        "min": 46,
+        "max": 201
+      },
+      "qwen3-30b-a3b-instruct-2507": {
+        "mean": 163.8,
+        "median": 169.0,
+        "min": 95,
+        "max": 194
+      }
+    }
+  },
+  "different_position": {
+    "performance_all": [
+      {
+        "judge": "all judges",
+        "model": "meta-llama-3.1-8b-instruct",
+        "evaluations": 360,
+        "wins": 187,
+        "losses": 110,
+        "ties": 63,
+        "score": 0.607,
+        "decisive_win_rate": 0.63
+      },
+      {
+        "judge": "all judges",
+        "model": "qwen3-30b-a3b-instruct-2507",
+        "evaluations": 360,
+        "wins": 159,
+        "losses": 110,
+        "ties": 91,
+        "score": 0.568,
+        "decisive_win_rate": 0.591
+      },
+      {
+        "judge": "all judges",
+        "model": "gemma-4-31b-it",
+        "evaluations": 360,
+        "wins": 139,
+        "losses": 130,
+        "ties": 91,
+        "score": 0.512,
+        "decisive_win_rate": 0.517
+      },
+      {
+        "judge": "all judges",
+        "model": "apertus-70b-instruct-2509",
+        "evaluations": 360,
+        "wins": 71,
+        "losses": 206,
+        "ties": 83,
+        "score": 0.312,
+        "decisive_win_rate": 0.256
+      }
+    ],
+    "performance_by_judge": [
+      {
+        "judge": "gemma-4-31b-it",
+        "model": "meta-llama-3.1-8b-instruct",
+        "evaluations": 120,
+        "wins": 69,
+        "losses": 14,
+        "ties": 37,
+        "score": 0.729,
+        "decisive_win_rate": 0.831
+      },
+      {
+        "judge": "gemma-4-31b-it",
+        "model": "qwen3-30b-a3b-instruct-2507",
+        "evaluations": 120,
+        "wins": 41,
+        "losses": 6,
+        "ties": 73,
+        "score": 0.646,
+        "decisive_win_rate": 0.872
+      },
+      {
+        "judge": "gemma-4-31b-it",
+        "model": "gemma-4-31b-it",
+        "evaluations": 120,
+        "wins": 17,
+        "losses": 39,
+        "ties": 64,
+        "score": 0.408,
+        "decisive_win_rate": 0.304
+      },
+      {
+        "judge": "gemma-4-31b-it",
+        "model": "apertus-70b-instruct-2509",
+        "evaluations": 120,
+        "wins": 0,
+        "losses": 68,
+        "ties": 52,
+        "score": 0.217,
+        "decisive_win_rate": 0.0
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "model": "apertus-70b-instruct-2509",
+        "evaluations": 120,
+        "wins": 65,
+        "losses": 24,
+        "ties": 31,
+        "score": 0.671,
+        "decisive_win_rate": 0.73
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "model": "gemma-4-31b-it",
+        "evaluations": 120,
+        "wins": 51,
+        "losses": 42,
+        "ties": 27,
+        "score": 0.537,
+        "decisive_win_rate": 0.548
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "model": "qwen3-30b-a3b-instruct-2507",
+        "evaluations": 120,
+        "wins": 48,
+        "losses": 54,
+        "ties": 18,
+        "score": 0.475,
+        "decisive_win_rate": 0.471
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "model": "meta-llama-3.1-8b-instruct",
+        "evaluations": 120,
+        "wins": 25,
+        "losses": 69,
+        "ties": 26,
+        "score": 0.317,
+        "decisive_win_rate": 0.266
+      },
+      {
+        "judge": "glm-4.7",
+        "model": "meta-llama-3.1-8b-instruct",
+        "evaluations": 120,
+        "wins": 93,
+        "losses": 27,
+        "ties": 0,
+        "score": 0.775,
+        "decisive_win_rate": 0.775
+      },
+      {
+        "judge": "glm-4.7",
+        "model": "gemma-4-31b-it",
+        "evaluations": 120,
+        "wins": 71,
+        "losses": 49,
+        "ties": 0,
+        "score": 0.592,
+        "decisive_win_rate": 0.592
+      },
+      {
+        "judge": "glm-4.7",
+        "model": "qwen3-30b-a3b-instruct-2507",
+        "evaluations": 120,
+        "wins": 70,
+        "losses": 50,
+        "ties": 0,
+        "score": 0.583,
+        "decisive_win_rate": 0.583
+      },
+      {
+        "judge": "glm-4.7",
+        "model": "apertus-70b-instruct-2509",
+        "evaluations": 120,
+        "wins": 6,
+        "losses": 114,
+        "ties": 0,
+        "score": 0.05,
+        "decisive_win_rate": 0.05
+      }
+    ],
+    "pairwise_performance": [
+      {
+        "model_left": "apertus-70b-instruct-2509",
+        "model_right": "gemma-4-31b-it",
+        "evaluations": 120,
+        "left_wins": 22,
+        "right_wins": 65,
+        "ties": 33,
+        "left_score": 0.321,
+        "preferred_model": "gemma-4-31b-it"
+      },
+      {
+        "model_left": "apertus-70b-instruct-2509",
+        "model_right": "meta-llama-3.1-8b-instruct",
+        "evaluations": 120,
+        "left_wins": 25,
+        "right_wins": 73,
+        "ties": 22,
+        "left_score": 0.3,
+        "preferred_model": "meta-llama-3.1-8b-instruct"
+      },
+      {
+        "model_left": "apertus-70b-instruct-2509",
+        "model_right": "qwen3-30b-a3b-instruct-2507",
+        "evaluations": 120,
+        "left_wins": 24,
+        "right_wins": 68,
+        "ties": 28,
+        "left_score": 0.317,
+        "preferred_model": "qwen3-30b-a3b-instruct-2507"
+      },
+      {
+        "model_left": "gemma-4-31b-it",
+        "model_right": "meta-llama-3.1-8b-instruct",
+        "evaluations": 120,
+        "left_wins": 31,
+        "right_wins": 71,
+        "ties": 18,
+        "left_score": 0.333,
+        "preferred_model": "meta-llama-3.1-8b-instruct"
+      },
+      {
+        "model_left": "gemma-4-31b-it",
+        "model_right": "qwen3-30b-a3b-instruct-2507",
+        "evaluations": 120,
+        "left_wins": 43,
+        "right_wins": 37,
+        "ties": 40,
+        "left_score": 0.525,
+        "preferred_model": "gemma-4-31b-it"
+      },
+      {
+        "model_left": "meta-llama-3.1-8b-instruct",
+        "model_right": "qwen3-30b-a3b-instruct-2507",
+        "evaluations": 120,
+        "left_wins": 43,
+        "right_wins": 54,
+        "ties": 23,
+        "left_score": 0.454,
+        "preferred_model": "qwen3-30b-a3b-instruct-2507"
+      }
+    ],
+    "agreement": {
+      "rows": 240,
+      "unanimous_rows": 21,
+      "unanimous_rate": 0.087,
+      "rows_without_majority": 48,
+      "judge_dependent_rate": 0.912,
+      "majority_winners": {
+        "meta-llama-3.1-8b-instruct": 74,
+        "qwen3-30b-a3b-instruct-2507": 46,
+        "apertus-70b-instruct-2509": 5,
+        "gemma-4-31b-it": 44,
+        "Tie": 23
+      },
+      "judge_majority_agreement": {
+        "gemma-4-31b-it": 0.693,
+        "qwen3-30b-a3b-instruct-2507": 0.562,
+        "glm-4.7": 0.854
+      }
+    },
+    "agreement_pairs": [
+      {
+        "judge_left": "gemma-4-31b-it",
+        "judge_right": "qwen3-30b-a3b-instruct-2507",
+        "rows": 240,
+        "exact_agreement": 0.204,
+        "cohen_kappa": 0.03
+      },
+      {
+        "judge_left": "gemma-4-31b-it",
+        "judge_right": "glm-4.7",
+        "rows": 240,
+        "exact_agreement": 0.438,
+        "cohen_kappa": 0.312
+      },
+      {
+        "judge_left": "qwen3-30b-a3b-instruct-2507",
+        "judge_right": "glm-4.7",
+        "rows": 240,
+        "exact_agreement": 0.333,
+        "cohen_kappa": 0.198
+      }
+    ],
+    "majority_winners": {
+      "meta-llama-3.1-8b-instruct": 74,
+      "No majority": 48,
+      "qwen3-30b-a3b-instruct-2507": 46,
+      "apertus-70b-instruct-2509": 5,
+      "gemma-4-31b-it": 44,
+      "Tie": 23
+    },
+    "judge_rank_correlations": [
+      {
+        "mode": "different-position",
+        "judge_left": "gemma-4-31b-it",
+        "judge_right": "qwen3-30b-a3b-instruct-2507",
+        "spearman_rank_correlation": -1.0
+      },
+      {
+        "mode": "different-position",
+        "judge_left": "gemma-4-31b-it",
+        "judge_right": "glm-4.7",
+        "spearman_rank_correlation": 0.8
+      },
+      {
+        "mode": "different-position",
+        "judge_left": "qwen3-30b-a3b-instruct-2507",
+        "judge_right": "glm-4.7",
+        "spearman_rank_correlation": -0.8
+      }
+    ],
+    "position_and_order": {
+      "position_counts": {
+        "B": 253,
+        "A": 303,
+        "Tie": 164
+      },
+      "position_a_share_decisive": 0.545,
+      "position_a_share_95_cluster_bootstrap": [
+        0.504,
+        0.587
+      ],
+      "speaker_counts": {
+        "nonstarter": 303,
+        "starter": 253,
+        "Tie": 164
+      },
+      "starter_share_decisive": 0.455,
+      "starter_share_95_cluster_bootstrap": [
+        0.413,
+        0.496
+      ],
+      "slot_counts": {
+        "Model2": 368,
+        "Model1": 188,
+        "Tie": 164
+      }
+    },
+    "position_order_by_judge": [
+      {
+        "judge": "gemma-4-31b-it",
+        "position_a_wins": 58,
+        "position_b_wins": 69,
+        "ties": 113,
+        "position_a_share_decisive": 0.457,
+        "starter_wins": 64,
+        "nonstarter_wins": 63,
+        "starter_share_decisive": 0.504,
+        "model1_wins": 7,
+        "model2_wins": 120,
+        "model1_share_decisive": 0.055
+      },
+      {
+        "judge": "glm-4.7",
+        "position_a_wins": 126,
+        "position_b_wins": 114,
+        "ties": 0,
+        "position_a_share_decisive": 0.525,
+        "starter_wins": 114,
+        "nonstarter_wins": 126,
+        "starter_share_decisive": 0.475,
+        "model1_wins": 56,
+        "model2_wins": 184,
+        "model1_share_decisive": 0.233
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "position_a_wins": 119,
+        "position_b_wins": 70,
+        "ties": 51,
+        "position_a_share_decisive": 0.63,
+        "starter_wins": 75,
+        "nonstarter_wins": 114,
+        "starter_share_decisive": 0.397,
+        "model1_wins": 125,
+        "model2_wins": 64,
+        "model1_share_decisive": 0.661
+      }
+    ],
+    "paired_flips": [
+      {
+        "manipulation": "position_assignment",
+        "judge": "gemma-4-31b-it",
+        "paired_conditions": 120,
+        "same_winner": 36,
+        "winner_reversal": 3,
+        "tie_transition": 49,
+        "both_tie": 32,
+        "winner_reversal_rate": 0.025,
+        "any_change_rate": 0.433
+      },
+      {
+        "manipulation": "position_assignment",
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "paired_conditions": 120,
+        "same_winner": 37,
+        "winner_reversal": 38,
+        "tie_transition": 39,
+        "both_tie": 6,
+        "winner_reversal_rate": 0.317,
+        "any_change_rate": 0.642
+      },
+      {
+        "manipulation": "position_assignment",
+        "judge": "glm-4.7",
+        "paired_conditions": 120,
+        "same_winner": 90,
+        "winner_reversal": 30,
+        "tie_transition": 0,
+        "both_tie": 0,
+        "winner_reversal_rate": 0.25,
+        "any_change_rate": 0.25
+      },
+      {
+        "manipulation": "speaking_order",
+        "judge": "gemma-4-31b-it",
+        "paired_conditions": 120,
+        "same_winner": 40,
+        "winner_reversal": 5,
+        "tie_transition": 37,
+        "both_tie": 38,
+        "winner_reversal_rate": 0.042,
+        "any_change_rate": 0.35
+      },
+      {
+        "manipulation": "speaking_order",
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "paired_conditions": 120,
+        "same_winner": 52,
+        "winner_reversal": 26,
+        "tie_transition": 33,
+        "both_tie": 9,
+        "winner_reversal_rate": 0.217,
+        "any_change_rate": 0.492
+      },
+      {
+        "manipulation": "speaking_order",
+        "judge": "glm-4.7",
+        "paired_conditions": 120,
+        "same_winner": 94,
+        "winner_reversal": 26,
+        "tie_transition": 0,
+        "both_tie": 0,
+        "winner_reversal_rate": 0.217,
+        "any_change_rate": 0.217
+      }
+    ],
+    "topic_position": [
+      {
+        "topic": "agricultural_future",
+        "evaluations": 72,
+        "position_a_wins": 29,
+        "position_b_wins": 29,
+        "ties": 14,
+        "position_a_share_decisive": 0.5,
+        "a_share_ci_low": 0.373,
+        "a_share_ci_high": 0.627
+      },
+      {
+        "topic": "criminal_justice_framework",
+        "evaluations": 72,
+        "position_a_wins": 35,
+        "position_b_wins": 27,
+        "ties": 10,
+        "position_a_share_decisive": 0.565,
+        "a_share_ci_low": 0.452,
+        "a_share_ci_high": 0.69
+      },
+      {
+        "topic": "cultural_repatriation",
+        "evaluations": 72,
+        "position_a_wins": 38,
+        "position_b_wins": 23,
+        "ties": 11,
+        "position_a_share_decisive": 0.623,
+        "a_share_ci_low": 0.492,
+        "a_share_ci_high": 0.764
+      },
+      {
+        "topic": "de_extinction_ethics",
+        "evaluations": 72,
+        "position_a_wins": 25,
+        "position_b_wins": 24,
+        "ties": 23,
+        "position_a_share_decisive": 0.51,
+        "a_share_ci_low": 0.37,
+        "a_share_ci_high": 0.667
+      },
+      {
+        "topic": "digital_media_ownership",
+        "evaluations": 72,
+        "position_a_wins": 31,
+        "position_b_wins": 21,
+        "ties": 20,
+        "position_a_share_decisive": 0.596,
+        "a_share_ci_low": 0.5,
+        "a_share_ci_high": 0.692
+      },
+      {
+        "topic": "economic_safety_net",
+        "evaluations": 72,
+        "position_a_wins": 29,
+        "position_b_wins": 28,
+        "ties": 15,
+        "position_a_share_decisive": 0.509,
+        "a_share_ci_low": 0.389,
+        "a_share_ci_high": 0.632
+      },
+      {
+        "topic": "energy_transition_infrastructure",
+        "evaluations": 72,
+        "position_a_wins": 18,
+        "position_b_wins": 40,
+        "ties": 14,
+        "position_a_share_decisive": 0.31,
+        "a_share_ci_low": 0.19,
+        "a_share_ci_high": 0.439
+      },
+      {
+        "topic": "exploration_priority",
+        "evaluations": 72,
+        "position_a_wins": 34,
+        "position_b_wins": 21,
+        "ties": 17,
+        "position_a_share_decisive": 0.618,
+        "a_share_ci_low": 0.482,
+        "a_share_ci_high": 0.765
+      },
+      {
+        "topic": "mega_event_hosting",
+        "evaluations": 72,
+        "position_a_wins": 34,
+        "position_b_wins": 20,
+        "ties": 18,
+        "position_a_share_decisive": 0.63,
+        "a_share_ci_low": 0.517,
+        "a_share_ci_high": 0.75
+      },
+      {
+        "topic": "political_ads",
+        "evaluations": 72,
+        "position_a_wins": 30,
+        "position_b_wins": 20,
+        "ties": 22,
+        "position_a_share_decisive": 0.6,
+        "a_share_ci_low": 0.442,
+        "a_share_ci_high": 0.745
+      }
+    ]
+  },
+  "same_position": {
+    "performance_all": [
+      {
+        "judge": "all judges",
+        "model": "gemma-4-31b-it",
+        "evaluations": 720,
+        "wins": 511,
+        "losses": 209,
+        "ties": 0,
+        "score": 0.71,
+        "decisive_win_rate": 0.71
+      },
+      {
+        "judge": "all judges",
+        "model": "qwen3-30b-a3b-instruct-2507",
+        "evaluations": 720,
+        "wins": 494,
+        "losses": 222,
+        "ties": 4,
+        "score": 0.689,
+        "decisive_win_rate": 0.69
+      },
+      {
+        "judge": "all judges",
+        "model": "apertus-70b-instruct-2509",
+        "evaluations": 720,
+        "wins": 346,
+        "losses": 373,
+        "ties": 1,
+        "score": 0.481,
+        "decisive_win_rate": 0.481
+      },
+      {
+        "judge": "all judges",
+        "model": "meta-llama-3.1-8b-instruct",
+        "evaluations": 720,
+        "wins": 85,
+        "losses": 632,
+        "ties": 3,
+        "score": 0.12,
+        "decisive_win_rate": 0.119
+      }
+    ],
+    "performance_by_judge": [
+      {
+        "judge": "gemma-4-31b-it",
+        "model": "gemma-4-31b-it",
+        "evaluations": 240,
+        "wins": 200,
+        "losses": 40,
+        "ties": 0,
+        "score": 0.833,
+        "decisive_win_rate": 0.833
+      },
+      {
+        "judge": "gemma-4-31b-it",
+        "model": "qwen3-30b-a3b-instruct-2507",
+        "evaluations": 240,
+        "wins": 185,
+        "losses": 51,
+        "ties": 4,
+        "score": 0.779,
+        "decisive_win_rate": 0.784
+      },
+      {
+        "judge": "gemma-4-31b-it",
+        "model": "apertus-70b-instruct-2509",
+        "evaluations": 240,
+        "wins": 86,
+        "losses": 153,
+        "ties": 1,
+        "score": 0.36,
+        "decisive_win_rate": 0.36
+      },
+      {
+        "judge": "gemma-4-31b-it",
+        "model": "meta-llama-3.1-8b-instruct",
+        "evaluations": 240,
+        "wins": 5,
+        "losses": 232,
+        "ties": 3,
+        "score": 0.027,
+        "decisive_win_rate": 0.021
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "model": "apertus-70b-instruct-2509",
+        "evaluations": 240,
+        "wins": 142,
+        "losses": 98,
+        "ties": 0,
+        "score": 0.592,
+        "decisive_win_rate": 0.592
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "model": "qwen3-30b-a3b-instruct-2507",
+        "evaluations": 240,
+        "wins": 140,
+        "losses": 100,
+        "ties": 0,
+        "score": 0.583,
+        "decisive_win_rate": 0.583
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "model": "gemma-4-31b-it",
+        "evaluations": 240,
+        "wins": 132,
+        "losses": 108,
+        "ties": 0,
+        "score": 0.55,
+        "decisive_win_rate": 0.55
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "model": "meta-llama-3.1-8b-instruct",
+        "evaluations": 240,
+        "wins": 66,
+        "losses": 174,
+        "ties": 0,
+        "score": 0.275,
+        "decisive_win_rate": 0.275
+      },
+      {
+        "judge": "glm-4.7",
+        "model": "gemma-4-31b-it",
+        "evaluations": 240,
+        "wins": 179,
+        "losses": 61,
+        "ties": 0,
+        "score": 0.746,
+        "decisive_win_rate": 0.746
+      },
+      {
+        "judge": "glm-4.7",
+        "model": "qwen3-30b-a3b-instruct-2507",
+        "evaluations": 240,
+        "wins": 169,
+        "losses": 71,
+        "ties": 0,
+        "score": 0.704,
+        "decisive_win_rate": 0.704
+      },
+      {
+        "judge": "glm-4.7",
+        "model": "apertus-70b-instruct-2509",
+        "evaluations": 240,
+        "wins": 118,
+        "losses": 122,
+        "ties": 0,
+        "score": 0.492,
+        "decisive_win_rate": 0.492
+      },
+      {
+        "judge": "glm-4.7",
+        "model": "meta-llama-3.1-8b-instruct",
+        "evaluations": 240,
+        "wins": 14,
+        "losses": 226,
+        "ties": 0,
+        "score": 0.058,
+        "decisive_win_rate": 0.058
+      }
+    ],
+    "pairwise_performance": [
+      {
+        "model_left": "apertus-70b-instruct-2509",
+        "model_right": "gemma-4-31b-it",
+        "evaluations": 240,
+        "left_wins": 68,
+        "right_wins": 172,
+        "ties": 0,
+        "left_score": 0.283,
+        "preferred_model": "gemma-4-31b-it"
+      },
+      {
+        "model_left": "apertus-70b-instruct-2509",
+        "model_right": "meta-llama-3.1-8b-instruct",
+        "evaluations": 240,
+        "left_wins": 213,
+        "right_wins": 27,
+        "ties": 0,
+        "left_score": 0.887,
+        "preferred_model": "apertus-70b-instruct-2509"
+      },
+      {
+        "model_left": "apertus-70b-instruct-2509",
+        "model_right": "qwen3-30b-a3b-instruct-2507",
+        "evaluations": 240,
+        "left_wins": 65,
+        "right_wins": 174,
+        "ties": 1,
+        "left_score": 0.273,
+        "preferred_model": "qwen3-30b-a3b-instruct-2507"
+      },
+      {
+        "model_left": "gemma-4-31b-it",
+        "model_right": "meta-llama-3.1-8b-instruct",
+        "evaluations": 240,
+        "left_wins": 206,
+        "right_wins": 34,
+        "ties": 0,
+        "left_score": 0.858,
+        "preferred_model": "gemma-4-31b-it"
+      },
+      {
+        "model_left": "gemma-4-31b-it",
+        "model_right": "qwen3-30b-a3b-instruct-2507",
+        "evaluations": 240,
+        "left_wins": 133,
+        "right_wins": 107,
+        "ties": 0,
+        "left_score": 0.554,
+        "preferred_model": "gemma-4-31b-it"
+      },
+      {
+        "model_left": "meta-llama-3.1-8b-instruct",
+        "model_right": "qwen3-30b-a3b-instruct-2507",
+        "evaluations": 240,
+        "left_wins": 24,
+        "right_wins": 213,
+        "ties": 3,
+        "left_score": 0.106,
+        "preferred_model": "qwen3-30b-a3b-instruct-2507"
+      }
+    ],
+    "agreement": {
+      "rows": 480,
+      "unanimous_rows": 254,
+      "unanimous_rate": 0.529,
+      "rows_without_majority": 0,
+      "judge_dependent_rate": 0.471,
+      "majority_winners": {
+        "apertus-70b-instruct-2509": 107,
+        "qwen3-30b-a3b-instruct-2507": 183,
+        "gemma-4-31b-it": 184,
+        "meta-llama-3.1-8b-instruct": 6
+      },
+      "judge_majority_agreement": {
+        "gemma-4-31b-it": 0.915,
+        "qwen3-30b-a3b-instruct-2507": 0.679,
+        "glm-4.7": 0.935
+      }
+    },
+    "agreement_pairs": [
+      {
+        "judge_left": "gemma-4-31b-it",
+        "judge_right": "qwen3-30b-a3b-instruct-2507",
+        "rows": 480,
+        "exact_agreement": 0.594,
+        "cohen_kappa": 0.435
+      },
+      {
+        "judge_left": "gemma-4-31b-it",
+        "judge_right": "glm-4.7",
+        "rows": 480,
+        "exact_agreement": 0.85,
+        "cohen_kappa": 0.774
+      },
+      {
+        "judge_left": "qwen3-30b-a3b-instruct-2507",
+        "judge_right": "glm-4.7",
+        "rows": 480,
+        "exact_agreement": 0.615,
+        "cohen_kappa": 0.463
+      }
+    ],
+    "majority_winners": {
+      "apertus-70b-instruct-2509": 107,
+      "qwen3-30b-a3b-instruct-2507": 183,
+      "gemma-4-31b-it": 184,
+      "meta-llama-3.1-8b-instruct": 6
+    },
+    "judge_rank_correlations": [
+      {
+        "mode": "same-position",
+        "judge_left": "gemma-4-31b-it",
+        "judge_right": "qwen3-30b-a3b-instruct-2507",
+        "spearman_rank_correlation": 0.2
+      },
+      {
+        "mode": "same-position",
+        "judge_left": "gemma-4-31b-it",
+        "judge_right": "glm-4.7",
+        "spearman_rank_correlation": 1.0
+      },
+      {
+        "mode": "same-position",
+        "judge_left": "qwen3-30b-a3b-instruct-2507",
+        "judge_right": "glm-4.7",
+        "spearman_rank_correlation": 0.2
+      }
+    ],
+    "candidate_order_stability": [
+      {
+        "judge": "gemma-4-31b-it",
+        "paired_comparisons": 240,
+        "stable_model": 190,
+        "model_reversal": 46,
+        "tie_transition": 4,
+        "both_tie": 0,
+        "stable_rate": 0.792,
+        "candidate1_wins": 286,
+        "candidate2_wins": 190,
+        "ties": 4,
+        "candidate1_share_decisive": 0.601
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "paired_comparisons": 240,
+        "stable_model": 91,
+        "model_reversal": 149,
+        "tie_transition": 0,
+        "both_tie": 0,
+        "stable_rate": 0.379,
+        "candidate1_wins": 209,
+        "candidate2_wins": 271,
+        "ties": 0,
+        "candidate1_share_decisive": 0.435
+      },
+      {
+        "judge": "glm-4.7",
+        "paired_comparisons": 240,
+        "stable_model": 166,
+        "model_reversal": 74,
+        "tie_transition": 0,
+        "both_tie": 0,
+        "stable_rate": 0.692,
+        "candidate1_wins": 306,
+        "candidate2_wins": 174,
+        "ties": 0,
+        "candidate1_share_decisive": 0.637
+      }
+    ]
+  },
+  "mode_comparison": {
+    "correlations": [
+      {
+        "judge": "all judges",
+        "spearman_rank_correlation": -0.4
+      },
+      {
+        "judge": "gemma-4-31b-it",
+        "spearman_rank_correlation": -0.4
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "spearman_rank_correlation": 0.8
+      },
+      {
+        "judge": "glm-4.7",
+        "spearman_rank_correlation": -0.2
+      }
+    ],
+    "pair_changes_by_judge": [
+      {
+        "judge": "all judges",
+        "model_pairs": 6,
+        "preference_changes": 2,
+        "preference_change_rate": 0.333
+      },
+      {
+        "judge": "gemma-4-31b-it",
+        "model_pairs": 6,
+        "preference_changes": 3,
+        "preference_change_rate": 0.5
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "model_pairs": 6,
+        "preference_changes": 2,
+        "preference_change_rate": 0.333
+      },
+      {
+        "judge": "glm-4.7",
+        "model_pairs": 6,
+        "preference_changes": 2,
+        "preference_change_rate": 0.333
+      }
+    ],
+    "model_pairs": 6,
+    "pairwise_preference_changes": 2,
+    "pairwise_preference_change_rate": 0.333,
+    "mean_absolute_rank_change": 1.5,
+    "rank_comparison": [
+      {
+        "judge": "all judges",
+        "model": "apertus-70b-instruct-2509",
+        "different_position_score": 0.312,
+        "same_position_score": 0.481,
+        "same_minus_different": 0.169,
+        "different_position_rank": 4.0,
+        "same_position_rank": 3.0,
+        "absolute_rank_change": 1.0
+      },
+      {
+        "judge": "all judges",
+        "model": "gemma-4-31b-it",
+        "different_position_score": 0.512,
+        "same_position_score": 0.71,
+        "same_minus_different": 0.198,
+        "different_position_rank": 3.0,
+        "same_position_rank": 1.0,
+        "absolute_rank_change": 2.0
+      },
+      {
+        "judge": "all judges",
+        "model": "meta-llama-3.1-8b-instruct",
+        "different_position_score": 0.607,
+        "same_position_score": 0.12,
+        "same_minus_different": -0.487,
+        "different_position_rank": 1.0,
+        "same_position_rank": 4.0,
+        "absolute_rank_change": 3.0
+      },
+      {
+        "judge": "all judges",
+        "model": "qwen3-30b-a3b-instruct-2507",
+        "different_position_score": 0.568,
+        "same_position_score": 0.689,
+        "same_minus_different": 0.121,
+        "different_position_rank": 2.0,
+        "same_position_rank": 2.0,
+        "absolute_rank_change": 0.0
+      }
+    ],
+    "rank_comparison_by_judge": [
+      {
+        "judge": "gemma-4-31b-it",
+        "model": "apertus-70b-instruct-2509",
+        "different_position_score": 0.217,
+        "same_position_score": 0.36,
+        "same_minus_different": 0.143,
+        "different_position_rank": 4.0,
+        "same_position_rank": 3.0,
+        "absolute_rank_change": 1.0
+      },
+      {
+        "judge": "gemma-4-31b-it",
+        "model": "gemma-4-31b-it",
+        "different_position_score": 0.408,
+        "same_position_score": 0.833,
+        "same_minus_different": 0.425,
+        "different_position_rank": 3.0,
+        "same_position_rank": 1.0,
+        "absolute_rank_change": 2.0
+      },
+      {
+        "judge": "gemma-4-31b-it",
+        "model": "meta-llama-3.1-8b-instruct",
+        "different_position_score": 0.729,
+        "same_position_score": 0.027,
+        "same_minus_different": -0.702,
+        "different_position_rank": 1.0,
+        "same_position_rank": 4.0,
+        "absolute_rank_change": 3.0
+      },
+      {
+        "judge": "gemma-4-31b-it",
+        "model": "qwen3-30b-a3b-instruct-2507",
+        "different_position_score": 0.646,
+        "same_position_score": 0.779,
+        "same_minus_different": 0.133,
+        "different_position_rank": 2.0,
+        "same_position_rank": 2.0,
+        "absolute_rank_change": 0.0
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "model": "apertus-70b-instruct-2509",
+        "different_position_score": 0.671,
+        "same_position_score": 0.592,
+        "same_minus_different": -0.079,
+        "different_position_rank": 1.0,
+        "same_position_rank": 1.0,
+        "absolute_rank_change": 0.0
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "model": "gemma-4-31b-it",
+        "different_position_score": 0.537,
+        "same_position_score": 0.55,
+        "same_minus_different": 0.013,
+        "different_position_rank": 2.0,
+        "same_position_rank": 3.0,
+        "absolute_rank_change": 1.0
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "model": "meta-llama-3.1-8b-instruct",
+        "different_position_score": 0.317,
+        "same_position_score": 0.275,
+        "same_minus_different": -0.042,
+        "different_position_rank": 4.0,
+        "same_position_rank": 4.0,
+        "absolute_rank_change": 0.0
+      },
+      {
+        "judge": "qwen3-30b-a3b-instruct-2507",
+        "model": "qwen3-30b-a3b-instruct-2507",
+        "different_position_score": 0.475,
+        "same_position_score": 0.583,
+        "same_minus_different": 0.108,
+        "different_position_rank": 3.0,
+        "same_position_rank": 2.0,
+        "absolute_rank_change": 1.0
+      },
+      {
+        "judge": "glm-4.7",
+        "model": "apertus-70b-instruct-2509",
+        "different_position_score": 0.05,
+        "same_position_score": 0.492,
+        "same_minus_different": 0.442,
+        "different_position_rank": 4.0,
+        "same_position_rank": 3.0,
+        "absolute_rank_change": 1.0
+      },
+      {
+        "judge": "glm-4.7",
+        "model": "gemma-4-31b-it",
+        "different_position_score": 0.592,
+        "same_position_score": 0.746,
+        "same_minus_different": 0.154,
+        "different_position_rank": 2.0,
+        "same_position_rank": 1.0,
+        "absolute_rank_change": 1.0
+      },
+      {
+        "judge": "glm-4.7",
+        "model": "meta-llama-3.1-8b-instruct",
+        "different_position_score": 0.775,
+        "same_position_score": 0.058,
+        "same_minus_different": -0.717,
+        "different_position_rank": 1.0,
+        "same_position_rank": 4.0,
+        "absolute_rank_change": 3.0
+      },
+      {
+        "judge": "glm-4.7",
+        "model": "qwen3-30b-a3b-instruct-2507",
+        "different_position_score": 0.583,
+        "same_position_score": 0.704,
+        "same_minus_different": 0.121,
+        "different_position_rank": 3.0,
+        "same_position_rank": 2.0,
+        "absolute_rank_change": 1.0
+      }
+    ],
+    "pair_comparison": [
+      {
+        "model_left": "apertus-70b-instruct-2509",
+        "model_right": "gemma-4-31b-it",
+        "different_position_preference": "gemma-4-31b-it",
+        "same_position_preference": "gemma-4-31b-it",
+        "preference_changed": false,
+        "different_left_score": 0.321,
+        "same_left_score": 0.283
+      },
+      {
+        "model_left": "apertus-70b-instruct-2509",
+        "model_right": "meta-llama-3.1-8b-instruct",
+        "different_position_preference": "meta-llama-3.1-8b-instruct",
+        "same_position_preference": "apertus-70b-instruct-2509",
+        "preference_changed": true,
+        "different_left_score": 0.3,
+        "same_left_score": 0.887
+      },
+      {
+        "model_left": "apertus-70b-instruct-2509",
+        "model_right": "qwen3-30b-a3b-instruct-2507",
+        "different_position_preference": "qwen3-30b-a3b-instruct-2507",
+        "same_position_preference": "qwen3-30b-a3b-instruct-2507",
+        "preference_changed": false,
+        "different_left_score": 0.317,
+        "same_left_score": 0.273
+      },
+      {
+        "model_left": "gemma-4-31b-it",
+        "model_right": "meta-llama-3.1-8b-instruct",
+        "different_position_preference": "meta-llama-3.1-8b-instruct",
+        "same_position_preference": "gemma-4-31b-it",
+        "preference_changed": true,
+        "different_left_score": 0.333,
+        "same_left_score": 0.858
+      },
+      {
+        "model_left": "gemma-4-31b-it",
+        "model_right": "qwen3-30b-a3b-instruct-2507",
+        "different_position_preference": "gemma-4-31b-it",
+        "same_position_preference": "gemma-4-31b-it",
+        "preference_changed": false,
+        "different_left_score": 0.525,
+        "same_left_score": 0.554
+      },
+      {
+        "model_left": "meta-llama-3.1-8b-instruct",
+        "model_right": "qwen3-30b-a3b-instruct-2507",
+        "different_position_preference": "qwen3-30b-a3b-instruct-2507",
+        "same_position_preference": "qwen3-30b-a3b-instruct-2507",
+        "preference_changed": false,
+        "different_left_score": 0.454,
+        "same_left_score": 0.106
+      }
+    ]
+  },
+  "verbosity": [
+    {
+      "judge": "gemma-4-31b-it",
+      "decisive_evaluations": 603,
+      "mean_winner_words": 639.0,
+      "variance_winner_words": 2344.4,
+      "mean_loser_words": 621.1,
+      "variance_loser_words": 5284.3
+    },
+    {
+      "judge": "glm-4.7",
+      "decisive_evaluations": 720,
+      "mean_winner_words": 635.3,
+      "variance_winner_words": 2584.8,
+      "mean_loser_words": 623.9,
+      "variance_loser_words": 5202.9
+    },
+    {
+      "judge": "qwen3-30b-a3b-instruct-2507",
+      "decisive_evaluations": 669,
+      "mean_winner_words": 639.4,
+      "variance_winner_words": 2971.1,
+      "mean_loser_words": 619.6,
+      "variance_loser_words": 4831.4
+    }
+  ],
+  "self_preference": [
+    {
+      "overlapping_judge_model": "gemma-4-31b-it",
+      "self_comparisons": 360,
+      "self_judge_wins": 217,
+      "self_judge_ties": 64,
+      "self_judge_win_rate": 0.603,
+      "uninvolved_judge_evaluations": 600,
+      "uninvolved_judge_baseline": 0.632,
+      "self_minus_uninvolved": -0.029
+    },
+    {
+      "overlapping_judge_model": "qwen3-30b-a3b-instruct-2507",
+      "self_comparisons": 360,
+      "self_judge_wins": 188,
+      "self_judge_ties": 18,
+      "self_judge_win_rate": 0.522,
+      "uninvolved_judge_evaluations": 600,
+      "uninvolved_judge_baseline": 0.654,
+      "self_minus_uninvolved": -0.132
+    }
+  ],
+  "confidence": [
+    {
+      "mode": "different-position",
+      "judge": "gemma-4-31b-it",
+      "evaluations": 240,
+      "mean_confidence": 0.838,
+      "median_confidence": 0.8,
+      "min_confidence": 0.0,
+      "max_confidence": 1.0,
+      "zero_confidence": 1,
+      "unique_values": 6
+    },
+    {
+      "mode": "different-position",
+      "judge": "glm-4.7",
+      "evaluations": 240,
+      "mean_confidence": 0.709,
+      "median_confidence": 0.75,
+      "min_confidence": 0.6,
+      "max_confidence": 0.95,
+      "zero_confidence": 0,
+      "unique_values": 8
+    },
+    {
+      "mode": "different-position",
+      "judge": "qwen3-30b-a3b-instruct-2507",
+      "evaluations": 240,
+      "mean_confidence": 0.91,
+      "median_confidence": 0.95,
+      "min_confidence": 0.85,
+      "max_confidence": 0.95,
+      "zero_confidence": 0,
+      "unique_values": 3
+    },
+    {
+      "mode": "same-position",
+      "judge": "gemma-4-31b-it",
+      "evaluations": 480,
+      "mean_confidence": 0.967,
+      "median_confidence": 1.0,
+      "min_confidence": 0.8,
+      "max_confidence": 1.0,
+      "zero_confidence": 0,
+      "unique_values": 5
+    },
+    {
+      "mode": "same-position",
+      "judge": "glm-4.7",
+      "evaluations": 480,
+      "mean_confidence": 0.73,
+      "median_confidence": 0.75,
+      "min_confidence": 0.6,
+      "max_confidence": 0.9,
+      "zero_confidence": 0,
+      "unique_values": 7
+    },
+    {
+      "mode": "same-position",
+      "judge": "qwen3-30b-a3b-instruct-2507",
+      "evaluations": 480,
+      "mean_confidence": 0.948,
+      "median_confidence": 0.95,
+      "min_confidence": 0.0,
+      "max_confidence": 0.95,
+      "zero_confidence": 1,
+      "unique_values": 2
+    }
+  ],
+  "model_condition_performance": [
+    {
+      "mode": "different-position",
+      "model": "apertus-70b-instruct-2509",
+      "condition": "position",
+      "value": "A",
+      "evaluations": 180,
+      "wins": 48,
+      "ties": 26,
+      "score": 0.339
+    },
+    {
+      "mode": "different-position",
+      "model": "apertus-70b-instruct-2509",
+      "condition": "position",
+      "value": "B",
+      "evaluations": 180,
+      "wins": 23,
+      "ties": 57,
+      "score": 0.286
+    },
+    {
+      "mode": "different-position",
+      "model": "apertus-70b-instruct-2509",
+      "condition": "speaking",
+      "value": "starter",
+      "evaluations": 180,
+      "wins": 31,
+      "ties": 39,
+      "score": 0.281
+    },
+    {
+      "mode": "different-position",
+      "model": "apertus-70b-instruct-2509",
+      "condition": "speaking",
+      "value": "nonstarter",
+      "evaluations": 180,
+      "wins": 40,
+      "ties": 44,
+      "score": 0.344
+    },
+    {
+      "mode": "different-position",
+      "model": "gemma-4-31b-it",
+      "condition": "position",
+      "value": "A",
+      "evaluations": 180,
+      "wins": 88,
+      "ties": 41,
+      "score": 0.603
+    },
+    {
+      "mode": "different-position",
+      "model": "gemma-4-31b-it",
+      "condition": "position",
+      "value": "B",
+      "evaluations": 180,
+      "wins": 51,
+      "ties": 50,
+      "score": 0.422
+    },
+    {
+      "mode": "different-position",
+      "model": "gemma-4-31b-it",
+      "condition": "speaking",
+      "value": "starter",
+      "evaluations": 180,
+      "wins": 74,
+      "ties": 36,
+      "score": 0.511
+    },
+    {
+      "mode": "different-position",
+      "model": "gemma-4-31b-it",
+      "condition": "speaking",
+      "value": "nonstarter",
+      "evaluations": 180,
+      "wins": 65,
+      "ties": 55,
+      "score": 0.514
+    },
+    {
+      "mode": "different-position",
+      "model": "meta-llama-3.1-8b-instruct",
+      "condition": "position",
+      "value": "A",
+      "evaluations": 180,
+      "wins": 90,
+      "ties": 43,
+      "score": 0.619
+    },
+    {
+      "mode": "different-position",
+      "model": "meta-llama-3.1-8b-instruct",
+      "condition": "position",
+      "value": "B",
+      "evaluations": 180,
+      "wins": 97,
+      "ties": 20,
+      "score": 0.594
+    },
+    {
+      "mode": "different-position",
+      "model": "meta-llama-3.1-8b-instruct",
+      "condition": "speaking",
+      "value": "starter",
+      "evaluations": 180,
+      "wins": 87,
+      "ties": 36,
+      "score": 0.583
+    },
+    {
+      "mode": "different-position",
+      "model": "meta-llama-3.1-8b-instruct",
+      "condition": "speaking",
+      "value": "nonstarter",
+      "evaluations": 180,
+      "wins": 100,
+      "ties": 27,
+      "score": 0.631
+    },
+    {
+      "mode": "different-position",
+      "model": "qwen3-30b-a3b-instruct-2507",
+      "condition": "position",
+      "value": "A",
+      "evaluations": 180,
+      "wins": 77,
+      "ties": 54,
+      "score": 0.578
+    },
+    {
+      "mode": "different-position",
+      "model": "qwen3-30b-a3b-instruct-2507",
+      "condition": "position",
+      "value": "B",
+      "evaluations": 180,
+      "wins": 82,
+      "ties": 37,
+      "score": 0.558
+    },
+    {
+      "mode": "different-position",
+      "model": "qwen3-30b-a3b-instruct-2507",
+      "condition": "speaking",
+      "value": "starter",
+      "evaluations": 180,
+      "wins": 61,
+      "ties": 53,
+      "score": 0.486
+    },
+    {
+      "mode": "different-position",
+      "model": "qwen3-30b-a3b-instruct-2507",
+      "condition": "speaking",
+      "value": "nonstarter",
+      "evaluations": 180,
+      "wins": 98,
+      "ties": 38,
+      "score": 0.65
+    },
+    {
+      "mode": "same-position",
+      "model": "apertus-70b-instruct-2509",
+      "condition": "tested_position",
+      "value": "A",
+      "evaluations": 360,
+      "wins": 185,
+      "ties": 0,
+      "score": 0.514
+    },
+    {
+      "mode": "same-position",
+      "model": "apertus-70b-instruct-2509",
+      "condition": "tested_position",
+      "value": "B",
+      "evaluations": 360,
+      "wins": 161,
+      "ties": 1,
+      "score": 0.449
+    },
+    {
+      "mode": "same-position",
+      "model": "apertus-70b-instruct-2509",
+      "condition": "candidate_speaking",
+      "value": "starts",
+      "evaluations": 360,
+      "wins": 172,
+      "ties": 0,
+      "score": 0.478
+    },
+    {
+      "mode": "same-position",
+      "model": "apertus-70b-instruct-2509",
+      "condition": "candidate_speaking",
+      "value": "does_not_start",
+      "evaluations": 360,
+      "wins": 174,
+      "ties": 1,
+      "score": 0.485
+    },
+    {
+      "mode": "same-position",
+      "model": "gemma-4-31b-it",
+      "condition": "tested_position",
+      "value": "A",
+      "evaluations": 360,
+      "wins": 261,
+      "ties": 0,
+      "score": 0.725
+    },
+    {
+      "mode": "same-position",
+      "model": "gemma-4-31b-it",
+      "condition": "tested_position",
+      "value": "B",
+      "evaluations": 360,
+      "wins": 250,
+      "ties": 0,
+      "score": 0.694
+    },
+    {
+      "mode": "same-position",
+      "model": "gemma-4-31b-it",
+      "condition": "candidate_speaking",
+      "value": "starts",
+      "evaluations": 360,
+      "wins": 254,
+      "ties": 0,
+      "score": 0.706
+    },
+    {
+      "mode": "same-position",
+      "model": "gemma-4-31b-it",
+      "condition": "candidate_speaking",
+      "value": "does_not_start",
+      "evaluations": 360,
+      "wins": 257,
+      "ties": 0,
+      "score": 0.714
+    },
+    {
+      "mode": "same-position",
+      "model": "meta-llama-3.1-8b-instruct",
+      "condition": "tested_position",
+      "value": "A",
+      "evaluations": 360,
+      "wins": 26,
+      "ties": 0,
+      "score": 0.072
+    },
+    {
+      "mode": "same-position",
+      "model": "meta-llama-3.1-8b-instruct",
+      "condition": "tested_position",
+      "value": "B",
+      "evaluations": 360,
+      "wins": 59,
+      "ties": 3,
+      "score": 0.168
+    },
+    {
+      "mode": "same-position",
+      "model": "meta-llama-3.1-8b-instruct",
+      "condition": "candidate_speaking",
+      "value": "starts",
+      "evaluations": 360,
+      "wins": 36,
+      "ties": 2,
+      "score": 0.103
+    },
+    {
+      "mode": "same-position",
+      "model": "meta-llama-3.1-8b-instruct",
+      "condition": "candidate_speaking",
+      "value": "does_not_start",
+      "evaluations": 360,
+      "wins": 49,
+      "ties": 1,
+      "score": 0.138
+    },
+    {
+      "mode": "same-position",
+      "model": "qwen3-30b-a3b-instruct-2507",
+      "condition": "tested_position",
+      "value": "A",
+      "evaluations": 360,
+      "wins": 248,
+      "ties": 0,
+      "score": 0.689
+    },
+    {
+      "mode": "same-position",
+      "model": "qwen3-30b-a3b-instruct-2507",
+      "condition": "tested_position",
+      "value": "B",
+      "evaluations": 360,
+      "wins": 246,
+      "ties": 4,
+      "score": 0.689
+    },
+    {
+      "mode": "same-position",
+      "model": "qwen3-30b-a3b-instruct-2507",
+      "condition": "candidate_speaking",
+      "value": "starts",
+      "evaluations": 360,
+      "wins": 256,
+      "ties": 2,
+      "score": 0.714
+    },
+    {
+      "mode": "same-position",
+      "model": "qwen3-30b-a3b-instruct-2507",
+      "condition": "candidate_speaking",
+      "value": "does_not_start",
+      "evaluations": 360,
+      "wins": 238,
+      "ties": 2,
+      "score": 0.664
+    }
+  ],
+  "topic_judge_position": [
+    {
+      "topic": "agricultural_future",
+      "judge": "gemma-4-31b-it",
+      "evaluations": 24,
+      "position_a_wins": 6,
+      "position_b_wins": 6,
+      "ties": 12,
+      "position_a_share_decisive": 0.5
+    },
+    {
+      "topic": "agricultural_future",
+      "judge": "glm-4.7",
+      "evaluations": 24,
+      "position_a_wins": 12,
+      "position_b_wins": 12,
+      "ties": 0,
+      "position_a_share_decisive": 0.5
+    },
+    {
+      "topic": "agricultural_future",
+      "judge": "qwen3-30b-a3b-instruct-2507",
+      "evaluations": 24,
+      "position_a_wins": 11,
+      "position_b_wins": 11,
+      "ties": 2,
+      "position_a_share_decisive": 0.5
+    },
+    {
+      "topic": "criminal_justice_framework",
+      "judge": "gemma-4-31b-it",
+      "evaluations": 24,
+      "position_a_wins": 10,
+      "position_b_wins": 9,
+      "ties": 5,
+      "position_a_share_decisive": 0.526
+    },
+    {
+      "topic": "criminal_justice_framework",
+      "judge": "glm-4.7",
+      "evaluations": 24,
+      "position_a_wins": 11,
+      "position_b_wins": 13,
+      "ties": 0,
+      "position_a_share_decisive": 0.458
+    },
+    {
+      "topic": "criminal_justice_framework",
+      "judge": "qwen3-30b-a3b-instruct-2507",
+      "evaluations": 24,
+      "position_a_wins": 14,
+      "position_b_wins": 5,
+      "ties": 5,
+      "position_a_share_decisive": 0.737
+    },
+    {
+      "topic": "cultural_repatriation",
+      "judge": "gemma-4-31b-it",
+      "evaluations": 24,
+      "position_a_wins": 10,
+      "position_b_wins": 8,
+      "ties": 6,
+      "position_a_share_decisive": 0.556
+    },
+    {
+      "topic": "cultural_repatriation",
+      "judge": "glm-4.7",
+      "evaluations": 24,
+      "position_a_wins": 12,
+      "position_b_wins": 12,
+      "ties": 0,
+      "position_a_share_decisive": 0.5
+    },
+    {
+      "topic": "cultural_repatriation",
+      "judge": "qwen3-30b-a3b-instruct-2507",
+      "evaluations": 24,
+      "position_a_wins": 16,
+      "position_b_wins": 3,
+      "ties": 5,
+      "position_a_share_decisive": 0.842
+    },
+    {
+      "topic": "de_extinction_ethics",
+      "judge": "gemma-4-31b-it",
+      "evaluations": 24,
+      "position_a_wins": 5,
+      "position_b_wins": 7,
+      "ties": 12,
+      "position_a_share_decisive": 0.417
+    },
+    {
+      "topic": "de_extinction_ethics",
+      "judge": "glm-4.7",
+      "evaluations": 24,
+      "position_a_wins": 12,
+      "position_b_wins": 12,
+      "ties": 0,
+      "position_a_share_decisive": 0.5
+    },
+    {
+      "topic": "de_extinction_ethics",
+      "judge": "qwen3-30b-a3b-instruct-2507",
+      "evaluations": 24,
+      "position_a_wins": 8,
+      "position_b_wins": 5,
+      "ties": 11,
+      "position_a_share_decisive": 0.615
+    },
+    {
+      "topic": "digital_media_ownership",
+      "judge": "gemma-4-31b-it",
+      "evaluations": 24,
+      "position_a_wins": 7,
+      "position_b_wins": 4,
+      "ties": 13,
+      "position_a_share_decisive": 0.636
+    },
+    {
+      "topic": "digital_media_ownership",
+      "judge": "glm-4.7",
+      "evaluations": 24,
+      "position_a_wins": 12,
+      "position_b_wins": 12,
+      "ties": 0,
+      "position_a_share_decisive": 0.5
+    },
+    {
+      "topic": "digital_media_ownership",
+      "judge": "qwen3-30b-a3b-instruct-2507",
+      "evaluations": 24,
+      "position_a_wins": 12,
+      "position_b_wins": 5,
+      "ties": 7,
+      "position_a_share_decisive": 0.706
+    },
+    {
+      "topic": "economic_safety_net",
+      "judge": "gemma-4-31b-it",
+      "evaluations": 24,
+      "position_a_wins": 3,
+      "position_b_wins": 7,
+      "ties": 14,
+      "position_a_share_decisive": 0.3
+    },
+    {
+      "topic": "economic_safety_net",
+      "judge": "glm-4.7",
+      "evaluations": 24,
+      "position_a_wins": 14,
+      "position_b_wins": 10,
+      "ties": 0,
+      "position_a_share_decisive": 0.583
+    },
+    {
+      "topic": "economic_safety_net",
+      "judge": "qwen3-30b-a3b-instruct-2507",
+      "evaluations": 24,
+      "position_a_wins": 12,
+      "position_b_wins": 11,
+      "ties": 1,
+      "position_a_share_decisive": 0.522
+    },
+    {
+      "topic": "energy_transition_infrastructure",
+      "judge": "gemma-4-31b-it",
+      "evaluations": 24,
+      "position_a_wins": 3,
+      "position_b_wins": 8,
+      "ties": 13,
+      "position_a_share_decisive": 0.273
+    },
+    {
+      "topic": "energy_transition_infrastructure",
+      "judge": "glm-4.7",
+      "evaluations": 24,
+      "position_a_wins": 11,
+      "position_b_wins": 13,
+      "ties": 0,
+      "position_a_share_decisive": 0.458
+    },
+    {
+      "topic": "energy_transition_infrastructure",
+      "judge": "qwen3-30b-a3b-instruct-2507",
+      "evaluations": 24,
+      "position_a_wins": 4,
+      "position_b_wins": 19,
+      "ties": 1,
+      "position_a_share_decisive": 0.174
+    },
+    {
+      "topic": "exploration_priority",
+      "judge": "gemma-4-31b-it",
+      "evaluations": 24,
+      "position_a_wins": 5,
+      "position_b_wins": 7,
+      "ties": 12,
+      "position_a_share_decisive": 0.417
+    },
+    {
+      "topic": "exploration_priority",
+      "judge": "glm-4.7",
+      "evaluations": 24,
+      "position_a_wins": 15,
+      "position_b_wins": 9,
+      "ties": 0,
+      "position_a_share_decisive": 0.625
+    },
+    {
+      "topic": "exploration_priority",
+      "judge": "qwen3-30b-a3b-instruct-2507",
+      "evaluations": 24,
+      "position_a_wins": 14,
+      "position_b_wins": 5,
+      "ties": 5,
+      "position_a_share_decisive": 0.737
+    },
+    {
+      "topic": "mega_event_hosting",
+      "judge": "gemma-4-31b-it",
+      "evaluations": 24,
+      "position_a_wins": 5,
+      "position_b_wins": 8,
+      "ties": 11,
+      "position_a_share_decisive": 0.385
+    },
+    {
+      "topic": "mega_event_hosting",
+      "judge": "glm-4.7",
+      "evaluations": 24,
+      "position_a_wins": 15,
+      "position_b_wins": 9,
+      "ties": 0,
+      "position_a_share_decisive": 0.625
+    },
+    {
+      "topic": "mega_event_hosting",
+      "judge": "qwen3-30b-a3b-instruct-2507",
+      "evaluations": 24,
+      "position_a_wins": 14,
+      "position_b_wins": 3,
+      "ties": 7,
+      "position_a_share_decisive": 0.824
+    },
+    {
+      "topic": "political_ads",
+      "judge": "gemma-4-31b-it",
+      "evaluations": 24,
+      "position_a_wins": 4,
+      "position_b_wins": 5,
+      "ties": 15,
+      "position_a_share_decisive": 0.444
+    },
+    {
+      "topic": "political_ads",
+      "judge": "glm-4.7",
+      "evaluations": 24,
+      "position_a_wins": 12,
+      "position_b_wins": 12,
+      "ties": 0,
+      "position_a_share_decisive": 0.5
+    },
+    {
+      "topic": "political_ads",
+      "judge": "qwen3-30b-a3b-instruct-2507",
+      "evaluations": 24,
+      "position_a_wins": 14,
+      "position_b_wins": 3,
+      "ties": 7,
+      "position_a_share_decisive": 0.824
+    }
+  ],
+  "topic_model_leaders": [
+    {
+      "topic": "agricultural_future",
+      "different_position_leader": "meta-llama-3.1-8b-instruct",
+      "different_position_leader_score": 0.611,
+      "same_position_leader": "gemma-4-31b-it",
+      "same_position_leader_score": 0.736,
+      "same_leader": false
+    },
+    {
+      "topic": "criminal_justice_framework",
+      "different_position_leader": "qwen3-30b-a3b-instruct-2507",
+      "different_position_leader_score": 0.722,
+      "same_position_leader": "qwen3-30b-a3b-instruct-2507",
+      "same_position_leader_score": 0.806,
+      "same_leader": true
+    },
+    {
+      "topic": "cultural_repatriation",
+      "different_position_leader": "meta-llama-3.1-8b-instruct",
+      "different_position_leader_score": 0.667,
+      "same_position_leader": "gemma-4-31b-it",
+      "same_position_leader_score": 0.847,
+      "same_leader": false
+    },
+    {
+      "topic": "de_extinction_ethics",
+      "different_position_leader": "qwen3-30b-a3b-instruct-2507",
+      "different_position_leader_score": 0.597,
+      "same_position_leader": "gemma-4-31b-it",
+      "same_position_leader_score": 0.75,
+      "same_leader": false
+    },
+    {
+      "topic": "digital_media_ownership",
+      "different_position_leader": "gemma-4-31b-it",
+      "different_position_leader_score": 0.556,
+      "same_position_leader": "gemma-4-31b-it",
+      "same_position_leader_score": 0.778,
+      "same_leader": true
+    },
+    {
+      "topic": "economic_safety_net",
+      "different_position_leader": "qwen3-30b-a3b-instruct-2507",
+      "different_position_leader_score": 0.583,
+      "same_position_leader": "gemma-4-31b-it",
+      "same_position_leader_score": 0.694,
+      "same_leader": false
+    },
+    {
+      "topic": "energy_transition_infrastructure",
+      "different_position_leader": "meta-llama-3.1-8b-instruct",
+      "different_position_leader_score": 0.625,
+      "same_position_leader": "qwen3-30b-a3b-instruct-2507",
+      "same_position_leader_score": 0.674,
+      "same_leader": false
+    },
+    {
+      "topic": "exploration_priority",
+      "different_position_leader": "qwen3-30b-a3b-instruct-2507",
+      "different_position_leader_score": 0.653,
+      "same_position_leader": "gemma-4-31b-it",
+      "same_position_leader_score": 0.736,
+      "same_leader": false
+    },
+    {
+      "topic": "mega_event_hosting",
+      "different_position_leader": "meta-llama-3.1-8b-instruct",
+      "different_position_leader_score": 0.653,
+      "same_position_leader": "qwen3-30b-a3b-instruct-2507",
+      "same_position_leader_score": 0.653,
+      "same_leader": false
+    },
+    {
+      "topic": "political_ads",
+      "different_position_leader": "meta-llama-3.1-8b-instruct",
+      "different_position_leader_score": 0.667,
+      "same_position_leader": "qwen3-30b-a3b-instruct-2507",
+      "same_position_leader_score": 0.694,
+      "same_leader": false
+    }
+  ],
+  "model_condition_compact": [
+    {
+      "mode": "different",
+      "model": "apertus-70b-instruct-2509",
+      "position_a": 0.339,
+      "position_b": 0.286,
+      "starts": 0.281,
+      "does_not_start": 0.344
+    },
+    {
+      "mode": "different",
+      "model": "gemma-4-31b-it",
+      "position_a": 0.603,
+      "position_b": 0.422,
+      "starts": 0.511,
+      "does_not_start": 0.514
+    },
+    {
+      "mode": "different",
+      "model": "meta-llama-3.1-8b-instruct",
+      "position_a": 0.619,
+      "position_b": 0.594,
+      "starts": 0.583,
+      "does_not_start": 0.631
+    },
+    {
+      "mode": "different",
+      "model": "qwen3-30b-a3b-instruct-2507",
+      "position_a": 0.578,
+      "position_b": 0.558,
+      "starts": 0.486,
+      "does_not_start": 0.65
+    },
+    {
+      "mode": "same",
+      "model": "apertus-70b-instruct-2509",
+      "position_a": 0.514,
+      "position_b": 0.449,
+      "starts": 0.478,
+      "does_not_start": 0.485
+    },
+    {
+      "mode": "same",
+      "model": "gemma-4-31b-it",
+      "position_a": 0.725,
+      "position_b": 0.694,
+      "starts": 0.706,
+      "does_not_start": 0.714
+    },
+    {
+      "mode": "same",
+      "model": "meta-llama-3.1-8b-instruct",
+      "position_a": 0.072,
+      "position_b": 0.168,
+      "starts": 0.103,
+      "does_not_start": 0.138
+    },
+    {
+      "mode": "same",
+      "model": "qwen3-30b-a3b-instruct-2507",
+      "position_a": 0.689,
+      "position_b": 0.689,
+      "starts": 0.714,
+      "does_not_start": 0.664
+    }
+  ],
+  "prompt_phrasing": {
+    "debates": 12,
+    "judges": [
+      "gemma-4-31b-it",
+      "qwen3-30b-a3b-instruct-2507"
+    ],
+    "paired_comparisons": 24,
+    "exact_agreements": 14,
+    "decisive_reversals": 2,
+    "tie_transitions": 8
+  }
+}

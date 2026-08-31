@@ -1,0 +1,11 @@
+topic,evaluations,position_a_wins,position_b_wins,ties,position_a_share_decisive,a_share_ci_low,a_share_ci_high
+agricultural_future,72,29,29,14,0.5,0.373,0.627
+criminal_justice_framework,72,35,27,10,0.565,0.452,0.69
+cultural_repatriation,72,38,23,11,0.623,0.492,0.764
+de_extinction_ethics,72,25,24,23,0.51,0.37,0.667
+digital_media_ownership,72,31,21,20,0.596,0.5,0.692
+economic_safety_net,72,29,28,15,0.509,0.389,0.632
+energy_transition_infrastructure,72,18,40,14,0.31,0.19,0.439
+exploration_priority,72,34,21,17,0.618,0.482,0.765
+mega_event_hosting,72,34,20,18,0.63,0.517,0.75
+political_ads,72,30,20,22,0.6,0.442,0.745

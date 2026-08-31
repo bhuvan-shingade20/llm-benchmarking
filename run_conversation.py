@@ -17,7 +17,7 @@ DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434"
 DEFAULT_MODEL = "llama3.2:3b"
 DEFAULT_JUDGE_MODEL = "llama3.2:3b"
 DEFAULT_TOPICS_PATH = Path("topics/phase1_topics.json")
-OUTPUT_DIR = Path("results/conversations")
+OUTPUT_DIR = Path("runs/conversations")
 
 
 START_PROMPTS = {
@@ -186,9 +186,12 @@ def complete_chat(
     messages: list[dict[str, str]],
     max_tokens: int,
     temperature: float,
+    response_format: dict[str, Any] | None = None,
 ) -> str:
     if client.provider == "ollama":
-        return call_ollama(client, model, messages, max_tokens, temperature)
+        return call_ollama(
+            client, model, messages, max_tokens, temperature, response_format
+        )
     return call_openai_compatible(client, model, messages, max_tokens, temperature)
 
 
@@ -198,6 +201,7 @@ def call_ollama(
     messages: list[dict[str, str]],
     max_tokens: int,
     temperature: float,
+    response_format: dict[str, Any] | None = None,
 ) -> str:
     payload = {
         "model": model,
@@ -208,6 +212,8 @@ def call_ollama(
             "num_predict": max_tokens,
         },
     }
+    if response_format is not None:
+        payload["format"] = response_format
     request = Request(
         f"{client.base_url}/api/chat",
         data=json.dumps(payload).encode("utf-8"),
@@ -241,11 +247,17 @@ def call_openai_compatible(
 
     openai_client = OpenAI(api_key=client.api_key, base_url=client.base_url, timeout=180)
     try:
+        request_kwargs: dict[str, Any] = {}
+        if model.startswith(("qwen3.5-", "qwen3.6-", "qwen3.8-")):
+            request_kwargs["extra_body"] = {
+                "chat_template_kwargs": {"enable_thinking": False}
+            }
         response = openai_client.chat.completions.create(
             model=model,
             messages=messages,
             temperature=temperature,
             max_tokens=max_tokens,
+            **request_kwargs,
         )
     except NotFoundError as error:
         raise RuntimeError(

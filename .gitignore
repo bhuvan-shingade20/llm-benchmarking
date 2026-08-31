@@ -1,12 +1,20 @@
 .env
 .venv/
 __pycache__/
-*.pyc
-outputs/*.json
-outputs/*.md
-!outputs/.gitkeep
-results/**/*.json
-results/**/*.csv
-results/**/*.md
-!results/.gitkeep
-!results/conversations/.gitkeep
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# API runs and local scratch data
+runs/
+tmp/
+data/external/**/source/
+
+# LaTeX build products
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.pdf
+paper/*.synctex.gz

@@ -1,0 +1,21 @@
+{
+  "dataset": "PoliProp",
+  "source_record": "https://zenodo.org/records/13887286",
+  "source_code": "https://github.com/manoelhortaribeiro/debate-gpt-x",
+  "license": "CC BY-NC-SA 3.0",
+  "selected_debates": 833,
+  "human_majority_counts": {
+    "Pro": 317,
+    "Con": 423,
+    "Tie": 93
+  },
+  "primary_decisive_debates": 740,
+  "human_tie_debates": 93,
+  "max_words_per_side": 450,
+  "robustness_sample_seed": "20260829",
+  "robustness_sample_size": 120,
+  "robustness_sample_counts": {
+    "Pro": 60,
+    "Con": 60
+  }
+}

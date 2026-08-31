@@ -1,0 +1,4 @@
+judge,decisive_evaluations,mean_winner_words,variance_winner_words,mean_loser_words,variance_loser_words
+gemma-4-31b-it,603,639.0,2344.4,621.1,5284.3
+glm-4.7,720,635.3,2584.8,623.9,5202.9
+qwen3-30b-a3b-instruct-2507,669,639.4,2971.1,619.6,4831.4

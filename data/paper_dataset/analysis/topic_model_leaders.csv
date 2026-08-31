@@ -1,0 +1,11 @@
+topic,different_position_leader,different_position_leader_score,same_position_leader,same_position_leader_score,same_leader
+agricultural_future,meta-llama-3.1-8b-instruct,0.611,gemma-4-31b-it,0.736,False
+criminal_justice_framework,qwen3-30b-a3b-instruct-2507,0.722,qwen3-30b-a3b-instruct-2507,0.806,True
+cultural_repatriation,meta-llama-3.1-8b-instruct,0.667,gemma-4-31b-it,0.847,False
+de_extinction_ethics,qwen3-30b-a3b-instruct-2507,0.597,gemma-4-31b-it,0.75,False
+digital_media_ownership,gemma-4-31b-it,0.556,gemma-4-31b-it,0.778,True
+economic_safety_net,qwen3-30b-a3b-instruct-2507,0.583,gemma-4-31b-it,0.694,False
+energy_transition_infrastructure,meta-llama-3.1-8b-instruct,0.625,qwen3-30b-a3b-instruct-2507,0.674,False
+exploration_priority,qwen3-30b-a3b-instruct-2507,0.653,gemma-4-31b-it,0.736,False
+mega_event_hosting,meta-llama-3.1-8b-instruct,0.653,qwen3-30b-a3b-instruct-2507,0.653,False
+political_ads,meta-llama-3.1-8b-instruct,0.667,qwen3-30b-a3b-instruct-2507,0.694,False
