@@ -84,7 +84,10 @@ def main() -> None:
         reader = csv.DictReader(handle)
         if reader.fieldnames != INPUT_FIELDS:
             raise ValueError(f"{input_path} has columns {reader.fieldnames}; expected {INPUT_FIELDS}.")
-        rows = [convert_row(row, index) for index, row in enumerate(reader, start=1)]
+        source_rows = list(reader)
+        if len(source_rows) != len({row["DebateId"] for row in source_rows}):
+            raise ValueError("Input contains duplicate DebateId values.")
+        rows = [convert_row(row, int(row["DebateId"])) for row in source_rows]
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", newline="", encoding="utf-8") as handle:

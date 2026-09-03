@@ -1,7 +1,9 @@
 import argparse
 import csv
 import json
+import re
 import time
+from collections import Counter
 from dataclasses import asdict, dataclass
 from itertools import combinations
 from pathlib import Path
@@ -70,6 +72,22 @@ def complete_turn_text(value: str) -> str:
     last_stop = max(text.rfind("."), text.rfind("!"), text.rfind("?"))
     if last_stop > 80:
         return text[: last_stop + 1].strip()
+    return text
+
+
+def validate_turn_text(value: str) -> str:
+    text = complete_turn_text(value)
+    words = re.findall(r"[a-z0-9']+", text.lower())
+    if len(words) < 20:
+        raise ValueError(f"Degenerate debate turn: only {len(words)} words")
+    counts = Counter(words)
+    unique_ratio = len(counts) / len(words)
+    dominant_ratio = counts.most_common(1)[0][1] / len(words)
+    if len(words) >= 40 and (unique_ratio < 0.15 or dominant_ratio > 0.45):
+        raise ValueError(
+            "Degenerate debate turn: excessive token repetition "
+            f"(unique_ratio={unique_ratio:.3f}, dominant_ratio={dominant_ratio:.3f})"
+        )
     return text
 
 
@@ -187,6 +205,7 @@ def run_raw_debate(case, model_a, model_b, starting: str, rounds: int, max_token
                     max_tokens=max_tokens,
                     temperature=0.75,
                 )
+                content = validate_turn_text(content)
                 break
             except Exception as error:
                 if attempt == 3:
@@ -197,7 +216,7 @@ def run_raw_debate(case, model_a, model_b, starting: str, rounds: int, max_token
                     f"Retrying in {wait_seconds} seconds."
                 )
                 time.sleep(wait_seconds)
-        transcript.append(RawMessage(speaker=label, content=complete_turn_text(content)))
+        transcript.append(RawMessage(speaker=label, content=content))
         printable_content = transcript[-1].content.encode("ascii", errors="replace").decode("ascii")
         print(f"{label}: {printable_content}\n")
     return transcript
