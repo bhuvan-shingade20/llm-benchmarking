@@ -1,0 +1,20 @@
+{
+  "experiment_id": "experiment_4_human_agreement",
+  "protocol_version": "2026-09-03-exp4-v1",
+  "models": [
+    {"spec": "openai:apertus-70b-instruct-2509", "display_name": "Apertus-70B", "panel_role": "existing"},
+    {"spec": "openai:meta-llama-3.1-8b-instruct", "display_name": "Llama-3.1-8B", "panel_role": "existing"},
+    {"spec": "openai:qwen3-30b-a3b-instruct-2507", "display_name": "Qwen3-30B", "panel_role": "existing"},
+    {"spec": "openai:gemma-4-31b-it", "display_name": "Gemma-4-31B", "panel_role": "existing"},
+    {"spec": "openai:qwen3.5-397b-a17b", "display_name": "Qwen3.5-397B-A17B", "panel_role": "strong_anchor"},
+    {"spec": "ollama:tinyllama:1.1b", "display_name": "TinyLlama-1.1B", "panel_role": "weak_anchor"}
+  ],
+  "forced_choice": true,
+  "external_dataset": {
+    "name": "PoliProp",
+    "zenodo_record": "13887286",
+    "decisive_human_cases_expected": 740,
+    "human_tie_cases_expected": 93,
+    "max_words_per_side": 450
+  }
+}

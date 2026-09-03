@@ -22,8 +22,8 @@ The current paper source is in [`paper`](paper).
 
 ## Final Report Experiments
 
-Only unfinished work is listed below. Data collection is paused at a resumable
-checkpoint while the experiment plan and debate-position sets are reviewed.
+Only unfinished work is listed below. The protocol and position sets were
+approved and frozen on 2026-09-03, and resumable data collection is active.
 
 ### Experiment 1: Extended replication of the paper
 
@@ -41,8 +41,6 @@ clearly more defensible.
 
 **Remaining work.**
 
-- [ ] Freeze the extreme-control positions and expected directions.
-- [ ] Audit the full and sampled same-position designs before fixing call counts.
 - [ ] Generate the balanced six-model debates and forced-choice judgments.
 - [ ] Report rankings for every judge and evaluation mode, averaged rankings,
   judge agreement, position and speaking-order effects, candidate-order
@@ -62,7 +60,6 @@ paraphrase of the judging prompt. No new debates are required.
 
 **Remaining work.**
 
-- [ ] Freeze the transcript sample and the one paraphrased prompt before judging.
 - [ ] Report within-prompt repeat agreement and winner-change rates.
 - [ ] Report order-invariant agreement after reversing candidate presentation.
 - [ ] Report agreement between the paraphrased prompt and the canonical modal
@@ -83,7 +80,6 @@ same six models as forced-choice judges.
 
 **Remaining work.**
 
-- [ ] Approve and freeze the political position set and ideological mappings.
 - [ ] Complete independent annotations and report agreement and exclusions.
 - [ ] Estimate judge-specific ideological preference while controlling for
   topic, debater identities, proposition assignment, and speaking order.
@@ -115,7 +111,8 @@ not converted into artificial binary ground truth.
 
 The four experiments use separately versioned inputs and outputs.
 
-- Experiment 1 requires the extreme-control positions to be frozen.
+- Experiment 1 uses 10 original topics plus four frozen extreme controls and a
+  pre-specified 840-comparison fixed-opponent same-position sample.
 - Experiment 2 requires only a frozen subset of Experiment 1 transcripts; it
   does not depend on completion of Experiment 1 judgments.
 - Experiment 3 requires its political position set and annotations to be frozen

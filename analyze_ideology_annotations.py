@@ -16,6 +16,7 @@ EXPECTED_ANNOTATORS = 3
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Validate ideological topic annotations.")
     parser.add_argument("--topics", type=Path, default=DEFAULT_TOPICS)
+    parser.add_argument("--config", type=Path)
     parser.add_argument("--input-dir", type=Path, default=DEFAULT_INPUT_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--allow-incomplete", action="store_true")
@@ -53,6 +54,14 @@ def majority(values: list[str]) -> tuple[str, int]:
 def main() -> None:
     args = parse_args()
     topics = json.loads(args.topics.read_text(encoding="utf-8"))
+    if args.config:
+        config = json.loads(args.config.read_text(encoding="utf-8"))
+        selected_ids = config["generated_debates"]["topic_ids"]
+        topic_by_id = {topic["id"]: topic for topic in topics}
+        missing = sorted(set(selected_ids) - set(topic_by_id))
+        if missing:
+            raise ValueError(f"Unknown configured topic ids: {missing}")
+        topics = [topic_by_id[topic_id] for topic_id in selected_ids]
     topic_by_id = {topic["id"]: topic for topic in topics}
     files = sorted(args.input_dir.glob("annotations_*.csv"))
     rows = [row for path in files for row in read_csv(path)]

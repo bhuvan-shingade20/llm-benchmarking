@@ -18,6 +18,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--results-dir", type=Path, default=DEFAULT_RESULTS)
     parser.add_argument("--ideology", type=Path, default=DEFAULT_IDEOLOGY)
     parser.add_argument("--allow-incomplete", action="store_true")
+    parser.add_argument(
+        "--primary-only",
+        action="store_true",
+        help="Validate and analyze only the 740-case human-agreement condition.",
+    )
     return parser.parse_args()
 
 
@@ -47,16 +52,21 @@ def main() -> None:
         raise ValueError("Duplicate judgment keys detected.")
     if not set(results["WinnerSide"]).issubset({"Pro", "Con"}):
         raise ValueError("Forced-choice results contain an invalid or tied winner.")
-    if not args.allow_incomplete:
-        per_judge = results.groupby("JudgeSpec").size()
-        if len(per_judge) != 6 or not (per_judge == 1220).all():
-            raise ValueError(f"Expected six complete 1,220-row judge streams: {per_judge.to_dict()}")
-
     baseline = results[
         (results["PromptVersion"] == "canonical")
         & (results["PresentationOrder"] == "pro_first")
         & (results["RepeatIndex"] == 1)
     ].copy()
+    if not args.allow_incomplete:
+        per_judge = baseline.groupby("JudgeSpec").size()
+        if len(per_judge) != 6 or not (per_judge == 740).all():
+            raise ValueError(f"Expected six complete 740-case primary streams: {per_judge.to_dict()}")
+        if not args.primary_only:
+            all_per_judge = results.groupby("JudgeSpec").size()
+            if not (all_per_judge == 1220).all():
+                raise ValueError(
+                    f"Expected six complete 1,220-row full streams: {all_per_judge.to_dict()}"
+                )
     baseline["HumanAgreement"] = baseline["HumanAgreement"].astype(int)
 
     judge_rows = []
@@ -90,6 +100,19 @@ def main() -> None:
     pd.DataFrame(pairwise_rows).to_csv(
         args.results_dir / "interjudge_agreement.csv", index=False
     )
+
+    if args.primary_only:
+        print(
+            json.dumps(
+                {
+                    "primary_rows": len(baseline),
+                    "judges": int(baseline["JudgeSpec"].nunique()),
+                    "complete": len(baseline) == 740 * 6,
+                },
+                indent=2,
+            )
+        )
+        return
 
     sample = results[results["RobustnessSample"].astype(int) == 1].copy()
     repeat = sample[

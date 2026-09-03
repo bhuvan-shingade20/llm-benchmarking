@@ -1,0 +1,11 @@
+{
+  "experiment_id": "experiment_2_robustness",
+  "protocol_version": "2026-09-03-exp2-v1",
+  "source_experiment": "experiment_1_extended_replication",
+  "sample_seed": "20260903",
+  "sample_size": 120,
+  "canonical_repeats": 3,
+  "include_reversed_presentation": true,
+  "include_one_paraphrased_prompt": true,
+  "forced_choice": true
+}

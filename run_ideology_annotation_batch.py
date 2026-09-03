@@ -1,5 +1,6 @@
 import argparse
 import csv
+import json
 import re
 import subprocess
 import sys
@@ -15,6 +16,8 @@ DEFAULT_OUTPUT_DIR = Path("runs/2026-08-28_ideological_persuasion/annotations")
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run ideology annotators sequentially and resumably.")
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
+    parser.add_argument("--config", type=Path)
+    parser.add_argument("--topics", type=Path, default=Path("topics/ideology_topics.json"))
     parser.add_argument("--annotators", default=",".join(DEFAULT_ANNOTATORS))
     parser.add_argument("--call-delay", type=float, default=10.0)
     parser.add_argument("--rate-limit-sleep", type=int, default=600)
@@ -35,17 +38,26 @@ def row_count(path: Path) -> int:
 
 def main() -> None:
     args = parse_args()
-    annotators = [item.strip() for item in args.annotators.split(",") if item.strip()]
+    topic_ids = None
+    if args.config:
+        config = json.loads(args.config.read_text(encoding="utf-8"))
+        annotators = config["ideology_annotators"]
+        args.topics = Path(config["generated_debates"]["topics_file"])
+        topic_ids = config["generated_debates"]["topic_ids"]
+    else:
+        annotators = [item.strip() for item in args.annotators.split(",") if item.strip()]
+    expected = len(topic_ids) if topic_ids else len(json.loads(args.topics.read_text(encoding="utf-8")))
     args.output_dir.mkdir(parents=True, exist_ok=True)
     for annotator in annotators:
         output = args.output_dir / f"annotations_{slug(annotator)}.csv"
-        while row_count(output) < 20:
+        while row_count(output) < expected:
             before = row_count(output)
-            print(f"starting annotator={annotator} rows={before}/20", flush=True)
-            result = subprocess.run(
-                [
+            print(f"starting annotator={annotator} rows={before}/{expected}", flush=True)
+            command = [
                     sys.executable,
                     "annotate_ideology_topics.py",
+                    "--topics",
+                    str(args.topics),
                     "--annotator",
                     annotator,
                     "--output-dir",
@@ -54,18 +66,19 @@ def main() -> None:
                     str(args.call_delay),
                     "--rate-limit-sleep",
                     str(args.rate_limit_sleep),
-                ],
-                check=False,
-            )
+                ]
+            if topic_ids:
+                command.extend(["--topic-ids", ",".join(topic_ids)])
+            result = subprocess.run(command, check=False)
             after = row_count(output)
             print(
                 f"annotator pass finished annotator={annotator} exit={result.returncode} "
-                f"rows={after}/20",
+                f"rows={after}/{expected}",
                 flush=True,
             )
             if after <= before:
                 time.sleep(args.idle_sleep)
-            elif after < 20:
+            elif after < expected:
                 time.sleep(60)
     print("All ideological annotation files are complete.", flush=True)
 

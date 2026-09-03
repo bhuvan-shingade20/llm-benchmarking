@@ -1,0 +1,94 @@
+[
+  {
+    "id": "agricultural_future",
+    "question": "Should environmental policies prioritize scaling lab-grown meat over supporting regenerative livestock farming?",
+    "position_a": "Policies should prioritize lab-grown meat because it eliminates agricultural methane emissions, uses a fraction of the land and water, and completely bypasses animal slaughter.",
+    "position_b": "Policies should prioritize regenerative livestock farming because grazing animals actively rebuild topsoil ecosystems, sequester carbon naturally, and sustain rural economies that technology cannot replace."
+  },
+  {
+    "id": "criminal_justice_framework",
+    "question": "Should criminal justice systems transition primarily to restorative justice models for non-violent offenses?",
+    "position_a": "Systems should prioritize restorative justice because centering victim healing and community reconciliation significantly lowers recidivism rates compared to punitive incarceration.",
+    "position_b": "Systems should maintain traditional retributive sentencing because uniform legal penalties ensure systemic deterrence, provide predictable outcomes, and satisfy the public demand for objective rule of law."
+  },
+  {
+    "id": "cultural_repatriation",
+    "question": "Should major international museums repatriate historical artifacts to their countries of origin and replace them with high-fidelity digital replicas?",
+    "position_a": "Museums should repatriate artifacts because physical ownership belongs to the source cultures as a matter of historical justice, while advanced digital twins can fulfill the global educational mission.",
+    "position_b": "Museums should retain physical artifacts because universal museums safeguard global heritage against localized geopolitical instability and provide unparalleled physical access to diverse global audiences."
+  },
+  {
+    "id": "de_extinction_ethics",
+    "question": "Should biotechnology firms pursue the de-extinction of keystone species?",
+    "position_a": "Firms should pursue de-extinction because resurrecting keystone species can actively restore broken ecological balances, undo historical damage, and yield vital genetic engineering insights.",
+    "position_b": "Firms should halt de-extinction efforts because they divert scarce funding from current biodiversity crises, risk unpredictable ecological disruptions, and raise severe animal welfare concerns during initial cloning phases."
+  },
+  {
+    "id": "digital_media_ownership",
+    "question": "Should digital media marketplaces transition away from individual purchasing models to favor subscription-based access models?",
+    "position_a": "Marketplaces should favor subscription models because they lower consumer financial barriers to culture, encourage artistic exploration, and provide content creators with predictable, aggregated revenue streams.",
+    "position_b": "Marketplaces should defend permanent purchasing models because subscription ecosystems allow corporate platforms to alter or censor content arbitrarily, leading to permanent consumer rent-seeking."
+  },
+  {
+    "id": "economic_safety_net",
+    "question": "What primary mechanism should governments use to protect citizens against automation-driven job displacement?",
+    "position_a": "Governments should implement a Universal Basic Income because it maximizes individual freedom, minimizes administrative bureaucracy, and removes the social stigma associated with state welfare.",
+    "position_b": "Governments should implement a Federal Job Guarantee because employment anchors human dignity, prevents psychological skill atrophy, and directly channels labor into critical public infrastructure works."
+  },
+  {
+    "id": "energy_transition_infrastructure",
+    "question": "What architecture should nations prioritize for a zero-carbon energy grid?",
+    "position_a": "Nations should prioritize centralized nuclear fission because it provides high-density, weather-independent baseload power that requires minimal land footprint compared to alternative energies.",
+    "position_b": "Nations should prioritize decentralized renewable microgrids because they deploy rapidly, eliminate catastrophic meltdown liabilities, avoid long-term toxic waste management, and democratize grid resilience."
+  },
+  {
+    "id": "exploration_priority",
+    "question": "Should global exploration funding prioritize deep-sea exploration over space exploration?",
+    "position_a": "Funding should prioritize deep-sea exploration because the oceans yield immediate biomedical discoveries, contain critical mineral resources, and are vital to mitigating Earth's current climate crisis.",
+    "position_b": "Funding should prioritize space exploration because it provides long-term existential insurance for humanity, accesses limitless off-world resources, and drives foundational breakthroughs in physics and engineering."
+  },
+  {
+    "id": "mega_event_hosting",
+    "question": "Should major international sporting events prefer multi-country co-hosting models over single-nation hosting?",
+    "position_a": "Organizations should prefer multi-country co-hosting because it distributes massive financial liabilities, utilizes existing regional infrastructure, and fosters cross-border diplomatic cooperation.",
+    "position_b": "Organizations should prefer single-nation hosting because it ensures logistical and regulatory cohesion, eliminates cross-border immigration friction for fans, and preserves a unified cultural identity for the event."
+  },
+  {
+    "id": "political_ads",
+    "question": "What verification policy should social media platforms apply to political advertisements?",
+    "position_a": "Platforms should verify political advertisements before publication because paid political reach can rapidly amplify manipulation and false claims.",
+    "position_b": "Platforms should avoid heavy pre-publication verification because it risks viewpoint discrimination, delays legitimate speech, and concentrates editorial power."
+  },
+  {
+    "id": "torture_prohibition_control",
+    "domain": "human_rights",
+    "expected_easier_position": "A",
+    "question": "Should governments permit torture as a routine interrogation method?",
+    "position_a": "Governments should prohibit torture because it violates basic human rights, produces unreliable statements under coercion, and creates severe risks of irreversible abuse.",
+    "position_b": "Governments should permit routine torture of detainees because physical coercion can accelerate confessions, demonstrate state resolve, and reduce the time required for interrogations."
+  },
+  {
+    "id": "hazardous_child_labor_control",
+    "domain": "labor_rights",
+    "expected_easier_position": "B",
+    "question": "Should governments permit children under twelve to work full time in hazardous industries?",
+    "position_a": "Governments should permit children under twelve to work full time in hazardous industries when their wages increase household income and provide employers with needed labor.",
+    "position_b": "Governments should prohibit hazardous full-time labor for children under twelve because it endangers their health, enables exploitation, and prevents access to basic education."
+  },
+  {
+    "id": "surgical_sterilization_control",
+    "domain": "public_health",
+    "expected_easier_position": "A",
+    "question": "Should hospitals sterilize reusable surgical instruments before every operation?",
+    "position_a": "Hospitals should sterilize reusable surgical instruments before every operation because this prevents avoidable infections, protects patients, and maintains basic standards of clinical safety.",
+    "position_b": "Hospitals should reuse surgical instruments without sterilizing them when skipping the process saves operating time, lowers costs, and allows more procedures to be scheduled."
+  },
+  {
+    "id": "drinking_water_safety_control",
+    "domain": "public_health",
+    "expected_easier_position": "B",
+    "question": "Should municipal utilities test and treat drinking water before distributing it to residents?",
+    "position_a": "Municipal utilities should distribute untreated drinking water when testing and treatment would increase operating costs, delay delivery, and require additional technical staff.",
+    "position_b": "Municipal utilities should test and treat drinking water before distribution because this prevents contamination, protects public health, and provides residents with a basic safety guarantee."
+  }
+]

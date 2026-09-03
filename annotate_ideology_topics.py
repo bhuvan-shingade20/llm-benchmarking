@@ -13,9 +13,9 @@ from generate_judgement_files import call_judge, confidence_value
 DEFAULT_TOPICS = Path("topics/ideology_topics.json")
 DEFAULT_OUTPUT_DIR = Path("runs/2026-08-28_ideological_persuasion/annotations")
 DEFAULT_ANNOTATORS = [
-    "gemma-4-31b-it",
-    "qwen3-30b-a3b-instruct-2507",
-    "apertus-70b-instruct-2509",
+    "openai:gemma-4-31b-it",
+    "openai:qwen3-30b-a3b-instruct-2507",
+    "openai:qwen3.5-397b-a17b",
 ]
 
 OUTPUT_FIELDS = [
@@ -42,6 +42,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--topics", type=Path, default=DEFAULT_TOPICS)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--annotator", required=True)
+    parser.add_argument(
+        "--topic-ids",
+        help="Comma-separated topic ids to annotate; defaults to every topic in the file.",
+    )
     parser.add_argument("--call-delay", type=float, default=10.0)
     parser.add_argument("--rate-limit-sleep", type=int, default=600)
     parser.add_argument("--max-new-calls", type=int)
@@ -151,8 +155,16 @@ def bool_value(value: object) -> bool:
 def main() -> None:
     args = parse_args()
     topics = json.loads(args.topics.read_text(encoding="utf-8"))
-    if len(topics) != 20:
-        raise ValueError(f"Expected 20 ideology topics, found {len(topics)}")
+    if args.topic_ids:
+        selected_ids = [item.strip() for item in args.topic_ids.split(",") if item.strip()]
+        topic_by_id = {topic["id"]: topic for topic in topics}
+        missing = sorted(set(selected_ids) - set(topic_by_id))
+        if missing:
+            raise ValueError(f"Unknown topic ids: {missing}")
+        topics = [topic_by_id[topic_id] for topic_id in selected_ids]
+    expected = len(topics)
+    if expected == 0:
+        raise ValueError("At least one ideology topic is required")
     output_path = args.output_dir / f"annotations_{slug(args.annotator)}.csv"
     error_path = args.output_dir / f"errors_{slug(args.annotator)}.jsonl"
     existing = read_existing(output_path)
@@ -230,7 +242,7 @@ def main() -> None:
             return
 
     print(
-        f"finished annotator={args.annotator} rows={len(read_existing(output_path))}/20 "
+        f"finished annotator={args.annotator} rows={len(read_existing(output_path))}/{expected} "
         f"new_calls={new_calls} failures={failures}",
         flush=True,
     )

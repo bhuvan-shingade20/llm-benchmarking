@@ -17,6 +17,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--call-delay", type=float, default=10.0)
     parser.add_argument("--rate-limit-sleep", type=int, default=600)
+    parser.add_argument(
+        "--condition-set",
+        choices=("primary", "robustness", "all"),
+        default="all",
+    )
     return parser.parse_args()
 
 
@@ -26,11 +31,23 @@ def slug(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", value.lower()).strip("_")
 
 
-def rows(path: Path) -> int:
+def rows(path: Path, condition_set: str = "all") -> int:
     if not path.exists():
         return 0
     with path.open(newline="", encoding="utf-8") as handle:
-        return sum(1 for _ in csv.DictReader(handle))
+        records = list(csv.DictReader(handle))
+    if condition_set == "all":
+        return len(records)
+    primary = lambda row: (
+        row["PromptVersion"] == "canonical"
+        and row["PresentationOrder"] == "pro_first"
+        and row["RepeatIndex"] == "1"
+    )
+    return sum(
+        1
+        for row in records
+        if primary(row) == (condition_set == "primary")
+    )
 
 
 def main() -> None:
@@ -39,11 +56,14 @@ def main() -> None:
     args.output_dir.mkdir(parents=True, exist_ok=True)
     log_path = args.output_dir / "batch.log"
     models = config["models"][1:5] + [config["models"][5], config["models"][0]]
+    expected = {"primary": 740, "robustness": 480, "all": 1220}[
+        args.condition_set
+    ]
     for model in models:
         judge = model["spec"]
         output = args.output_dir / f"judgements_{slug(judge)}.csv"
-        while rows(output) < 1220:
-            before = rows(output)
+        while rows(output, args.condition_set) < expected:
+            before = rows(output, args.condition_set)
             command = [
                 sys.executable,
                 "run_real_world_forced_choice.py",
@@ -57,6 +77,8 @@ def main() -> None:
                 str(args.call_delay),
                 "--rate-limit-sleep",
                 str(args.rate_limit_sleep),
+                "--condition-set",
+                args.condition_set,
             ]
             with log_path.open("a", encoding="utf-8") as log:
                 log.write("\n>>> " + " ".join(command) + "\n")
@@ -64,11 +86,17 @@ def main() -> None:
                 exit_code = subprocess.run(
                     command, stdout=log, stderr=subprocess.STDOUT, text=True
                 ).returncode
-                log.write(f"\n<<< exit={exit_code} rows={rows(output)}\n")
-            after = rows(output)
+                log.write(
+                    f"\n<<< exit={exit_code} "
+                    f"{args.condition_set}_rows={rows(output, args.condition_set)}\n"
+                )
+            after = rows(output, args.condition_set)
             if after == before:
                 time.sleep(args.rate_limit_sleep)
-        print(f"complete judge={judge} rows={rows(output)}", flush=True)
+        print(
+            f"complete judge={judge} condition_set={args.condition_set} rows={expected}",
+            flush=True,
+        )
 
 
 if __name__ == "__main__":

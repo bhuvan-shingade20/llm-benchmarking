@@ -45,6 +45,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--call-delay", type=float, default=10.0)
     parser.add_argument("--rate-limit-sleep", type=int, default=600)
     parser.add_argument("--max-new-calls", type=int)
+    parser.add_argument(
+        "--condition-set",
+        choices=("primary", "robustness", "all"),
+        default="all",
+        help="Run only the primary human-agreement condition, only robustness additions, or both.",
+    )
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args()
 
@@ -69,9 +75,13 @@ def judge_metadata(config: dict[str, object], judge_spec: str) -> dict[str, str]
     raise ValueError(f"Judge {judge_spec!r} is not in the frozen six-model panel.")
 
 
-def planned_conditions(record: dict[str, object]) -> list[tuple[str, str, int]]:
-    conditions = [("canonical", "pro_first", 1)]
-    if record["robustness_sample"]:
+def planned_conditions(
+    record: dict[str, object], condition_set: str
+) -> list[tuple[str, str, int]]:
+    conditions = []
+    if condition_set in {"primary", "all"}:
+        conditions.append(("canonical", "pro_first", 1))
+    if condition_set in {"robustness", "all"} and record["robustness_sample"]:
         conditions.extend(
             [
                 ("canonical", "pro_first", 2),
@@ -261,7 +271,9 @@ def main() -> None:
     planned = [
         (record, prompt_version, order, repeat_index)
         for record in records
-        for prompt_version, order, repeat_index in planned_conditions(record)
+        for prompt_version, order, repeat_index in planned_conditions(
+            record, args.condition_set
+        )
     ]
     remaining = [
         item
@@ -279,8 +291,14 @@ def main() -> None:
         f"remaining={len(remaining)}",
         flush=True,
     )
-    if len(planned) != 1220:
-        raise ValueError(f"Expected 1,220 conditions per judge, found {len(planned)}")
+    expected = {"primary": 740, "robustness": 480, "all": 1220}[
+        args.condition_set
+    ]
+    if len(planned) != expected:
+        raise ValueError(
+            f"Expected {expected:,} {args.condition_set} conditions per judge, "
+            f"found {len(planned)}"
+        )
     if args.dry_run:
         return
 

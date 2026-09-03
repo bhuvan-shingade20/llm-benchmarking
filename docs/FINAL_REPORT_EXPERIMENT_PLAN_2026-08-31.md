@@ -46,10 +46,12 @@ then determine whether the original conclusions replicate.
 - Observational verbosity and self-preference diagnostics.
 - Recovery of the pre-specified expected winner on extreme controls.
 
-### Decision required
+### Frozen execution decision
 
-Approve the extreme-control wording and choose exhaustive versus sampled
-same-position evaluation after reviewing the exact API-call budget.
+The approved panel contains the original 10 topics and four pre-specified
+extreme controls. Same-position evaluation uses 840 balanced comparisons. Each
+comparison holds the proposition, candidate starting status, and opposing model
+fixed, and candidate presentation order is deterministically balanced.
 
 ## Experiment 2: Robustness and Ablation
 
@@ -124,7 +126,7 @@ data.
 
 ## Independence and Execution Order
 
-Experiment 1 can start after the extreme controls are approved. Experiment 2
+Experiment 1 started after the extreme controls were approved. Experiment 2
 depends only on a frozen subset of Experiment 1 transcripts, not on completed
 Experiment 1 judgments. Experiment 3 can run independently after its political
 position set is approved and annotated. Experiment 4 is fully independent

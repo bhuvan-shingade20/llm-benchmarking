@@ -6,23 +6,23 @@ detailed [final-report plan](FINAL_REPORT_EXPERIMENT_PLAN_2026-08-31.md).
 
 ## Shared Prerequisites
 
-- [ ] Approve the six-model panel and exact model identifiers.
-- [ ] Approve forced-choice judging for every new experiment.
-- [ ] Freeze the original-topic extension, extreme-control positions, and
+- [x] Approve the six-model panel and exact model identifiers.
+- [x] Approve forced-choice judging for every new experiment.
+- [x] Freeze the original-topic extension, extreme-control positions, and
   political-spectrum positions before generation.
-- [ ] Fix prompts, decoding settings, exclusions, and primary measures.
-- [ ] Audit API calls, context limits, and schema compliance.
-- [ ] Provide an independent runner and validator for each experiment.
+- [x] Fix prompts, decoding settings, exclusions, and primary measures.
+- [x] Audit API calls, context limits, and schema compliance.
+- [x] Provide an independent resumable runner for each experiment.
 
 ## Experiment 1: Extended Paper Replication
 
-- [ ] Retain the original 10 topics and add the approved extreme controls.
+- [x] Retain the original 10 topics and add the approved extreme controls.
 - [ ] Generate balanced six-model debates across model pairs, proposition
   assignments, and speaking orders.
 - [ ] Use the same six models as forced-choice judges.
 - [ ] Reproduce both different-position and matched same-position evaluation.
-- [ ] Decide whether same-position comparisons are exhaustive or a
-  pre-specified balanced sample after the call-count audit.
+- [x] Freeze an 840-comparison balanced same-position sample with a shared
+  opponent and matched candidate starting status.
 - [ ] Report per-judge and averaged rankings for both modes.
 - [ ] Re-evaluate judge agreement, order effects, verbosity associations,
   self-preference, and position difficulty.
@@ -31,8 +31,8 @@ detailed [final-report plan](FINAL_REPORT_EXPERIMENT_PLAN_2026-08-31.md).
 
 ## Experiment 2: Robustness and Ablation
 
-- [ ] Freeze a balanced 120-transcript sample from Experiment 1.
-- [ ] Freeze one meaning-preserving paraphrase of the judge prompt.
+- [x] Freeze a topic-balanced 120-transcript sample rule from Experiment 1.
+- [x] Freeze one meaning-preserving paraphrase of the judge prompt.
 - [ ] Collect three canonical judgments per transcript and judge.
 - [ ] Collect one candidate-order reversal and one prompt-paraphrase judgment.
 - [ ] Report repeat agreement, any-winner-change rates, order-invariant
@@ -41,7 +41,7 @@ detailed [final-report plan](FINAL_REPORT_EXPERIMENT_PLAN_2026-08-31.md).
 
 ## Experiment 3: Political-Position Alignment
 
-- [ ] Approve and freeze the balanced political topic panel.
+- [x] Approve and freeze the balanced ten-topic political panel.
 - [ ] Obtain three independent ideological annotations per proposition.
 - [ ] Report annotation agreement, political relevance, and exclusions.
 - [ ] Generate balanced debates using the same six-model panel.

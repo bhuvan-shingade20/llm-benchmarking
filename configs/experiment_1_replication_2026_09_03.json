@@ -1,0 +1,29 @@
+{
+  "experiment_id": "experiment_1_extended_replication",
+  "protocol_version": "2026-09-03-exp1-v1",
+  "models": [
+    {"spec": "openai:apertus-70b-instruct-2509", "display_name": "Apertus-70B", "panel_role": "existing"},
+    {"spec": "openai:meta-llama-3.1-8b-instruct", "display_name": "Llama-3.1-8B", "panel_role": "existing"},
+    {"spec": "openai:qwen3-30b-a3b-instruct-2507", "display_name": "Qwen3-30B", "panel_role": "existing"},
+    {"spec": "openai:gemma-4-31b-it", "display_name": "Gemma-4-31B", "panel_role": "existing"},
+    {"spec": "openai:qwen3.5-397b-a17b", "display_name": "Qwen3.5-397B-A17B", "panel_role": "strong_anchor"},
+    {"spec": "ollama:tinyllama:1.1b", "display_name": "TinyLlama-1.1B", "panel_role": "weak_anchor"}
+  ],
+  "forced_choice": true,
+  "generated_debates": {
+    "topics_file": "topics/final_report_replication_topics.json",
+    "topic_count": 14,
+    "original_topic_count": 10,
+    "extreme_control_count": 4,
+    "messages_per_debate": 8,
+    "max_tokens_per_message": 220,
+    "expected_debates": 840
+  },
+  "same_position": {
+    "design": "balanced_fixed_opponent_sample",
+    "expected_comparisons": 840,
+    "candidate_order": "deterministically_balanced",
+    "opponent_assignment": "deterministic_greedy_balance",
+    "opponent_assignment_seed": "20260903"
+  }
+}
