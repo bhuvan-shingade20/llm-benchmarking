@@ -67,6 +67,36 @@ paraphrase of the judging prompt. No new debates are required.
 - [ ] Keep this study deliberately small and avoid searching over many prompt
   variants after observing results.
 
+#### Experiment 2b: Causal length and style interventions
+
+**Question.** Do changes in argument length or tone alter a judge's verdict
+when the proposition, claims, evidence, rebuttals, opponent, and speaking order
+are held fixed?
+
+**Design.** Reuse the frozen 120-transcript sample and deterministically assign
+one focal debater per transcript, balanced across models and candidate slots.
+For the length intervention, rewrite only the focal debater's turns so that its
+total word count matches the opponent's within a fixed tolerance. Report
+compression and expansion cases separately. For the style intervention, create
+assertive and cautious versions of the same focal turns at matched length. A
+fixed strong rewriter may change wording only: it may not add or remove claims,
+evidence, examples, numbers, concessions, or rebuttals. Automated checks, two
+independent semantic-preservation verifiers, and a blinded manual audit precede
+judging. The same six forced-choice judges evaluate the accepted variants in a
+fixed, balanced presentation order.
+
+**Remaining work.**
+
+- [ ] Freeze the transformation prompts, focal-candidate assignment, word-count
+  tolerance, semantic-preservation rubric, retry limit, and exclusion rule.
+- [ ] Generate and validate the matched-length and paired-tone variants before
+  collecting any counterfactual judgments.
+- [ ] Report paired changes in focal-candidate selection and winner-flip rates,
+  separately for every judge and intervention direction, with transcript-level
+  bootstrap uncertainty.
+- [ ] Treat the estimates as effects of the accepted text interventions, not as
+  universal effects of verbosity or style.
+
 ### Experiment 3: Political-position alignment
 
 **Question.** Do judges systematically prefer one region of a political
@@ -128,9 +158,10 @@ not a dependency between experiments.
 
 1. Reproduce and extend the paper benchmark with the corrected protocol.
 2. Test robustness to repeated judging, candidate order, and prompt wording.
-3. Analyze judge and debater behavior across the political spectrum.
-4. Validate LLM judges against human judgments on real-world debates.
-5. Summarize limitations, uncertainty, provider failures, and scope conditions.
+3. Test causal sensitivity to controlled length and tone interventions.
+4. Analyze judge and debater behavior across the political spectrum.
+5. Validate LLM judges against human judgments on real-world debates.
+6. Summarize limitations, uncertainty, provider failures, and scope conditions.
 
 Detailed pending tasks are maintained in
 [`docs/FUTURE_EXPERIMENTS.md`](docs/FUTURE_EXPERIMENTS.md). The complete
@@ -139,11 +170,9 @@ pre-analysis design is in
 
 ## Deferred Work
 
-The following studies are outside the four core final-report experiments unless
+The following studies remain outside the core final-report experiments unless
 they are explicitly added later:
 
-- [ ] Controlled verbosity using matched-length transcript variants.
-- [ ] Controlled style using meaning-preserving normalized variants.
 - [ ] A validated annotation study of perceived debater confidence.
 - [ ] Direct human evaluation of a newly collected benchmark subset, subject to
   resources and any required ethics review.

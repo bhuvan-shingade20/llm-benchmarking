@@ -39,6 +39,28 @@ detailed [final-report plan](FINAL_REPORT_EXPERIMENT_PLAN_2026-08-31.md).
   agreement, prompt agreement, and judge-specific results.
 - [ ] Do not add prompt variants after inspecting outcomes.
 
+### Experiment 2b: Causal Length and Style Interventions
+
+- [ ] Freeze the balanced focal-candidate assignment on the same 120
+  transcripts without using verdicts.
+- [ ] Freeze one rewriter, transformation prompts, decoding settings, target
+  lengths, tolerance, retry limit, and exclusion rule before generation.
+- [ ] Create a matched-length version by moving only the focal debater to the
+  opponent's total word count; retain whether this required compression or
+  expansion.
+- [ ] Create length-matched assertive and cautious variants of the same focal
+  turns while preserving all substantive content.
+- [ ] Require structural checks and acceptance by two independent semantic
+  verifiers before a variant can enter judging.
+- [ ] Complete a blinded manual audit of a pre-specified random subset before
+  judging starts.
+- [ ] Judge accepted counterfactuals with the same six-model forced-choice panel
+  and identical candidate order within each paired comparison.
+- [ ] Report paired selection changes, winner flips, judge-specific effects,
+  transcript-bootstrap intervals, exclusions, and verifier agreement.
+- [ ] Separate compression from expansion and avoid generalizing beyond the
+  accepted counterfactual edits.
+
 ## Experiment 3: Political-Position Alignment
 
 - [x] Approve and freeze the balanced ten-topic political panel.
@@ -74,8 +96,6 @@ detailed [final-report plan](FINAL_REPORT_EXPERIMENT_PLAN_2026-08-31.md).
 
 ## Deferred Work
 
-- [ ] Controlled verbosity with matched-length variants.
-- [ ] Controlled style with semantic-preservation checks.
 - [ ] Validated perceived-debater-confidence annotations.
 - [ ] Newly collected direct human evaluation, subject to resources and ethics
   requirements.

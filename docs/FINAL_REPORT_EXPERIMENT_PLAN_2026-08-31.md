@@ -78,6 +78,41 @@ Measure whether small changes to the judging procedure alter verdicts.
 This is intentionally a limited diagnostic, not a search over many possible
 prompts.
 
+### Causal extension: controlled length and style
+
+The observational comparison between winner and loser word counts cannot show
+that length caused a verdict. A causal extension therefore reuses the same
+frozen 120-transcript sample and changes only one pre-assigned focal debater in
+each transcript. Assignment is fixed without reference to any judgment and is
+balanced across debater identity, topic, candidate slot, proposition, and
+speaking order.
+
+The length intervention moves the focal debater's total word count to the
+opponent's total within a pre-specified tolerance while preserving the four
+turns and their substantive content. Compression and expansion are distinct
+strata. The style intervention produces an assertive and a cautious version of
+the focal turns at matched word count. The opponent and all debate conditions
+remain unchanged.
+
+A fixed strong rewriter must preserve the proposition, claims, evidence,
+examples, numbers, concessions, and rebuttals and may not introduce new factual
+material. Structural checks, two independent blinded semantic verifiers, and a
+manual audit of a frozen random subset are completed before judging. Failed
+variants are retried only up to a fixed limit and are then excluded with a
+reported reason. No verdict is collected for a rejected variant.
+
+The primary length estimand is the paired change in focal-candidate selection
+between the canonical modal verdict and the accepted matched-length variant,
+reported separately for compression and expansion. The primary style estimand
+is the paired change in focal-candidate selection between assertive and cautious
+variants. Report judge-specific effects, winner-flip rates, verifier agreement,
+and transcript-level bootstrap intervals. These are local effects of accepted
+counterfactual edits; they do not identify a universal effect of verbosity or
+tone.
+
+The complete protocol is specified in
+[`CAUSAL_BIAS_EXPERIMENT_PLAN_2026-09-04.md`](CAUSAL_BIAS_EXPERIMENT_PLAN_2026-09-04.md).
+
 ## Experiment 3: Political-Position Alignment
 
 ### Aim
@@ -139,6 +174,5 @@ written outputs.
 
 ## Deferred Analyses
 
-Matched-length verbosity interventions, style normalization, perceived
-confidence annotation, and newly collected human evaluation remain outside the
-four core experiments unless separately approved.
+Perceived-confidence annotation and newly collected human evaluation remain
+outside the four core experiments unless separately approved.
