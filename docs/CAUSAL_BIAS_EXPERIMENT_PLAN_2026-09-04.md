@@ -20,6 +20,21 @@ candidate slot, proposition, starting status, and topic. The opponent, turn
 order, propositions, and candidate presentation order remain unchanged across
 every variant of a transcript.
 
+### September report phase
+
+To fit the September 15 deadline without using incomplete data, the report
+phase uses 100 debates from the already validated 240-debate paper dataset.
+Selection requires at least a 5% original relative length difference and is
+fixed without reference to any verdict. The tracked manifest contains exactly
+ten debates per topic, 25 focal assignments per debater, 50 focal assignments
+to each candidate slot and proposition, 50 starting and 50 non-starting focal
+debaters, and 50 compression and 50 expansion interventions. The four original
+debater models serve as the forced-choice judges, so this phase also uses the
+same model set for debating and judging. Each judge evaluates both the original
+and accepted matched-length transcript. Tone intervention remains part of the
+PLOS extension unless it can be completed and audited after the report-priority
+experiments.
+
 ## Intervention A: Matched Length
 
 Rewrite only the focal debater's four turns. The target is the opponent's total
@@ -29,6 +44,11 @@ concession, and rebuttal. Do not add new facts, arguments, citations, or attacks
 Record whether matching required compression or expansion and the achieved word
 counts. Compare the accepted variant with the canonical modal verdict from the
 three-repeat robustness condition.
+
+For the September report phase, both the original and matched-length versions
+receive fresh forced-choice judgments from the same four-model panel. This
+provides a directly paired baseline without relying on the earlier
+tie-permitting judgments.
 
 ## Intervention B: Matched Tone
 

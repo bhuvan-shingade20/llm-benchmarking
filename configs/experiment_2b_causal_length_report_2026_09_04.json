@@ -1,0 +1,26 @@
+{
+  "experiment_id": "experiment_2b_causal_length_report",
+  "protocol_version": "2026-09-04-exp2b-report-v1",
+  "source_csv": "data/paper_dataset/RawDebates.csv",
+  "topics_file": "topics/phase1_topics.json",
+  "sample_manifest": "data/experiment_manifests/causal_length_report_sample_2026_09_04.csv",
+  "sample_seed": "20260904",
+  "sample_size": 100,
+  "minimum_relative_length_gap": 0.05,
+  "target_total_word_tolerance": 0.03,
+  "target_turn_word_tolerance": 0.15,
+  "maximum_rewrite_attempts": 3,
+  "rewriter": "openai:qwen3.5-397b-a17b",
+  "semantic_verifiers": [
+    "openai:gemma-4-31b-it",
+    "openai:qwen3-30b-a3b-instruct-2507"
+  ],
+  "judges": [
+    "openai:apertus-70b-instruct-2509",
+    "openai:meta-llama-3.1-8b-instruct",
+    "openai:qwen3-30b-a3b-instruct-2507",
+    "openai:gemma-4-31b-it"
+  ],
+  "forced_choice": true,
+  "conditions": ["original", "matched_length"]
+}

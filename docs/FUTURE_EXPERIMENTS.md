@@ -41,8 +41,10 @@ detailed [final-report plan](FINAL_REPORT_EXPERIMENT_PLAN_2026-08-31.md).
 
 ### Experiment 2b: Causal Length and Style Interventions
 
-- [ ] Freeze the balanced focal-candidate assignment on the same 120
-  transcripts without using verdicts.
+- [x] Freeze the deadline-phase 100-debate focal-candidate assignment from the
+  validated paper dataset without using verdicts.
+- [ ] Freeze the later PLOS-phase focal-candidate assignment on the new
+  120-transcript robustness sample.
 - [ ] Freeze one rewriter, transformation prompts, decoding settings, target
   lengths, tolerance, retry limit, and exclusion rule before generation.
 - [ ] Create a matched-length version by moving only the focal debater to the
@@ -54,8 +56,9 @@ detailed [final-report plan](FINAL_REPORT_EXPERIMENT_PLAN_2026-08-31.md).
   verifiers before a variant can enter judging.
 - [ ] Complete a blinded manual audit of a pre-specified random subset before
   judging starts.
-- [ ] Judge accepted counterfactuals with the same six-model forced-choice panel
-  and identical candidate order within each paired comparison.
+- [ ] Judge accepted counterfactuals with the corresponding same-as-debaters
+  forced-choice panel and identical candidate order within each paired
+  comparison.
 - [ ] Report paired selection changes, winner flips, judge-specific effects,
   transcript-bootstrap intervals, exclusions, and verifier agreement.
 - [ ] Separate compression from expansion and avoid generalizing beyond the

@@ -25,6 +25,21 @@ The current paper source is in [`paper`](paper).
 Only unfinished work is listed below. The protocol and position sets were
 approved and frozen on 2026-09-03, and resumable data collection is active.
 
+### September 15 submission scope
+
+The report will include only experiments that are complete and independently
+validated by the writing cutoff. Collection is currently prioritized as:
+
+1. complete six-judge agreement with human outcomes on PoliProp;
+2. complete the bounded causal matched-length study on the validated paper
+   debates; and
+3. retain the completed NeurIPS analyses as the report's benchmark foundation.
+
+The broader six-model replication, prompt/order robustness extension,
+political-alignment experiment, and causal tone intervention remain preserved
+for the PLOS extension and are described as future work if they are unfinished.
+Partial streams are never reported as results.
+
 ### Experiment 1: Extended replication of the paper
 
 **Question.** Do the paper's findings persist with a broader model panel, no
